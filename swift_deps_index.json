@@ -1,0 +1,205 @@
+{
+  "direct_dep_identities": [
+    "asyncextensions",
+    "swift-async-algorithms"
+  ],
+  "modules": [
+    {
+      "name": "AsyncExtensions",
+      "c99name": "AsyncExtensions",
+      "src_type": "swift",
+      "label": "@swiftpkg_asyncextensions//:AsyncExtensions.rspm",
+      "package_identity": "asyncextensions",
+      "product_memberships": [
+        "AsyncExtensions"
+      ]
+    },
+    {
+      "name": "AsyncAlgorithms",
+      "c99name": "AsyncAlgorithms",
+      "src_type": "swift",
+      "label": "@swiftpkg_swift_async_algorithms//:AsyncAlgorithms.rspm",
+      "package_identity": "swift-async-algorithms",
+      "product_memberships": [
+        "AsyncAlgorithms"
+      ]
+    },
+    {
+      "name": "BitCollections",
+      "c99name": "BitCollections",
+      "src_type": "swift",
+      "label": "@swiftpkg_swift_collections//:BitCollections.rspm",
+      "package_identity": "swift-collections",
+      "product_memberships": [
+        "BitCollections",
+        "Collections"
+      ]
+    },
+    {
+      "name": "Collections",
+      "c99name": "Collections",
+      "src_type": "swift",
+      "label": "@swiftpkg_swift_collections//:Collections.rspm",
+      "package_identity": "swift-collections",
+      "product_memberships": [
+        "Collections"
+      ]
+    },
+    {
+      "name": "DequeModule",
+      "c99name": "DequeModule",
+      "src_type": "swift",
+      "label": "@swiftpkg_swift_collections//:DequeModule.rspm",
+      "package_identity": "swift-collections",
+      "product_memberships": [
+        "DequeModule",
+        "Collections"
+      ]
+    },
+    {
+      "name": "HashTreeCollections",
+      "c99name": "HashTreeCollections",
+      "src_type": "swift",
+      "label": "@swiftpkg_swift_collections//:HashTreeCollections.rspm",
+      "package_identity": "swift-collections",
+      "product_memberships": [
+        "HashTreeCollections",
+        "Collections"
+      ]
+    },
+    {
+      "name": "HeapModule",
+      "c99name": "HeapModule",
+      "src_type": "swift",
+      "label": "@swiftpkg_swift_collections//:HeapModule.rspm",
+      "package_identity": "swift-collections",
+      "product_memberships": [
+        "HeapModule",
+        "Collections"
+      ]
+    },
+    {
+      "name": "OrderedCollections",
+      "c99name": "OrderedCollections",
+      "src_type": "swift",
+      "label": "@swiftpkg_swift_collections//:OrderedCollections.rspm",
+      "package_identity": "swift-collections",
+      "product_memberships": [
+        "OrderedCollections",
+        "Collections"
+      ]
+    },
+    {
+      "name": "_CollectionsUtilities",
+      "c99name": "_CollectionsUtilities",
+      "src_type": "swift",
+      "label": "@swiftpkg_swift_collections//:_CollectionsUtilities.rspm",
+      "package_identity": "swift-collections",
+      "product_memberships": [
+        "BitCollections",
+        "DequeModule",
+        "HashTreeCollections",
+        "HeapModule",
+        "OrderedCollections",
+        "_RopeModule",
+        "Collections"
+      ]
+    },
+    {
+      "name": "_RopeModule",
+      "c99name": "_RopeModule",
+      "src_type": "swift",
+      "label": "@swiftpkg_swift_collections//:_RopeModule.rspm",
+      "package_identity": "swift-collections",
+      "product_memberships": [
+        "_RopeModule",
+        "Collections"
+      ]
+    }
+  ],
+  "products": [
+    {
+      "identity": "asyncextensions",
+      "name": "AsyncExtensions",
+      "type": "library",
+      "label": "@swiftpkg_asyncextensions//:AsyncExtensions"
+    },
+    {
+      "identity": "swift-async-algorithms",
+      "name": "AsyncAlgorithms",
+      "type": "library",
+      "label": "@swiftpkg_swift_async_algorithms//:AsyncAlgorithms"
+    },
+    {
+      "identity": "swift-collections",
+      "name": "BitCollections",
+      "type": "library",
+      "label": "@swiftpkg_swift_collections//:BitCollections"
+    },
+    {
+      "identity": "swift-collections",
+      "name": "Collections",
+      "type": "library",
+      "label": "@swiftpkg_swift_collections//:Collections"
+    },
+    {
+      "identity": "swift-collections",
+      "name": "DequeModule",
+      "type": "library",
+      "label": "@swiftpkg_swift_collections//:DequeModule"
+    },
+    {
+      "identity": "swift-collections",
+      "name": "HashTreeCollections",
+      "type": "library",
+      "label": "@swiftpkg_swift_collections//:HashTreeCollections"
+    },
+    {
+      "identity": "swift-collections",
+      "name": "HeapModule",
+      "type": "library",
+      "label": "@swiftpkg_swift_collections//:HeapModule"
+    },
+    {
+      "identity": "swift-collections",
+      "name": "OrderedCollections",
+      "type": "library",
+      "label": "@swiftpkg_swift_collections//:OrderedCollections"
+    },
+    {
+      "identity": "swift-collections",
+      "name": "_RopeModule",
+      "type": "library",
+      "label": "@swiftpkg_swift_collections//:_RopeModule"
+    }
+  ],
+  "packages": [
+    {
+      "name": "swiftpkg_asyncextensions",
+      "identity": "asyncextensions",
+      "remote": {
+        "commit": "1f0729e4f1f6c7166acfac3cec43b3cbe83be0e6",
+        "remote": "https://github.com/sideeffect-io/AsyncExtensions.git",
+        "version": "0.5.2"
+      }
+    },
+    {
+      "name": "swiftpkg_swift_async_algorithms",
+      "identity": "swift-async-algorithms",
+      "remote": {
+        "commit": "da4e36f86544cdf733a40d59b3a2267e3a7bbf36",
+        "remote": "https://github.com/apple/swift-async-algorithms.git",
+        "version": "1.0.0"
+      }
+    },
+    {
+      "name": "swiftpkg_swift_collections",
+      "identity": "swift-collections",
+      "remote": {
+        "commit": "94cf62b3ba8d4bed62680a282d4c25f9c63c2efb",
+        "remote": "https://github.com/apple/swift-collections.git",
+        "version": "1.1.0"
+      }
+    }
+  ]
+}
