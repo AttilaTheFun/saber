@@ -4,5 +4,5 @@ public protocol FooService {
 }
 
 public protocol FooServiceProvider {
-    var fooService: FooService { get }
+    var fooService: any FooService { get }
 }

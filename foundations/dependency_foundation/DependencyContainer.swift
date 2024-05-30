@@ -1,5 +1,4 @@
 
-@MainActor
 open class DependencyContainer<Dependencies> {
     public let dependencies: Dependencies
 

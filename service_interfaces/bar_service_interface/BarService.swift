@@ -4,5 +4,5 @@ public protocol BarService {
 }
 
 public protocol BarServiceProvider {
-    var barService: BarService { get }
+    var barService: any BarService { get }
 }

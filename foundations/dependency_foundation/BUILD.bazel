@@ -7,6 +7,7 @@ swift_library(
         "DependencyProvider.swift",
         "Route.swift",
         "RouteHandler.swift",
+        "Scope.swift",
     ],
     module_name = "DependencyFoundation",
     visibility = ["//visibility:public"],

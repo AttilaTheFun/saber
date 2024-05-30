@@ -8,14 +8,12 @@ public typealias FooDependencies
     & FooServiceProvider
     & BarRouteHandlerProvider
 
-@MainActor
 public final class FooRouteHandler: DependencyContainer<FooDependencies>, RouteHandler {
     public func destination(of route: FooRoute) -> UIViewController {
         return FooViewController(dependencies: self.dependencies)
     }
 }
 
-@MainActor
 final class FooViewController: UIViewController {
     private let fooService: FooService
     private let barRouteHandler: any RouteHandler<BarRoute>

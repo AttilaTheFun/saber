@@ -1,12 +1,12 @@
-load("@build_bazel_rules_swift//swift:swift.bzl", "swift_binary")
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
-swift_binary(
-    name = "example",
-    srcs = ["main.swift"],
-    module_name = "Example",
+swift_library(
+    name = "root_scope_implementation",
+    srcs = ["RootScope.swift"],
+    module_name = "RootScopeImplementation",
     visibility = ["//visibility:public"],
     deps = [
-        "//scope_implementations/root_scope_implementation",
+        "//foundations/dependency_foundation",
         "//service_implementations/bar_service_implementation",
         "//service_implementations/foo_service_implementation",
         "//service_interfaces/bar_service_interface",

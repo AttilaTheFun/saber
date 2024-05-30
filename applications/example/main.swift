@@ -1,6 +1,12 @@
 import FooServiceInterface
 import FooServiceImplementation
+import BarServiceInterface
+import BarServiceImplementation
+import RootScopeImplementation
 
-let fooService: FooService = FooServiceImplementation()
+let rootScope = RootScope()
 
-print(fooService)
+print(ObjectIdentifier(rootScope.fooService as! AnyObject))
+print(ObjectIdentifier(rootScope.fooService as! AnyObject))
+print(ObjectIdentifier(rootScope.barService as! AnyObject))
+print(ObjectIdentifier(rootScope.barService as! AnyObject))
