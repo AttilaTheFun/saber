@@ -3140,6 +3140,92 @@
         ]
       }
     },
+    "@@rules_swift_package_manager~//:extensions.bzl%swift_deps": {
+      "general": {
+        "bzlTransitiveDigest": "6l2zsx0cqTtMqy8Iqgd0Dh9ePjYCUdvPDGPecHxDGrw=",
+        "recordedFileInputs": {
+          "@@//swift_deps_index.json": "60cdf25eaa9622b480d54395c493f313d39b6e83a6ea90481ebd2c82f1c8827c"
+        },
+        "recordedDirentsInputs": {},
+        "envVariables": {},
+        "generatedRepoSpecs": {
+          "swiftpkg_asyncextensions": {
+            "bzlFile": "@@rules_swift_package_manager~//swiftpkg/internal:swift_package.bzl",
+            "ruleClassName": "swift_package",
+            "attributes": {
+              "bazel_package_name": "swiftpkg_asyncextensions",
+              "commit": "1f0729e4f1f6c7166acfac3cec43b3cbe83be0e6",
+              "remote": "https://github.com/sideeffect-io/AsyncExtensions.git",
+              "dependencies_index": "@@//:swift_deps_index.json",
+              "init_submodules": false,
+              "recursive_init_submodules": false,
+              "patch_args": [
+                "-p0"
+              ],
+              "patch_cmds": [],
+              "patch_cmds_win": [],
+              "patch_tool": "",
+              "patches": []
+            }
+          },
+          "swiftpkg_swift_async_algorithms": {
+            "bzlFile": "@@rules_swift_package_manager~//swiftpkg/internal:swift_package.bzl",
+            "ruleClassName": "swift_package",
+            "attributes": {
+              "bazel_package_name": "swiftpkg_swift_async_algorithms",
+              "commit": "da4e36f86544cdf733a40d59b3a2267e3a7bbf36",
+              "remote": "https://github.com/apple/swift-async-algorithms.git",
+              "dependencies_index": "@@//:swift_deps_index.json",
+              "init_submodules": false,
+              "recursive_init_submodules": false,
+              "patch_args": [
+                "-p0"
+              ],
+              "patch_cmds": [],
+              "patch_cmds_win": [],
+              "patch_tool": "",
+              "patches": []
+            }
+          },
+          "swiftpkg_swift_collections": {
+            "bzlFile": "@@rules_swift_package_manager~//swiftpkg/internal:swift_package.bzl",
+            "ruleClassName": "swift_package",
+            "attributes": {
+              "bazel_package_name": "swiftpkg_swift_collections",
+              "commit": "94cf62b3ba8d4bed62680a282d4c25f9c63c2efb",
+              "remote": "https://github.com/apple/swift-collections.git",
+              "dependencies_index": "@@//:swift_deps_index.json",
+              "init_submodules": false,
+              "recursive_init_submodules": false,
+              "patch_args": [
+                "-p0"
+              ],
+              "patch_cmds": [],
+              "patch_cmds_win": [],
+              "patch_tool": "",
+              "patches": []
+            }
+          }
+        },
+        "recordedRepoMappingEntries": [
+          [
+            "rules_swift_package_manager~",
+            "bazel_skylib",
+            "bazel_skylib~"
+          ],
+          [
+            "rules_swift_package_manager~",
+            "bazel_tools",
+            "bazel_tools"
+          ],
+          [
+            "rules_swift_package_manager~",
+            "cgrindel_bazel_starlib",
+            "cgrindel_bazel_starlib~"
+          ]
+        ]
+      }
+    },
     "@@rules_swift~//swift:extensions.bzl%non_module_deps": {
       "general": {
         "bzlTransitiveDigest": "m78FIsmmvFalZmXxi26P0AW5U6W6G+u5KGknjClFU/0=",

@@ -1,1 +1,6 @@
+
+# Bazel Files
 bazel-*
+
+# Swift Files
+.build
