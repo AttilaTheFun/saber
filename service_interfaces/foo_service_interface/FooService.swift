@@ -1,6 +1,6 @@
 
 public protocol FooService {
-    func foo() async throws
+    func foo() async throws -> String
 }
 
 public protocol FooServiceProvider {

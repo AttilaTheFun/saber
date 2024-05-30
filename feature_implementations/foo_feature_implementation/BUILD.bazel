@@ -1,0 +1,14 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "foo_feature_implementation",
+    srcs = ["FooViewController.swift"],
+    module_name = "FooFeatureImplementation",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//feature_interfaces/bar_feature_interface",
+        "//feature_interfaces/foo_feature_interface",
+        "//foundations/dependency_foundation",
+        "//service_interfaces/foo_service_interface",
+    ],
+)

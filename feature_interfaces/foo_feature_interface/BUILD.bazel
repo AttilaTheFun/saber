@@ -1,0 +1,9 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "foo_feature_interface",
+    srcs = ["FooRoute.swift"],
+    module_name = "FooFeatureInterface",
+    visibility = ["//visibility:public"],
+    deps = ["//foundations/dependency_foundation"],
+)

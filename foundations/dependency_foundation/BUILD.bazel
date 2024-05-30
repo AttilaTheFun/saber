@@ -1,0 +1,13 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "dependency_foundation",
+    srcs = [
+        "DependencyContainer.swift",
+        "DependencyProvider.swift",
+        "Route.swift",
+        "RouteHandler.swift",
+    ],
+    module_name = "DependencyFoundation",
+    visibility = ["//visibility:public"],
+)
