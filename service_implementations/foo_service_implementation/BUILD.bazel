@@ -3,6 +3,7 @@ load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 swift_library(
     name = "foo_service_implementation",
     srcs = ["FooServiceImplementation.swift"],
-    module_name = "foo_service_implementation",
+    module_name = "FooServiceImplementation",
     visibility = ["//visibility:public"],
+    deps = ["//service_interfaces/foo_service_interface"],
 )

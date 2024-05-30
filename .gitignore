@@ -1,6 +1,13 @@
 
+# System files:
+.DS_STORE
+
 # Bazel Files
-bazel-*
+.bazel
 
 # Swift Files
 .build
+
+# Apple Files
+*.xcodeproj
+**/DerivedData

@@ -1,8 +1,13 @@
 load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
 load("@rules_swift_package_manager//swiftpkg:defs.bzl", "swift_update_packages")
 
+# gazelle directives
+
+# gazelle:swift_module_naming_convention pascal_case
+# gazelle:exclude .build
 # gazelle:exclude .bazel
-# gazelle:exclude bazel-*
+
+# gazelle targets
 
 gazelle_binary(
     name = "gazelle_bin",

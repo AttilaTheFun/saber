@@ -1,2 +1,9 @@
+
+# System files:
+.DS_STORE
+
+# Bazel Files
+.bazel
+
 # Swift Files
 .build
