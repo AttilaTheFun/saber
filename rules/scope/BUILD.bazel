@@ -1,0 +1,10 @@
+load("//rules/scope:scope.bzl", "scope")
+
+scope(
+    name = "scope",
+    scope_name = "RootScope",
+    service_providers = [
+        "//rules/service_provider:foo_service_provider",
+        "//rules/service_provider:bar_service_provider",
+    ],
+)

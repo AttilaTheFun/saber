@@ -1,0 +1,12 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "user_service_interface",
+    srcs = [
+        "User.swift",
+        "UserService.swift",
+        "UserStorageService.swift",
+    ],
+    module_name = "UserServiceInterface",
+    visibility = ["//visibility:public"],
+)

@@ -1,9 +1,9 @@
 load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 swift_library(
-    name = "foo_feature_interface",
-    srcs = ["FooFeatureArguments.swift"],
-    module_name = "FooFeatureInterface",
+    name = "logged_out_scope_interface",
+    srcs = ["LoggedOutScopeArguments.swift"],
+    module_name = "LoggedOutScopeInterface",
     visibility = ["//visibility:public"],
     deps = ["//foundations/dependency_foundation"],
 )

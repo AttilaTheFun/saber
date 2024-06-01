@@ -1,0 +1,17 @@
+load("//rules/service_provider:service_provider.bzl", "service_provider")
+
+service_provider(
+    name = "foo_service_provider",
+    service_implementation = "//service_implementations/foo_service_implementation",
+    service_interface = "//service_interfaces/foo_service_interface",
+    service_name = "FooService",
+    visibility = ["//visibility:public"],
+)
+
+service_provider(
+    name = "bar_service_provider",
+    service_implementation = "//service_implementations/bar_service_implementation",
+    service_interface = "//service_interfaces/bar_service_interface",
+    service_name = "BarService",
+    visibility = ["//visibility:public"],
+)
