@@ -4,11 +4,9 @@ public protocol Scope {
     func shared<T>(_ function: @escaping () -> T) -> T
 }
 
-open class BaseScope: Scope {
+open class BaseScope<Dependencies>: DependencyContainer<Dependencies> {
     private var factories = [ObjectIdentifier : Any]()
     private var sharedInstances = [ObjectIdentifier : Any]()
-
-    public init() {}
 
     public func new<T>(_ function: @escaping () -> T) -> T {
         let identifier = ObjectIdentifier(T.self)

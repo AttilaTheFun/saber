@@ -11,6 +11,7 @@ swift_library(
     deps = [
         "//feature_implementations/bar_feature_implementation",
         "//feature_implementations/foo_feature_implementation",
+        "//scope_implementations/root_scope_implementation",
         "//service_implementations/bar_service_implementation",
         "//service_implementations/foo_service_implementation",
         "//service_implementations/user_service_implementation",

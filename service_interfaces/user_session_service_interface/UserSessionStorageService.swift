@@ -9,10 +9,3 @@ public protocol UserSessionStorageService {
 public protocol UserSessionStorageServiceProvider {
     var userSessionStorageService: UserSessionStorageService { get }
 }
-
-// TODO: Generate with @ServiceProvider macro with ability to opt out of automatic propagation.
-extension DependencyContainer: UserSessionStorageServiceProvider where Dependencies: UserSessionStorageServiceProvider {
-    public var userSessionStorageService: any UserSessionStorageService {
-        return self.dependencies.userSessionStorageService
-    }
-}

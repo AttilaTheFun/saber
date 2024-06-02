@@ -2,7 +2,10 @@ load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 swift_library(
     name = "user_session_service_implementation",
-    srcs = ["UserSessionServiceImplementation.swift"],
+    srcs = [
+        "UserSessionServiceImplementation.swift",
+        "UserSessionStorageServiceImplementation.swift",
+    ],
     module_name = "UserSessionServiceImplementation",
     visibility = ["//visibility:public"],
     deps = [

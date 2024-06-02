@@ -10,10 +10,3 @@ public protocol UserSessionService {
 public protocol UserSessionServiceProvider {
     var userSessionService: UserSessionService { get }
 }
-
-// TODO: Generate with @ServiceProvider macro with ability to opt out of automatic propagation.
-extension DependencyContainer: UserSessionServiceProvider where Dependencies: UserSessionServiceProvider {
-    public var userSessionService: any UserSessionService {
-        return self.dependencies.userSessionService
-    }
-}
