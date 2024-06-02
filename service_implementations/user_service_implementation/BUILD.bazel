@@ -1,0 +1,12 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "user_service_implementation",
+    srcs = ["UserServiceImplementation.swift"],
+    module_name = "UserServiceImplementation",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//foundations/dependency_foundation",
+        "//service_interfaces/user_service_interface",
+    ],
+)

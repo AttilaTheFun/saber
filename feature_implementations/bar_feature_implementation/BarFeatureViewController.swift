@@ -5,7 +5,7 @@ import BarServiceInterface
 import UIKit
 
 // TODO: Generate with @Builder macro.
-public final class BarBuilder: DependencyContainer<BarFeatureDependencies>, Builder {
+public final class BarFeatureBuilder: DependencyContainer<BarFeatureDependencies>, Builder {
     public func build(arguments: BarFeatureArguments) -> UIViewController {
         return BarFeatureViewController(dependencies: self.dependencies, arguments: arguments)
     }

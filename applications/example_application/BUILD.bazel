@@ -5,12 +5,13 @@ load("@rules_xcodeproj//xcodeproj:defs.bzl", "top_level_target", "xcode_provisio
 
 # TODO: Update these to your bundle ID and team ID.
 BUNDLE_ID = "com.LoganShire.ExampleApplication"
+
 TEAM_ID = "9CLW2BBDAG"
 
 apple_bundle_version(
     name = "_version",
-    short_version_string = "1.0",
     build_version = "1",
+    short_version_string = "1.0",
     tags = ["manual"],
 )
 
@@ -30,16 +31,16 @@ xcode_provisioning_profile(
 
 ios_application(
     name = "example_application",
-    bundle_name = "ExampleApplication",
     bundle_id = BUNDLE_ID,
+    bundle_name = "ExampleApplication",
     families = [
         "iphone",
         "ipad",
     ],
     infoplists = [":Info.plist"],
-    provisioning_profile = ":_development_profile",
     launch_storyboard = ":LaunchScreen.storyboard",
     minimum_os_version = "16.0",
+    provisioning_profile = ":_development_profile",
     version = ":_version",
     visibility = ["//visibility:public"],
     deps = ["//applications/example_application/sources"],

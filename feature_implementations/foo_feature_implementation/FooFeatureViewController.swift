@@ -5,7 +5,7 @@ import FooServiceInterface
 import UIKit
 
 // TODO: Generate with @Builder macro.
-public final class FooBuilder: DependencyContainer<FooFeatureDependencies>, Builder {
+public final class FooFeatureBuilder: DependencyContainer<FooFeatureDependencies>, Builder {
     public func build(arguments: FooFeatureArguments) -> UIViewController {
         return FooFeatureViewController(dependencies: self.dependencies, arguments: arguments)
     }

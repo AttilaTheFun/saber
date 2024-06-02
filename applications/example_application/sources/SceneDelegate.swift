@@ -1,3 +1,9 @@
+import BarFeatureImplementation
+import BarServiceImplementation
+import FooFeatureImplementation
+import FooServiceImplementation
+import UserServiceImplementation
+import UserSessionServiceImplementation
 import UIKit
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {

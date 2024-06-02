@@ -1,3 +1,4 @@
+import DependencyFoundation
 
 // @ServiceProvider
 public protocol UserStorageService {

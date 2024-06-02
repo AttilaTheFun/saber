@@ -8,4 +8,12 @@ swift_library(
     ],
     module_name = "Sources",
     visibility = ["//visibility:public"],
+    deps = [
+        "//feature_implementations/bar_feature_implementation",
+        "//feature_implementations/foo_feature_implementation",
+        "//service_implementations/bar_service_implementation",
+        "//service_implementations/foo_service_implementation",
+        "//service_implementations/user_service_implementation",
+        "//service_implementations/user_session_service_implementation",
+    ],
 )

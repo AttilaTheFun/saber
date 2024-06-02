@@ -9,4 +9,5 @@ swift_library(
     ],
     module_name = "UserServiceInterface",
     visibility = ["//visibility:public"],
+    deps = ["//foundations/dependency_foundation"],
 )
