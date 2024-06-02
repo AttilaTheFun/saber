@@ -1,0 +1,11 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "sources",
+    srcs = [
+        "ApplicationDelegate.swift",
+        "SceneDelegate.swift",
+    ],
+    module_name = "Sources",
+    visibility = ["//visibility:public"],
+)

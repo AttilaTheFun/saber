@@ -1,5 +1,5 @@
 
-public protocol Scope: DependencyProvider {
+public protocol Scope {
     func new<T>(_ function: @escaping () -> T) -> T
     func shared<T>(_ function: @escaping () -> T) -> T
 }
