@@ -2,7 +2,7 @@ import DependencyFoundation
 import UserSessionServiceInterface
 import UserServiceInterface
 
-// @RouterProvider
+// @BuilderProvider(building: AnyObject.self)
 public struct LoggedInScopeArguments {
     public let userSession: UserSession
     public let user: User
@@ -13,7 +13,7 @@ public struct LoggedInScopeArguments {
     }
 }
 
-// TODO: Generate with @RouterProvider macro.
-public protocol LoggedInScopeRouterProvider {
-    var loggedInScopeRouter: any Router<LoggedInScopeArguments> { get }
+// TODO: Generate with @BuilderProvider macro.
+public protocol LoggedInScopeBuilderProvider {
+    var loggedInScopeBuilder: any Builder<LoggedInScopeArguments, AnyObject> { get }
 }

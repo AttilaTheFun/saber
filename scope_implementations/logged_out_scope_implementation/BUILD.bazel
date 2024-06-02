@@ -5,4 +5,11 @@ swift_library(
     srcs = ["LoggedOutScopeImplementation.swift"],
     module_name = "LoggedOutScopeImplementation",
     visibility = ["//visibility:public"],
+    deps = [
+        "//foundations/dependency_foundation",
+        "//foundations/swift_foundation",
+        "//scope_interfaces/logged_out_scope_interface",
+        "//service_implementations/user_session_service_implementation",
+        "//service_interfaces/user_session_service_interface",
+    ],
 )

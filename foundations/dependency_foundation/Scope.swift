@@ -1,10 +1,6 @@
+import SwiftFoundation
 
-public protocol Scope {
-    func new<T>(_ function: @escaping () -> T) -> T
-    func shared<T>(_ function: @escaping () -> T) -> T
-}
-
-open class BaseScope<Dependencies>: DependencyContainer<Dependencies> {
+open class Scope<Dependencies>: DependencyContainer<Dependencies> {
     private var factories = [ObjectIdentifier : Any]()
     private var sharedInstances = [ObjectIdentifier : Any]()
 
@@ -18,14 +14,25 @@ open class BaseScope<Dependencies>: DependencyContainer<Dependencies> {
         return function()
     }
 
-    public func shared<T>(_ function: @escaping () -> T) -> T {
+    public func strong<T>(_ function: @escaping () -> T) -> T {
         let identifier = ObjectIdentifier(T.self)
-        if let instance = self.sharedInstances[identifier] as? T {
-            return instance
+        if let wrapper = self.sharedInstances[identifier] as? StrongWrapper<T>, let value = wrapper.value {
+            return value
         }
 
-        let instance = self.new(function)
-        self.sharedInstances[identifier] = instance
-        return instance
+        let value = self.new(function)
+        self.sharedInstances[identifier] = StrongWrapper(value: value)
+        return value
+    }
+
+    public func weak<T: AnyObject>(_ function: @escaping () -> T) -> T {
+        let identifier = ObjectIdentifier(T.self)
+        if let wrapper = self.sharedInstances[identifier] as? WeakWrapper<T>, let value = wrapper.value {
+            return value
+        }
+
+        let value = self.new(function)
+        self.sharedInstances[identifier] = WeakWrapper(value: value)
+        return value
     }
 }

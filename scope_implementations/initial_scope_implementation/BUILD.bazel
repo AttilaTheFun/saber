@@ -1,0 +1,12 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "initial_scope_implementation",
+    srcs = ["InitialScopeImplementation.swift"],
+    module_name = "InitialScopeImplementation",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//foundations/dependency_foundation",
+        "//scope_interfaces/initial_scope_interface",
+    ],
+)

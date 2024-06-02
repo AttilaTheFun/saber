@@ -1,0 +1,9 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_binary")
+
+swift_binary(
+    name = "test_binary",
+    srcs = ["main.swift"],
+    module_name = "TestBinary",
+    visibility = ["//visibility:public"],
+    deps = ["//foundations/swift_foundation"],
+)

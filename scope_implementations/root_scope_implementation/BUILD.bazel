@@ -2,11 +2,20 @@ load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 swift_library(
     name = "root_scope_implementation",
-    srcs = ["RootScope.swift"],
+    srcs = ["RootScopeImplementation.swift"],
     module_name = "RootScopeImplementation",
     visibility = ["//visibility:public"],
     deps = [
         "//foundations/dependency_foundation",
+        "//scope_implementations/initial_scope_implementation",
+        "//scope_implementations/loading_scope_implementation",
+        "//scope_implementations/logged_in_scope_implementation",
+        "//scope_implementations/logged_out_scope_implementation",
+        "//scope_interfaces/initial_scope_interface",
+        "//scope_interfaces/loading_scope_interface",
+        "//scope_interfaces/logged_in_scope_interface",
+        "//scope_interfaces/logged_out_scope_interface",
+        "//scope_interfaces/root_scope_interface",
         "//service_implementations/user_service_implementation",
         "//service_implementations/user_session_service_implementation",
         "//service_interfaces/user_service_interface",

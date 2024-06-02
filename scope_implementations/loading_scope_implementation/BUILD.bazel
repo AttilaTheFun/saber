@@ -1,0 +1,12 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "loading_scope_implementation",
+    srcs = ["LoadingScopeImplementation.swift"],
+    module_name = "LoadingScopeImplementation",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//foundations/dependency_foundation",
+        "//scope_interfaces/loading_scope_interface",
+    ],
+)

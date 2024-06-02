@@ -1,0 +1,8 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "immediate_execution_plugin_interface",
+    srcs = ["ImmediateExecutionPlugin.swift"],
+    module_name = "ImmediateExecutionPluginInterface",
+    visibility = ["//visibility:public"],
+)

@@ -1,7 +1,7 @@
 import DependencyFoundation
 import UserSessionServiceInterface
 
-// @RouterProvider
+// @BuilderProvider(building: AnyObject.self)
 public struct LoadingScopeArguments {
     public let userSession: UserSession
 
@@ -10,7 +10,7 @@ public struct LoadingScopeArguments {
     }
 }
 
-// TODO: Generate with @RouterProvider macro.
-public protocol LoadingScopeRouterProvider {
-    var loadingScopeRouter: any Router<LoadingScopeArguments> { get }
+// TODO: Generate with @BuilderProvider macro.
+public protocol LoadingScopeBuilderProvider {
+    var loadingScopeBuilder: any Builder<LoadingScopeArguments, AnyObject> { get }
 }
