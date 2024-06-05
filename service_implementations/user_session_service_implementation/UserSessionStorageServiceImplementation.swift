@@ -1,34 +1,51 @@
 import DependencyFoundation
 import Foundation
+import KeyFoundation
+import KeyValueServiceInterface
 import UserSessionServiceInterface
-
-private let userSessionKey = "UserSession"
 
 // TODO: Generate with @Injectable macro.
 public typealias UserSessionStorageServiceImplementationDependencies
     = DependencyProvider
+    & KeyValueServiceProvider
 
 // @Injectable
 public final class UserSessionStorageServiceImplementation: UserSessionStorageService {
 
+    // @Inject
+    let keyValueService: KeyValueService
+
     // TODO: Generate with @Injectable macro.
-    public init(dependencies: UserSessionStorageServiceImplementationDependencies) {}
+    public init(dependencies: UserSessionStorageServiceImplementationDependencies) {
+        self.keyValueService = dependencies.keyValueService
+    }
 
     public var userSession: UserSession? {
         get {
-            if 
-                let data = UserDefaults.standard.data(forKey: userSessionKey),
-                let user = try? JSONDecoder().decode(UserSession.self, from: data)
-            {
-                return user
-            }
-
-            return nil
+            return self.keyValueService.get(key: .userSession)
         }
         set {
-            if let data = try? JSONEncoder().encode(newValue) {
-                UserDefaults.standard.setValue(data, forKey: userSessionKey)
+            if let newValue {
+                self.keyValueService.set(value: newValue, for: .userSession)
+            } else {
+                self.keyValueService.removeValue(for: .userSession)
             }
         }
+    }
+}
+
+extension UserSession {
+    static var namespace: Namespace {
+        Namespace(type: UserSession.self)
+    }
+}
+
+extension Name {
+    static let userSession = Name(name: "UserSession", namespace: UserSession.namespace)
+}
+
+extension StorageKey {
+    static var userSession: StorageKey<UserSession> {
+        StorageKey<UserSession>(name: .userSession)
     }
 }

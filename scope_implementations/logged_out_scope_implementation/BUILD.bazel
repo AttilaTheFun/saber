@@ -13,6 +13,7 @@ swift_library(
         "//foundations/swift_foundation",
         "//plugin_interfaces/scope_initialization_plugin_interface",
         "//service_implementations/user_session_service_implementation",
+        "//service_interfaces/key_value_service_interface",
         "//service_interfaces/user_session_service_interface",
         "//service_interfaces/window_service_interface",
     ],

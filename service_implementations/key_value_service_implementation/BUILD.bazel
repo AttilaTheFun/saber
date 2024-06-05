@@ -1,0 +1,13 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "key_value_service_implementation",
+    srcs = ["KeyValueServiceImplementation.swift"],
+    module_name = "KeyValueServiceImplementation",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//foundations/dependency_foundation",
+        "//foundations/key_foundation",
+        "//service_interfaces/key_value_service_interface",
+    ],
+)

@@ -10,6 +10,8 @@ swift_library(
     visibility = ["//visibility:public"],
     deps = [
         "//foundations/dependency_foundation",
+        "//foundations/key_foundation",
+        "//service_interfaces/key_value_service_interface",
         "//service_interfaces/user_service_interface",
         "//service_interfaces/user_session_service_interface",
     ],

@@ -1,4 +1,6 @@
 import DependencyFoundation
+import KeyFoundation
+import KeyValueServiceInterface
 import LoadingFeatureInterface
 import LoadingFeatureImplementation
 import LoggedOutFeatureInterface
@@ -21,6 +23,7 @@ public final class LoadingFeatureBuilder: DependencyContainer<LoadingScopeImplem
 // TODO: Generate with @Injectable macro.
 public typealias LoadingScopeImplementationDependencies
     = DependencyProvider
+    & KeyValueServiceProvider
     & LoggedInFeatureBuilderProvider
     & LoggedOutFeatureBuilderProvider
     & UserSessionStorageServiceProvider
@@ -33,6 +36,9 @@ final class LoadingScopeImplementation: Scope<LoadingScopeImplementationDependen
 
     // @Arguments
     let loadingFeatureArguments: LoadingFeatureArguments
+
+    // @Propagate
+    // let keyValueService: KeyValueService
 
     // @Propagate
     // let windowService: WindowService
@@ -60,6 +66,13 @@ final class LoadingScopeImplementation: Scope<LoadingScopeImplementationDependen
     init(dependencies: LoadingScopeImplementationDependencies, arguments: LoadingFeatureArguments) {
         self.loadingFeatureArguments = arguments
         super.init(dependencies: dependencies)
+    }
+}
+
+// TODO: Generate from the @Propagate macro.
+extension LoadingScopeImplementation: KeyValueServiceProvider {
+    var keyValueService: any KeyValueService {
+        return self.dependencies.keyValueService
     }
 }
 

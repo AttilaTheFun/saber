@@ -1,6 +1,7 @@
+import DependencyFoundation
+import KeyValueServiceInterface
 import LoggedOutFeatureInterface
 import LoggedOutFeatureImplementation
-import DependencyFoundation
 import LoadingFeatureInterface
 import ScopeInitializationPluginInterface
 import SwiftFoundation
@@ -20,6 +21,7 @@ public final class LoggedOutFeatureBuilder: DependencyContainer<LoggedOutScopeIm
 // TODO: Generate with @Injectable macro.
 public typealias LoggedOutScopeImplementationDependencies
     = DependencyProvider
+    & KeyValueServiceProvider
     & LoadingFeatureBuilderProvider
     & UserSessionStorageServiceProvider
     & WindowServiceProvider
@@ -30,6 +32,9 @@ final class LoggedOutScopeImplementation: Scope<LoggedOutScopeImplementationDepe
 
     // @Arguments
     let loggedOutFeatureArguments: LoggedOutFeatureArguments
+
+    // @Propagate
+    // let keyValueService: KeyValueService
 
     // @Propagate
     // let windowService: WindowService
@@ -52,6 +57,13 @@ final class LoggedOutScopeImplementation: Scope<LoggedOutScopeImplementationDepe
         self.loggedOutFeatureArguments = arguments
 
         super.init(dependencies: dependencies)
+    }
+}
+
+// TODO: Generate from the @Propagate macro.
+extension LoggedOutScopeImplementation: KeyValueServiceProvider {
+    var keyValueService: any KeyValueService {
+        return self.dependencies.keyValueService
     }
 }
 

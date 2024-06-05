@@ -1,4 +1,5 @@
 import DependencyFoundation
+import KeyValueServiceInterface
 import LoggedInFeatureInterface
 import LoggedInFeatureInterface
 import LoggedInFeatureImplementation
@@ -28,6 +29,7 @@ public final class LoggedInScopeImplementationBuilder: DependencyContainer<Logge
 // TODO: Generate with @Injectable macro.
 public typealias LoggedInScopeImplementationDependencies
     = DependencyProvider
+    & KeyValueServiceProvider
     & LoggedOutFeatureBuilderProvider
     & UserSessionStorageServiceProvider
     & UserStorageServiceProvider
@@ -39,6 +41,9 @@ final class LoggedInScopeImplementation: Scope<LoggedInScopeImplementationDepend
 
     // @Arguments
     let loggedInFeatureArguments: LoggedInFeatureArguments
+
+    // @Propagate
+    // let keyValueService: KeyValueService
 
     // @Propagate
     // let userStorageService: UserStorageService
@@ -59,6 +64,13 @@ final class LoggedInScopeImplementation: Scope<LoggedInScopeImplementationDepend
     init(dependencies: LoggedInScopeImplementationDependencies, arguments: LoggedInFeatureArguments) {
         self.loggedInFeatureArguments = arguments
         super.init(dependencies: dependencies)
+    }
+}
+
+// TODO: Generate from the @Propagate macro.
+extension LoggedInScopeImplementation: KeyValueServiceProvider {
+    var keyValueService: any KeyValueService {
+        return self.dependencies.keyValueService
     }
 }
 

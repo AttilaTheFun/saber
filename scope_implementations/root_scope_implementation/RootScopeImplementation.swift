@@ -1,4 +1,6 @@
 import DependencyFoundation
+import KeyValueServiceInterface
+import KeyValueServiceImplementation
 import LoggedOutFeatureInterface
 import LoggedOutScopeImplementation
 import LoadingFeatureInterface
@@ -87,6 +89,15 @@ extension RootScopeImplementation: UserStorageServiceProvider {
     public var userStorageService: any UserStorageService {
         return self.strong { [unowned self] in
             UserStorageServiceImplementation(dependencies: self)
+        }
+    }
+}
+
+// TODO: Generate from @Instantiate and @Provide macros.
+extension RootScopeImplementation: KeyValueServiceProvider {
+    public var keyValueService: any KeyValueService {
+        return self.strong { [unowned self] in
+            KeyValueServiceImplementation(dependencies: self)
         }
     }
 }

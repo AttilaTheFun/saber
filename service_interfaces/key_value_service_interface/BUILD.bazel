@@ -1,0 +1,12 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "key_value_service_interface",
+    srcs = [
+        "KeyValueService.swift",
+        "StorageKey.swift",
+    ],
+    module_name = "KeyValueServiceInterface",
+    visibility = ["//visibility:public"],
+    deps = ["//foundations/key_foundation"],
+)
