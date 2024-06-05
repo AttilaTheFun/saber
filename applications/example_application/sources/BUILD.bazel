@@ -9,6 +9,7 @@ swift_library(
     module_name = "Sources",
     visibility = ["//visibility:public"],
     deps = [
+        "//feature_interfaces/root_feature_interface",
         "//foundations/dependency_foundation",
         "//scope_implementations/root_scope_implementation",
     ],
