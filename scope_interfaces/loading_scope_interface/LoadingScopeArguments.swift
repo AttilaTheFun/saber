@@ -2,6 +2,7 @@ import DependencyFoundation
 import UserSessionServiceInterface
 
 // @BuilderProvider(building: AnyObject.self)
+// @Provider
 public struct LoadingScopeArguments {
     public let userSession: UserSession
 

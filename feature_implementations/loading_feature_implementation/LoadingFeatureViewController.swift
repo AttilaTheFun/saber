@@ -20,6 +20,7 @@ public typealias LoadingFeatureDependencies
     & LoadingScopeArgumentsProvider
     & LoggedInScopeBuilderProvider
     & LoggedOutScopeBuilderProvider
+    & UserSessionStorageServiceProvider
     & UserServiceProvider
     & UserStorageServiceProvider
 
@@ -29,6 +30,9 @@ final class LoadingFeatureViewController: UIViewController {
 
     // @Inject
     private let loadingScopeArguments: LoadingScopeArguments
+
+    // @Inject
+    private let userSessionStorageService: UserSessionStorageService
 
     // @Inject
     private let userService: UserService
@@ -48,6 +52,7 @@ final class LoadingFeatureViewController: UIViewController {
     // TODO: Generate with @Injectable macro.
     init(dependencies: LoadingFeatureDependencies, arguments: LoadingFeatureArguments) {
         self.loadingScopeArguments = dependencies.loadingScopeArguments
+        self.userSessionStorageService = dependencies.userSessionStorageService
         self.userService = dependencies.userService
         self.userStorageService = dependencies.userStorageService
         self.loggedInScopeBuilder = dependencies.loggedInScopeBuilder
@@ -77,9 +82,11 @@ final class LoadingFeatureViewController: UIViewController {
         Task.detached {
             do {
                 let user = try await self.userService.getCurrentUser()
+                self.userStorageService.user = user
                 await self.buildLoggedInScope(userSession: self.loadingScopeArguments.userSession, user: user)
             } catch {
                 print(error)
+                self.userSessionStorageService.userSession = nil
                 await self.buildLoggedOutScope()
             }
         }

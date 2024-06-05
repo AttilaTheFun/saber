@@ -86,7 +86,6 @@ final class LoggedOutFeatureViewController: UIViewController {
         self.logInButton.configuration = logInButtonConfiguration
 
         // Create the view hierarchy:
-
         self.textFieldContainerView.addSubview(self.textField)
         self.view.addSubview(self.textFieldContainerView)
         self.view.addSubview(self.logInButton)

@@ -1,11 +1,11 @@
 import DependencyFoundation
 
-// @ServiceProvider
+// @Provider
 public protocol UserSessionStorageService: AnyObject {
     var userSession: UserSession? { get set }
 }
 
-// TODO: Generate with @ServiceProvider macro.
+// TODO: Generate with @Provider macro.
 public protocol UserSessionStorageServiceProvider {
     var userSessionStorageService: UserSessionStorageService { get }
 }

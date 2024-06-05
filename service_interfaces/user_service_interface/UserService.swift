@@ -1,11 +1,11 @@
 import DependencyFoundation
 
-// @ServiceProvider
-public protocol UserService {
+// @Provider
+public protocol UserService: AnyObject {
     func getCurrentUser() async throws -> User
 }
 
-// TODO: Generate with @ServiceProvider macro.
+// TODO: Generate with @Provider macro.
 public protocol UserServiceProvider {
     var userService: UserService { get }
 }

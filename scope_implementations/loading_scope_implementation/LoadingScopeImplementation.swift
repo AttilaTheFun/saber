@@ -7,6 +7,7 @@ import LoggedOutScopeInterface
 import LoggedInScopeInterface
 import ScopeInitializationPluginInterface
 import UIKit
+import UserSessionServiceInterface
 import UserServiceInterface
 import UserServiceImplementation
 import WindowServiceInterface
@@ -23,6 +24,7 @@ public typealias LoadingScopeImplementationDependencies
     = DependencyProvider
     & LoggedInScopeBuilderProvider
     & LoggedOutScopeBuilderProvider
+    & UserSessionStorageServiceProvider
     & UserStorageServiceProvider
     & WindowServiceProvider
 
@@ -35,6 +37,9 @@ final class LoadingScopeImplementation: Scope<LoadingScopeImplementationDependen
 
     // @Propagate
     // let windowService: WindowService
+
+    // @Propagate
+    // let userStorageService: UserStorageService
 
     // @Propagate
     // let userSessionStorageService: UserSessionStorageService
@@ -85,6 +90,13 @@ extension LoadingScopeImplementation: WindowServiceProvider {
 extension LoadingScopeImplementation: UserStorageServiceProvider {
     var userStorageService: any UserStorageService {
         return self.dependencies.userStorageService
+    }
+}
+
+// TODO: Generate from the @Propagate macro.
+extension LoadingScopeImplementation: UserSessionStorageServiceProvider {
+    var userSessionStorageService: any UserSessionStorageService {
+        return self.dependencies.userSessionStorageService
     }
 }
 

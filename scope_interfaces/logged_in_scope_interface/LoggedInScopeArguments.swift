@@ -3,6 +3,7 @@ import UserSessionServiceInterface
 import UserServiceInterface
 
 // @BuilderProvider(building: AnyObject.self)
+// @Provider
 public struct LoggedInScopeArguments {
     public let userSession: UserSession
     public let user: User
@@ -11,6 +12,11 @@ public struct LoggedInScopeArguments {
         self.userSession = userSession
         self.user = user
     }
+}
+
+// TODO: Generate with @Provider macro.
+public protocol LoggedInScopeArgumentsProvider {
+    var loggedInScopeArguments: LoggedInScopeArguments { get }
 }
 
 // TODO: Generate with @BuilderProvider macro.

@@ -30,7 +30,7 @@ public typealias LoggedOutScopeImplementationDependencies
 final class LoggedOutScopeImplementation: Scope<LoggedOutScopeImplementationDependencies> {
 
     // @Arguments
-    let arguments: LoggedOutScopeArguments
+    let loggedOutScopeArguments: LoggedOutScopeArguments
 
     // @Propagate
     // let windowService: WindowService
@@ -54,7 +54,7 @@ final class LoggedOutScopeImplementation: Scope<LoggedOutScopeImplementationDepe
 
     // TODO: Generate with @Injectable macro.
     init(dependencies: LoggedOutScopeImplementationDependencies, arguments: LoggedOutScopeArguments) {
-        self.arguments = arguments
+        self.loggedOutScopeArguments = arguments
 
         super.init(dependencies: dependencies)
 
@@ -72,16 +72,16 @@ final class LoggedOutScopeImplementation: Scope<LoggedOutScopeImplementationDepe
 }
 
 // TODO: Generate from the @Propagate macro.
-extension LoggedOutScopeImplementation: WindowServiceProvider {
-    var windowService: any WindowService {
-        return self.dependencies.windowService
+extension LoggedOutScopeImplementation: UserSessionStorageServiceProvider {
+    var userSessionStorageService: any UserSessionStorageService {
+        return self.dependencies.userSessionStorageService
     }
 }
 
 // TODO: Generate from the @Propagate macro.
-extension LoggedOutScopeImplementation: UserSessionStorageServiceProvider {
-    var userSessionStorageService: any UserSessionStorageService {
-        return self.dependencies.userSessionStorageService
+extension LoggedOutScopeImplementation: WindowServiceProvider {
+    var windowService: any WindowService {
+        return self.dependencies.windowService
     }
 }
 
@@ -118,3 +118,6 @@ extension LoggedOutScopeImplementation {
         }
     }
 }
+
+// TODO: Generate from @Arguments macro.
+extension LoggedOutScopeImplementation: LoggedOutScopeArgumentsProvider {}

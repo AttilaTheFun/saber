@@ -1,5 +1,15 @@
 import DependencyFoundation
 import LoggedInScopeInterface
+import LoggedInFeatureInterface
+import LoggedInFeatureImplementation
+import LoggedInScopeInitializationPluginImplementation
+import LoggedOutScopeInterface
+import ScopeInitializationPluginInterface
+import UIKit
+import UserServiceInterface
+import UserSessionServiceInterface
+import UserSessionServiceImplementation
+import WindowServiceInterface
 
 // TODO: Generate with @Buildable macro.
 public final class LoggedInScopeImplementationBuilder: DependencyContainer<LoggedInScopeImplementationDependencies>, Builder {
@@ -11,17 +21,109 @@ public final class LoggedInScopeImplementationBuilder: DependencyContainer<Logge
 // TODO: Generate with @Injectable macro.
 public typealias LoggedInScopeImplementationDependencies
     = DependencyProvider
+    & LoggedOutScopeBuilderProvider
+    & UserSessionStorageServiceProvider
+    & UserStorageServiceProvider
+    & WindowServiceProvider
 
 // @Buildable(building: AnyObject.self)
 // @Injectable
 final class LoggedInScopeImplementation: Scope<LoggedInScopeImplementationDependencies> {
 
     // @Arguments
-    let arguments: LoggedInScopeArguments
+    let loggedInScopeArguments: LoggedInScopeArguments
+
+    // @Propagate
+    // let userStorageService: UserStorageService
+
+    // @Propagate
+    // let userSessionStorageService: UserSessionStorageService
+
+    // @Propagate
+    // let windowService: WindowService
+
+    // @Propagate
+    // let loggedOutScopeBuilder: LoggedOutScopeBuilder
+
+    // @Instantiate(UserSessionServiceImplementation.self)
+    // let userSessionService: UserSessionService
+
+    // @Plugin(ScopeInitializationPlugin.self)
+    // @Instantiate
+    // let loggedInScopeInitializationPlugin: LoggedInScopeInitializationPluginImplementation
 
     // TODO: Generate with @Injectable macro.
     init(dependencies: LoggedInScopeImplementationDependencies, arguments: LoggedInScopeArguments) {
-        self.arguments = arguments
+        self.loggedInScopeArguments = arguments
         super.init(dependencies: dependencies)
+
+        // Register Plugins
+        let scopeInitializationPlugins: [any ScopeInitializationPlugin] = [
+            self.loggedInScopeInitializationPlugin
+        ]
+        self.registerPlugins(plugins: scopeInitializationPlugins)
+
+        // Execute Scope Initialization Plugins
+        for plugin in self.getPlugins(type: ScopeInitializationPlugin.self) {
+            plugin.execute()
+        }
     }
 }
+
+// TODO: Generate from the @Propagate macro.
+extension LoggedInScopeImplementation: UserStorageServiceProvider {
+    var userStorageService: any UserStorageService {
+        return self.dependencies.userStorageService
+    }
+}
+
+// TODO: Generate from the @Propagate macro.
+extension LoggedInScopeImplementation: UserSessionStorageServiceProvider {
+    var userSessionStorageService: any UserSessionStorageService {
+        return self.dependencies.userSessionStorageService
+    }
+}
+
+// TODO: Generate from the @Propagate macro.
+extension LoggedInScopeImplementation: WindowServiceProvider {
+    var windowService: any WindowService {
+        return self.dependencies.windowService
+    }
+}
+
+// TODO: Generate from the @Propagate macro.
+extension LoggedInScopeImplementation: LoggedOutScopeBuilderProvider {
+    var loggedOutScopeBuilder: any Builder<LoggedOutScopeArguments, AnyObject> {
+        return self.dependencies.loggedOutScopeBuilder
+    }
+}
+
+// TODO: Generate from the @Instantiate macro.
+extension LoggedInScopeImplementation: UserSessionServiceProvider {
+    var userSessionService: any UserSessionService {
+        return self.strong { [unowned self] in
+            return UserSessionServiceImplementation(dependencies: self)
+        }
+    }
+}
+
+// TODO: Generate from the @Instantiate macro.
+extension LoggedInScopeImplementation: LoggedInFeatureBuilderProvider {
+    var loggedInFeatureBuilder: any Builder<LoggedInFeatureArguments, UIViewController> {
+        return self.strong { [unowned self] in
+            return LoggedInFeatureBuilder(dependencies: self)
+        }
+    }
+}
+
+// TODO: Generate from @Instantiate macro.
+extension LoggedInScopeImplementation {
+    public var loggedInScopeInitializationPlugin: LoggedInScopeInitializationPluginImplementation {
+        return self.strong { [unowned self] in
+            LoggedInScopeInitializationPluginImplementation(dependencies: self)
+        }
+    }
+}
+
+// TODO: Generate from @Arguments macro.
+extension LoggedInScopeImplementation: LoggedInScopeArgumentsProvider {}

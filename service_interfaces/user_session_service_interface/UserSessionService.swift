@@ -1,12 +1,13 @@
 import DependencyFoundation
+import Foundation
 
-// @ServiceProvider
-public protocol UserSessionService {
+// @Provider
+public protocol UserSessionService: AnyObject {
     func createSession(username: String, password: String) async throws -> UserSession
-    func deleteSession(id: UInt64) async throws
+    func deleteSession(id: UUID) async throws
 }
 
-// TODO: Generate with @ServiceProvider macro.
+// TODO: Generate with @Provider macro.
 public protocol UserSessionServiceProvider {
     var userSessionService: UserSessionService { get }
 }

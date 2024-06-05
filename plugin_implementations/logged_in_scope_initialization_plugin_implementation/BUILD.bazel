@@ -1,0 +1,14 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "logged_in_scope_initialization_plugin_implementation",
+    srcs = ["LoggedInScopeInitializationPluginImplementation.swift"],
+    module_name = "LoggedInScopeInitializationPluginImplementation",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//feature_interfaces/logged_in_feature_interface",
+        "//foundations/dependency_foundation",
+        "//plugin_interfaces/scope_initialization_plugin_interface",
+        "//service_interfaces/window_service_interface",
+    ],
+)

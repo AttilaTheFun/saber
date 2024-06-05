@@ -16,6 +16,7 @@ swift_library(
         "//scope_interfaces/logged_out_scope_interface",
         "//service_implementations/user_service_implementation",
         "//service_interfaces/user_service_interface",
+        "//service_interfaces/user_session_service_interface",
         "//service_interfaces/window_service_interface",
     ],
 )

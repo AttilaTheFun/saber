@@ -1,17 +1,53 @@
 import DependencyFoundation
+import Foundation
 import UserServiceInterface
+import LoadingScopeInterface
+
+private let userIDsToUsersKey = "UserIDsToUsers"
 
 // TODO: Generate with @Injectable macro.
 public typealias UserServiceImplementationDependencies
     = DependencyProvider
+    & LoadingScopeArgumentsProvider
 
 // @Injectable
 public final class UserServiceImplementation: UserService {
 
+    private var userIDsToUsers: [UUID : User] {
+        get {
+            if
+                let data = UserDefaults.standard.data(forKey: userIDsToUsersKey),
+                let user = try? JSONDecoder().decode([UUID : User].self, from: data)
+            {
+                return user
+            }
+
+            return [:]
+        }
+        set {
+            if let data = try? JSONEncoder().encode(newValue) {
+                UserDefaults.standard.setValue(data, forKey: userIDsToUsersKey)
+            }
+        }
+    }
+
+    // @Inject
+    private let loadingScopeArguments: LoadingScopeArguments
+
     // TODO: Generate with @Injectable macro.
-    public init(dependencies: UserServiceImplementationDependencies) {}
+    public init(dependencies: UserServiceImplementationDependencies) {
+        self.loadingScopeArguments = dependencies.loadingScopeArguments
+    }
+
+    private enum UserServiceImplementationError: Error {
+        case missingUser
+    }
 
     public func getCurrentUser() async throws -> User {
-        return User(id: 0, username: "username")
+        guard let user = self.userIDsToUsers[self.loadingScopeArguments.userSession.userID] else {
+            throw UserServiceImplementationError.missingUser
+        }
+
+        return user
     }
 }
