@@ -7,7 +7,7 @@ swift_library(
     visibility = ["//visibility:public"],
     deps = [
         "//foundations/dependency_foundation",
-        "//plugin_implementations/initial_scope_initialization_plugin_implementation",
+        "//plugin_implementations/root_scope_initialization_plugin_implementation",
         "//plugin_interfaces/scope_initialization_plugin_interface",
         "//scope_implementations/loading_scope_implementation",
         "//scope_implementations/logged_in_scope_implementation",
@@ -18,7 +18,9 @@ swift_library(
         "//scope_interfaces/root_scope_interface",
         "//service_implementations/user_service_implementation",
         "//service_implementations/user_session_service_implementation",
+        "//service_implementations/window_service_implementation",
         "//service_interfaces/user_service_interface",
         "//service_interfaces/user_session_service_interface",
+        "//service_interfaces/window_service_interface",
     ],
 )

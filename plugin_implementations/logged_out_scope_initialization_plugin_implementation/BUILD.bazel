@@ -1,9 +1,9 @@
 load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 swift_library(
-    name = "initial_scope_initialization_plugin_implementation",
-    srcs = ["InitialScopeInitializationPluginImplementation.swift"],
-    module_name = "InitialScopeInitializationPluginImplementation",
+    name = "logged_out_scope_initialization_plugin_implementation",
+    srcs = ["LoggedOutScopeInitializationPluginImplementation.swift"],
+    module_name = "LoggedOutScopeInitializationPluginImplementation",
     visibility = ["//visibility:public"],
     deps = [
         "//foundations/dependency_foundation",

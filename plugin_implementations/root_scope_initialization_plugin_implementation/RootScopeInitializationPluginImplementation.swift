@@ -7,7 +7,7 @@ import UserSessionServiceInterface
 import ScopeInitializationPluginInterface
 
 // TODO: Generate with @Injectable macro.
-public typealias InitialScopeInitializationPluginImplementationDependencies
+public typealias RootScopeInitializationPluginImplementationDependencies
     = DependencyProvider
     & LoggedInScopeBuilderProvider
     & LoggedOutScopeBuilderProvider
@@ -16,7 +16,7 @@ public typealias InitialScopeInitializationPluginImplementationDependencies
     & UserStorageServiceProvider
 
 // @Injectable
-public final class InitialScopeInitializationPluginImplementation: ScopeInitializationPlugin {
+public final class RootScopeInitializationPluginImplementation: ScopeInitializationPlugin {
 
     // @Inject
     private let userSessionStorageService: UserSessionStorageService
@@ -34,7 +34,7 @@ public final class InitialScopeInitializationPluginImplementation: ScopeInitiali
     private let loadingScopeBuilder: any Builder<LoadingScopeArguments, AnyObject>
 
     // TODO: Generate with @Injectable macro.
-    public init(dependencies: InitialScopeInitializationPluginImplementationDependencies) {
+    public init(dependencies: RootScopeInitializationPluginImplementationDependencies) {
         self.userSessionStorageService = dependencies.userSessionStorageService
         self.userStorageService = dependencies.userStorageService
         self.loggedInScopeBuilder = dependencies.loggedInScopeBuilder

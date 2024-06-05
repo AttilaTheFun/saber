@@ -1,0 +1,14 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "authentication_feature_implementation",
+    srcs = ["AuthenticationFeatureViewController.swift"],
+    module_name = "AuthenticationFeatureImplementation",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//feature_interfaces/authentication_feature_interface",
+        "//foundations/dependency_foundation",
+        "//scope_interfaces/loading_scope_interface",
+        "//service_interfaces/user_session_service_interface",
+    ],
+)

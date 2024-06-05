@@ -1,8 +1,4 @@
 import DependencyFoundation
-import UserSessionServiceInterface
-import UserSessionServiceImplementation
-import UserServiceInterface
-import UserServiceImplementation
 import LoggedInScopeInterface
 import LoggedInScopeImplementation
 import LoggedOutScopeInterface
@@ -10,8 +6,14 @@ import LoggedOutScopeImplementation
 import LoadingScopeInterface
 import LoadingScopeImplementation
 import RootScopeInterface
+import RootScopeInitializationPluginImplementation
 import ScopeInitializationPluginInterface
-import InitialScopeInitializationPluginImplementation
+import UserSessionServiceInterface
+import UserSessionServiceImplementation
+import UserServiceInterface
+import UserServiceImplementation
+import WindowServiceInterface
+import WindowServiceImplementation
 
 // TODO: Generate with @Injectable macro.
 public typealias RootScopeImplementationDependencies
@@ -24,13 +26,13 @@ public final class RootScopeImplementation: Scope<RootScopeImplementationDepende
     // @Instantiate
     // let userSessionStorageService: UserSessionStorageServiceImplementation
 
-    // @Provide(UserSessionService.self)
-    // @Instantiate
-    // let userSessionService: UserSessionServiceImplementation
-
     // @Provide(UserStorageService.self)
     // @Instantiate
     // let userStorageService: UserStorageServiceImplementation
+
+    // @Provide(WindowService.self)
+    // @Instantiate
+    // let windowService: WindowServiceImplementation
 
     // @Provide(Builder<LoggedOutScopeArguments, AnyObject>.self)
     // @Instantiate
@@ -46,7 +48,7 @@ public final class RootScopeImplementation: Scope<RootScopeImplementationDepende
 
     // @Plugin(ScopeInitializationPlugin.self)
     // @Instantiate
-    // let initialScopeInitializationPlugin: InitialScopeInitializationPluginImplementation
+    // let rootScopeInitializationPlugin: RootScopeInitializationPluginImplementation
 
     // @Arguments
     public let arguments: RootScopeArguments
@@ -58,7 +60,7 @@ public final class RootScopeImplementation: Scope<RootScopeImplementationDepende
 
         // Register Plugins
         let scopeInitializationPlugins: [any ScopeInitializationPlugin] = [
-            self.initialScopeInitializationPlugin
+            self.rootScopeInitializationPlugin
         ]
         self.registerPlugins(plugins: scopeInitializationPlugins)
 
@@ -79,19 +81,19 @@ extension RootScopeImplementation: UserSessionStorageServiceProvider {
 }
 
 // TODO: Generate from @Instantiate and @Provide macros.
-extension RootScopeImplementation: UserSessionServiceProvider {
-    public var userSessionService: any UserSessionService {
+extension RootScopeImplementation: UserStorageServiceProvider {
+    public var userStorageService: any UserStorageService {
         return self.strong { [unowned self] in
-            UserSessionServiceImplementation(dependencies: self)
+            UserStorageServiceImplementation(dependencies: self)
         }
     }
 }
 
 // TODO: Generate from @Instantiate and @Provide macros.
-extension RootScopeImplementation: UserStorageServiceProvider {
-    public var userStorageService: any UserStorageService {
+extension RootScopeImplementation: WindowServiceProvider {
+    public var windowService: any WindowService {
         return self.strong { [unowned self] in
-            UserStorageServiceImplementation(dependencies: self)
+            WindowServiceImplementation(dependencies: self)
         }
     }
 }
@@ -125,9 +127,9 @@ extension RootScopeImplementation: LoggedInScopeBuilderProvider {
 
 // TODO: Generate from @Instantiate macro.
 extension RootScopeImplementation {
-    public var initialScopeInitializationPlugin: InitialScopeInitializationPluginImplementation {
+    public var rootScopeInitializationPlugin: RootScopeInitializationPluginImplementation {
         return self.new { [unowned self] in
-            InitialScopeInitializationPluginImplementation(dependencies: self)
+            RootScopeInitializationPluginImplementation(dependencies: self)
         }
     }
 }
