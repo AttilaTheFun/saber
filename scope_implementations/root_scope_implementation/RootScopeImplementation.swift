@@ -51,11 +51,11 @@ public final class RootScopeImplementation: Scope<RootScopeImplementationDepende
     // let rootScopeInitializationPlugin: RootScopeInitializationPluginImplementation
 
     // @Arguments
-    public let arguments: RootScopeArguments
+    public let rootScopeArguments: RootScopeArguments
 
     // TODO: Generate with @Injectable macro.
     public init(dependencies: RootScopeImplementationDependencies, arguments: RootScopeArguments) {
-        self.arguments = arguments
+        self.rootScopeArguments = arguments
         super.init(dependencies: dependencies)
 
         // Register Plugins

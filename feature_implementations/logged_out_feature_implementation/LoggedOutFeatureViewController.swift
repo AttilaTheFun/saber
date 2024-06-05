@@ -1,42 +1,47 @@
-import AuthenticationFeatureInterface
+import LoggedOutFeatureInterface
 import DependencyFoundation
 import LoadingScopeInterface
 import UserSessionServiceInterface
 import UIKit
 
 // TODO: Generate with @Builder macro.
-public final class AuthenticationFeatureBuilder: DependencyContainer<AuthenticationFeatureDependencies>, Builder {
-    public func build(arguments: AuthenticationFeatureArguments) -> UIViewController {
-        return AuthenticationFeatureViewController(dependencies: self.dependencies, arguments: arguments)
+public final class LoggedOutFeatureBuilder: DependencyContainer<LoggedOutFeatureDependencies>, Builder {
+    public func build(arguments: LoggedOutFeatureArguments) -> UIViewController {
+        return LoggedOutFeatureViewController(dependencies: self.dependencies, arguments: arguments)
     }
 }
 
 // TODO: Generate with @Injectable macro.
-public typealias AuthenticationFeatureDependencies
+public typealias LoggedOutFeatureDependencies
     = DependencyProvider
     & LoadingScopeBuilderProvider
     & UserSessionServiceProvider
+    & UserSessionStorageServiceProvider
 
 // @Builder(building: UIViewController.self)
 // @Injectable
-final class AuthenticationFeatureViewController: UIViewController {
+final class LoggedOutFeatureViewController: UIViewController {
 
     // @Inject
     private let userSessionService: UserSessionService
 
     // @Inject
+    private let userSessionStorageService: UserSessionStorageService
+
+    // @Inject
     private let loadingScopeBuilder: any Builder<LoadingScopeArguments, AnyObject>
 
     // @Arguments
-    private let arguments: AuthenticationFeatureArguments
+    private let arguments: LoggedOutFeatureArguments
 
     private let textField = UITextField()
     private let textFieldContainerView = UIView()
     private let logInButton = UIButton()
 
     // TODO: Generate with @Injectable macro.
-    init(dependencies: AuthenticationFeatureDependencies, arguments: AuthenticationFeatureArguments) {
+    init(dependencies: LoggedOutFeatureDependencies, arguments: LoggedOutFeatureArguments) {
         self.userSessionService = dependencies.userSessionService
+        self.userSessionStorageService = dependencies.userSessionStorageService
         self.loadingScopeBuilder = dependencies.loadingScopeBuilder
         self.arguments = arguments
         super.init(nibName: nil, bundle: nil)
@@ -123,7 +128,7 @@ final class AuthenticationFeatureViewController: UIViewController {
                     username: self.textField.text ?? "",
                     password: "1234"
                 )
-
+                self.userSessionStorageService.userSession = userSession
                 await self.buildLoadingScope(userSession: userSession)
             } catch {
                 print(error)

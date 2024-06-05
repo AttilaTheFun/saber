@@ -1,5 +1,5 @@
-import AuthenticationFeatureInterface
-import AuthenticationFeatureImplementation
+import LoggedOutFeatureInterface
+import LoggedOutFeatureImplementation
 import DependencyFoundation
 import LoggedOutScopeInterface
 import LoggedOutScopeInitializationPluginImplementation
@@ -22,11 +22,15 @@ public final class LoggedOutScopeImplementationBuilder: DependencyContainer<Logg
 public typealias LoggedOutScopeImplementationDependencies
     = DependencyProvider
     & LoadingScopeBuilderProvider
+    & UserSessionStorageServiceProvider
     & WindowServiceProvider
 
 // @Buildable(building: AnyObject.self)
 // @Injectable
 final class LoggedOutScopeImplementation: Scope<LoggedOutScopeImplementationDependencies> {
+
+    // @Arguments
+    let arguments: LoggedOutScopeArguments
 
     // @Propagate
     // let windowService: WindowService
@@ -40,16 +44,13 @@ final class LoggedOutScopeImplementation: Scope<LoggedOutScopeImplementationDepe
     // @Instantiate(UserSessionServiceImplementation.self)
     // let userSessionService: UserSessionService
 
-    // @Provide(Builder<AuthenticationFeatureArguments, UIViewController>.self)
+    // @Provide(Builder<LoggedOutFeatureArguments, UIViewController>.self)
     // @Instantiate
-    // let authenticationFeatureBuilder: AuthenticationFeatureBuilder
+    // let loggedOutFeatureBuilder: LoggedOutFeatureBuilder
 
     // @Plugin(ScopeInitializationPlugin.self)
     // @Instantiate
     // let loggedOutScopeInitializationPlugin: LoggedOutScopeInitializationPluginImplementation
-
-    // @Arguments
-    let arguments: LoggedOutScopeArguments
 
     // TODO: Generate with @Injectable macro.
     init(dependencies: LoggedOutScopeImplementationDependencies, arguments: LoggedOutScopeArguments) {
@@ -70,10 +71,17 @@ final class LoggedOutScopeImplementation: Scope<LoggedOutScopeImplementationDepe
     }
 }
 
-// TODO: Generate from the @Instantiate macro.
+// TODO: Generate from the @Propagate macro.
 extension LoggedOutScopeImplementation: WindowServiceProvider {
     var windowService: any WindowService {
         return self.dependencies.windowService
+    }
+}
+
+// TODO: Generate from the @Propagate macro.
+extension LoggedOutScopeImplementation: UserSessionStorageServiceProvider {
+    var userSessionStorageService: any UserSessionStorageService {
+        return self.dependencies.userSessionStorageService
     }
 }
 
@@ -87,21 +95,25 @@ extension LoggedOutScopeImplementation: LoadingScopeBuilderProvider {
 // TODO: Generate from the @Instantiate macro.
 extension LoggedOutScopeImplementation: UserSessionServiceProvider {
     var userSessionService: any UserSessionService {
-        return UserSessionServiceImplementation(dependencies: self)
+        return self.strong { [unowned self] in
+            return UserSessionServiceImplementation(dependencies: self)
+        }
     }
 }
 
 // TODO: Generate from the @Instantiate macro.
-extension LoggedOutScopeImplementation: AuthenticationFeatureBuilderProvider {
-    var authenticationFeatureBuilder: any Builder<AuthenticationFeatureArguments, UIViewController> {
-        return AuthenticationFeatureBuilder(dependencies: self)
+extension LoggedOutScopeImplementation: LoggedOutFeatureBuilderProvider {
+    var loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController> {
+        return self.strong { [unowned self] in
+            return LoggedOutFeatureBuilder(dependencies: self)
+        }
     }
 }
 
 // TODO: Generate from @Instantiate macro.
 extension LoggedOutScopeImplementation {
     public var loggedOutScopeInitializationPlugin: LoggedOutScopeInitializationPluginImplementation {
-        return self.new { [unowned self] in
+        return self.strong { [unowned self] in
             LoggedOutScopeInitializationPluginImplementation(dependencies: self)
         }
     }

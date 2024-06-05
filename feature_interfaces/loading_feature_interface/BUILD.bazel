@@ -1,9 +1,9 @@
 load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 swift_library(
-    name = "authentication_feature_interface",
-    srcs = ["AuthenticationFeatureArguments.swift"],
-    module_name = "AuthenticationFeatureInterface",
+    name = "loading_feature_interface",
+    srcs = ["LoadingFeatureArguments.swift"],
+    module_name = "LoadingFeatureInterface",
     visibility = ["//visibility:public"],
     deps = ["//foundations/dependency_foundation"],
 )

@@ -10,6 +10,11 @@ public struct LoadingScopeArguments {
     }
 }
 
+// TODO: Generate with @Provider macro.
+public protocol LoadingScopeArgumentsProvider {
+    var loadingScopeArguments: LoadingScopeArguments { get }
+}
+
 // TODO: Generate with @BuilderProvider macro.
 public protocol LoadingScopeBuilderProvider {
     var loadingScopeBuilder: any Builder<LoadingScopeArguments, AnyObject> { get }

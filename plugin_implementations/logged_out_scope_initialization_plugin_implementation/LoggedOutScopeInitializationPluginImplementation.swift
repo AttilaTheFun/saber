@@ -1,5 +1,5 @@
 import DependencyFoundation
-import AuthenticationFeatureInterface
+import LoggedOutFeatureInterface
 import ScopeInitializationPluginInterface
 import UIKit
 import WindowServiceInterface
@@ -7,7 +7,7 @@ import WindowServiceInterface
 // TODO: Generate with @Injectable macro.
 public typealias LoggedOutScopeInitializationPluginImplementationDependencies
     = DependencyProvider
-    & AuthenticationFeatureBuilderProvider
+    & LoggedOutFeatureBuilderProvider
     & WindowServiceProvider
 
 // @Injectable
@@ -17,18 +17,18 @@ public final class LoggedOutScopeInitializationPluginImplementation: ScopeInitia
     private let windowService: WindowService
 
     // @Inject
-    private let authenticationFeatureBuilder: any Builder<AuthenticationFeatureArguments, UIViewController>
+    private let loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController>
 
     // TODO: Generate with @Injectable macro.
     public init(dependencies: LoggedOutScopeInitializationPluginImplementationDependencies) {
         self.windowService = dependencies.windowService
-        self.authenticationFeatureBuilder = dependencies.authenticationFeatureBuilder
+        self.loggedOutFeatureBuilder = dependencies.loggedOutFeatureBuilder
     }
 
     public func execute() {
         self.windowService.register {
-            let arguments = AuthenticationFeatureArguments()
-            return self.authenticationFeatureBuilder.build(arguments: arguments)
+            let arguments = LoggedOutFeatureArguments()
+            return self.loggedOutFeatureBuilder.build(arguments: arguments)
         }
     }
 }

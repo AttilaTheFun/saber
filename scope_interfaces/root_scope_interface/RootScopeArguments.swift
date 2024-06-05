@@ -1,6 +1,6 @@
 import Foundation
 
-// @ScopeArguments
+// @Provider
 public struct RootScopeArguments {
     public init(endpointURL: URL) {
         self.endpointURL = endpointURL
@@ -9,7 +9,7 @@ public struct RootScopeArguments {
     public let endpointURL: URL
 }
 
-// TODO: Generate with @ScopeArguments macro.
+// TODO: Generate with @Provider macro.
 public protocol RootScopeArgumentsProvider {
-    var arguments: RootScopeArguments { get }
+    var rootScopeArguments: RootScopeArguments { get }
 }

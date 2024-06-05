@@ -1,7 +1,7 @@
 import DependencyFoundation
 
 // @ServiceProvider
-public protocol UserSessionStorageService {
+public protocol UserSessionStorageService: AnyObject {
     var userSession: UserSession? { get set }
 }
 
