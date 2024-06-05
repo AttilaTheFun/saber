@@ -1,19 +1,22 @@
 import DependencyFoundation
-import LoggedOutScopeInterface
+import LoggedOutFeatureInterface
 import LoggedInScopeInterface
 import LoadingScopeInterface
+import ScopeInitializationPluginInterface
 import UserServiceInterface
 import UserSessionServiceInterface
-import ScopeInitializationPluginInterface
+import WindowServiceInterface
+import UIKit
 
 // TODO: Generate with @Injectable macro.
 public typealias RootScopeInitializationPluginImplementationDependencies
     = DependencyProvider
     & LoggedInScopeBuilderProvider
-    & LoggedOutScopeBuilderProvider
+    & LoggedOutFeatureBuilderProvider
     & LoadingScopeBuilderProvider
     & UserSessionStorageServiceProvider
     & UserStorageServiceProvider
+    & WindowServiceProvider
 
 // @Injectable
 public final class RootScopeInitializationPluginImplementation: ScopeInitializationPlugin {
@@ -25,27 +28,34 @@ public final class RootScopeInitializationPluginImplementation: ScopeInitializat
     private let userStorageService: UserStorageService
 
     // @Inject
-    private let loggedInScopeBuilder: any Builder<LoggedInScopeArguments, AnyObject>
+    private let windowService: WindowService
 
     // @Inject
-    private let loggedOutScopeBuilder: any Builder<LoggedOutScopeArguments, AnyObject>
+    private let loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController>
 
     // @Inject
     private let loadingScopeBuilder: any Builder<LoadingScopeArguments, AnyObject>
+
+    // @Inject
+    private let loggedInScopeBuilder: any Builder<LoggedInScopeArguments, AnyObject>
 
     // TODO: Generate with @Injectable macro.
     public init(dependencies: RootScopeInitializationPluginImplementationDependencies) {
         self.userSessionStorageService = dependencies.userSessionStorageService
         self.userStorageService = dependencies.userStorageService
-        self.loggedInScopeBuilder = dependencies.loggedInScopeBuilder
-        self.loggedOutScopeBuilder = dependencies.loggedOutScopeBuilder
+        self.windowService = dependencies.windowService
+        self.loggedOutFeatureBuilder = dependencies.loggedOutFeatureBuilder
         self.loadingScopeBuilder = dependencies.loadingScopeBuilder
+        self.loggedInScopeBuilder = dependencies.loggedInScopeBuilder
     }
 
     public func execute() {
         guard let userSession = self.userSessionStorageService.userSession else {
-            let arguments = LoggedOutScopeArguments()
-            self.loggedOutScopeBuilder.build(arguments: arguments)
+            let builder = self.loggedOutFeatureBuilder
+            self.windowService.register {
+                let arguments = LoggedOutFeatureArguments()
+                return builder.build(arguments: arguments)
+            }
             return
         }
 

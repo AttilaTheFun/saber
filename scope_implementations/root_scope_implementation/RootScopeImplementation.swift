@@ -1,7 +1,7 @@
 import DependencyFoundation
 import LoggedInScopeInterface
 import LoggedInScopeImplementation
-import LoggedOutScopeInterface
+import LoggedOutFeatureInterface
 import LoggedOutScopeImplementation
 import LoadingScopeInterface
 import LoadingScopeImplementation
@@ -12,6 +12,7 @@ import UserSessionServiceInterface
 import UserSessionServiceImplementation
 import UserServiceInterface
 import UserServiceImplementation
+import UIKit
 import WindowServiceInterface
 import WindowServiceImplementation
 
@@ -99,10 +100,10 @@ extension RootScopeImplementation: WindowServiceProvider {
 }
 
 // TODO: Generate from @Instantiate and @Provide macros.
-extension RootScopeImplementation: LoggedOutScopeBuilderProvider {
-    public var loggedOutScopeBuilder: any Builder<LoggedOutScopeArguments, AnyObject> {
+extension RootScopeImplementation: LoggedOutFeatureBuilderProvider {
+    public var loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController> {
         return self.new { [unowned self] in
-            LoggedOutScopeImplementationBuilder(dependencies: self)
+            LoggedOutFeatureBuilder(dependencies: self)
         }
     }
 }

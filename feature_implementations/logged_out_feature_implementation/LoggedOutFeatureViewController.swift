@@ -5,7 +5,7 @@ import UserSessionServiceInterface
 import UIKit
 
 // TODO: Generate with @Builder macro.
-public final class LoggedOutFeatureBuilder: DependencyContainer<LoggedOutFeatureDependencies>, Builder {
+public final class LoggedOutFeatureViewControllerBuilder: DependencyContainer<LoggedOutFeatureDependencies>, Builder {
     public func build(arguments: LoggedOutFeatureArguments) -> UIViewController {
         return LoggedOutFeatureViewController(dependencies: self.dependencies, arguments: arguments)
     }

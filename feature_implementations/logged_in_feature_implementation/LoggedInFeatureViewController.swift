@@ -1,10 +1,11 @@
 import DependencyFoundation
 import LoggedInFeatureInterface
 import LoggedInScopeInterface
-import LoggedOutScopeInterface
+import LoggedOutFeatureInterface
 import UserSessionServiceInterface
 import UserServiceInterface
 import UIKit
+import WindowServiceInterface
 
 // TODO: Generate with @Builder macro.
 public final class LoggedInFeatureBuilder: DependencyContainer<LoggedInFeatureDependencies>, Builder {
@@ -17,10 +18,11 @@ public final class LoggedInFeatureBuilder: DependencyContainer<LoggedInFeatureDe
 public typealias LoggedInFeatureDependencies
     = DependencyProvider
     & LoggedInScopeArgumentsProvider
-    & LoggedOutScopeBuilderProvider
+    & LoggedOutFeatureBuilderProvider
     & UserSessionServiceProvider
     & UserSessionStorageServiceProvider
     & UserStorageServiceProvider
+    & WindowServiceProvider
 
 // @Builder(building: UIViewController.self)
 // @Injectable
@@ -39,7 +41,10 @@ final class LoggedInFeatureViewController: UIViewController {
     private let userStorageService: UserStorageService
 
     // @Inject
-    private let loggedOutScopeBuilder: any Builder<LoggedOutScopeArguments, AnyObject>
+    private let windowService: WindowService
+
+    // @Inject
+    private let loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController>
 
     // @Arguments
     private let loggedInFeatureArguments: LoggedInFeatureArguments
@@ -54,7 +59,8 @@ final class LoggedInFeatureViewController: UIViewController {
         self.userStorageService = dependencies.userStorageService
         self.userSessionService = dependencies.userSessionService
         self.userSessionStorageService = dependencies.userSessionStorageService
-        self.loggedOutScopeBuilder = dependencies.loggedOutScopeBuilder
+        self.windowService = dependencies.windowService
+        self.loggedOutFeatureBuilder = dependencies.loggedOutFeatureBuilder
         self.loggedInFeatureArguments = arguments
         super.init(nibName: nil, bundle: nil)
     }
@@ -143,13 +149,16 @@ final class LoggedInFeatureViewController: UIViewController {
 
             self.userSessionStorageService.userSession = nil
             self.userStorageService.user = nil
-            await self.buildLoggedOutScope()
+            await self.buildLoggedOutFeature()
         }
     }
 
     @MainActor
-    private func buildLoggedOutScope() {
-        let arguments = LoggedOutScopeArguments()
-        self.loggedOutScopeBuilder.build(arguments: arguments)
+    private func buildLoggedOutFeature() {
+        let builder = self.loggedOutFeatureBuilder
+        self.windowService.register {
+            let arguments = LoggedOutFeatureArguments()
+            return builder.build(arguments: arguments)
+        }
     }
 }

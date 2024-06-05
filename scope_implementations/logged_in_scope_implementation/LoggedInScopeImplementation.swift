@@ -3,7 +3,7 @@ import LoggedInScopeInterface
 import LoggedInFeatureInterface
 import LoggedInFeatureImplementation
 import LoggedInScopeInitializationPluginImplementation
-import LoggedOutScopeInterface
+import LoggedOutFeatureInterface
 import ScopeInitializationPluginInterface
 import UIKit
 import UserServiceInterface
@@ -21,7 +21,7 @@ public final class LoggedInScopeImplementationBuilder: DependencyContainer<Logge
 // TODO: Generate with @Injectable macro.
 public typealias LoggedInScopeImplementationDependencies
     = DependencyProvider
-    & LoggedOutScopeBuilderProvider
+    & LoggedOutFeatureBuilderProvider
     & UserSessionStorageServiceProvider
     & UserStorageServiceProvider
     & WindowServiceProvider
@@ -43,7 +43,7 @@ final class LoggedInScopeImplementation: Scope<LoggedInScopeImplementationDepend
     // let windowService: WindowService
 
     // @Propagate
-    // let loggedOutScopeBuilder: LoggedOutScopeBuilder
+    // let loggedOutFeatureBuilder: LoggedOutFeatureBuilder
 
     // @Instantiate(UserSessionServiceImplementation.self)
     // let userSessionService: UserSessionService
@@ -92,9 +92,9 @@ extension LoggedInScopeImplementation: WindowServiceProvider {
 }
 
 // TODO: Generate from the @Propagate macro.
-extension LoggedInScopeImplementation: LoggedOutScopeBuilderProvider {
-    var loggedOutScopeBuilder: any Builder<LoggedOutScopeArguments, AnyObject> {
-        return self.dependencies.loggedOutScopeBuilder
+extension LoggedInScopeImplementation: LoggedOutFeatureBuilderProvider {
+    var loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController> {
+        return self.dependencies.loggedOutFeatureBuilder
     }
 }
 

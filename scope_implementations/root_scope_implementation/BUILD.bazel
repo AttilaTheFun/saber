@@ -6,6 +6,7 @@ swift_library(
     module_name = "RootScopeImplementation",
     visibility = ["//visibility:public"],
     deps = [
+        "//feature_interfaces/logged_out_feature_interface",
         "//foundations/dependency_foundation",
         "//plugin_implementations/root_scope_initialization_plugin_implementation",
         "//plugin_interfaces/scope_initialization_plugin_interface",
@@ -14,7 +15,6 @@ swift_library(
         "//scope_implementations/logged_out_scope_implementation",
         "//scope_interfaces/loading_scope_interface",
         "//scope_interfaces/logged_in_scope_interface",
-        "//scope_interfaces/logged_out_scope_interface",
         "//scope_interfaces/root_scope_interface",
         "//service_implementations/user_service_implementation",
         "//service_implementations/user_session_service_implementation",

@@ -1,7 +1,6 @@
 import LoggedOutFeatureInterface
 import LoggedOutFeatureImplementation
 import DependencyFoundation
-import LoggedOutScopeInterface
 import LoggedOutScopeInitializationPluginImplementation
 import LoadingScopeInterface
 import ScopeInitializationPluginInterface
@@ -12,9 +11,10 @@ import UIKit
 import WindowServiceInterface
 
 // TODO: Generate with @Buildable macro.
-public final class LoggedOutScopeImplementationBuilder: DependencyContainer<LoggedOutScopeImplementationDependencies>, Builder {
-    public func build(arguments: LoggedOutScopeArguments) -> AnyObject {
-        return LoggedOutScopeImplementation(dependencies: self.dependencies, arguments: arguments)
+public final class LoggedOutFeatureBuilder: DependencyContainer<LoggedOutScopeImplementationDependencies>, Builder {
+    public func build(arguments: LoggedOutFeatureArguments) -> UIViewController {
+        let scope = LoggedOutScopeImplementation(dependencies: self.dependencies, arguments: arguments)
+        return scope.loggedOutFeatureViewControllerBuilder.build(arguments: arguments)
     }
 }
 
@@ -30,7 +30,7 @@ public typealias LoggedOutScopeImplementationDependencies
 final class LoggedOutScopeImplementation: Scope<LoggedOutScopeImplementationDependencies> {
 
     // @Arguments
-    let loggedOutScopeArguments: LoggedOutScopeArguments
+    let loggedOutFeatureArguments: LoggedOutFeatureArguments
 
     // @Propagate
     // let windowService: WindowService
@@ -53,21 +53,21 @@ final class LoggedOutScopeImplementation: Scope<LoggedOutScopeImplementationDepe
     // let loggedOutScopeInitializationPlugin: LoggedOutScopeInitializationPluginImplementation
 
     // TODO: Generate with @Injectable macro.
-    init(dependencies: LoggedOutScopeImplementationDependencies, arguments: LoggedOutScopeArguments) {
-        self.loggedOutScopeArguments = arguments
+    init(dependencies: LoggedOutScopeImplementationDependencies, arguments: LoggedOutFeatureArguments) {
+        self.loggedOutFeatureArguments = arguments
 
         super.init(dependencies: dependencies)
 
-        // Register Plugins
-        let scopeInitializationPlugins: [any ScopeInitializationPlugin] = [
-            self.loggedOutScopeInitializationPlugin
-        ]
-        self.registerPlugins(plugins: scopeInitializationPlugins)
-
-        // Execute Scope Initialization Plugins
-        for plugin in self.getPlugins(type: ScopeInitializationPlugin.self) {
-            plugin.execute()
-        }
+//        // Register Plugins
+//        let scopeInitializationPlugins: [any ScopeInitializationPlugin] = [
+//            self.loggedOutScopeInitializationPlugin
+//        ]
+//        self.registerPlugins(plugins: scopeInitializationPlugins)
+//
+//        // Execute Scope Initialization Plugins
+//        for plugin in self.getPlugins(type: ScopeInitializationPlugin.self) {
+//            plugin.execute()
+//        }
     }
 }
 
@@ -102,22 +102,22 @@ extension LoggedOutScopeImplementation: UserSessionServiceProvider {
 }
 
 // TODO: Generate from the @Instantiate macro.
-extension LoggedOutScopeImplementation: LoggedOutFeatureBuilderProvider {
-    var loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController> {
+extension LoggedOutScopeImplementation {
+    var loggedOutFeatureViewControllerBuilder: any Builder<LoggedOutFeatureArguments, UIViewController> {
         return self.strong { [unowned self] in
-            return LoggedOutFeatureBuilder(dependencies: self)
+            return LoggedOutFeatureViewControllerBuilder(dependencies: self)
         }
     }
 }
 
-// TODO: Generate from @Instantiate macro.
-extension LoggedOutScopeImplementation {
-    public var loggedOutScopeInitializationPlugin: LoggedOutScopeInitializationPluginImplementation {
-        return self.strong { [unowned self] in
-            LoggedOutScopeInitializationPluginImplementation(dependencies: self)
-        }
-    }
-}
+//// TODO: Generate from @Instantiate macro.
+//extension LoggedOutScopeImplementation {
+//    public var loggedOutScopeInitializationPlugin: LoggedOutScopeInitializationPluginImplementation {
+//        return self.strong { [unowned self] in
+//            LoggedOutScopeInitializationPluginImplementation(dependencies: self)
+//        }
+//    }
+//}
 
 // TODO: Generate from @Arguments macro.
-extension LoggedOutScopeImplementation: LoggedOutScopeArgumentsProvider {}
+extension LoggedOutScopeImplementation: LoggedOutFeatureArgumentsProvider {}

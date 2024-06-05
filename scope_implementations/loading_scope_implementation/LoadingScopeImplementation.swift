@@ -3,7 +3,7 @@ import LoadingFeatureInterface
 import LoadingFeatureImplementation
 import LoadingScopeInterface
 import LoadingScopeInitializationPluginImplementation
-import LoggedOutScopeInterface
+import LoggedOutFeatureInterface
 import LoggedInScopeInterface
 import ScopeInitializationPluginInterface
 import UIKit
@@ -23,7 +23,7 @@ public final class LoadingScopeImplementationBuilder: DependencyContainer<Loadin
 public typealias LoadingScopeImplementationDependencies
     = DependencyProvider
     & LoggedInScopeBuilderProvider
-    & LoggedOutScopeBuilderProvider
+    & LoggedOutFeatureBuilderProvider
     & UserSessionStorageServiceProvider
     & UserStorageServiceProvider
     & WindowServiceProvider
@@ -45,7 +45,7 @@ final class LoadingScopeImplementation: Scope<LoadingScopeImplementationDependen
     // let userSessionStorageService: UserSessionStorageService
 
     // @Propagate
-    // let loggedOutScopeBuilder: LoggedOutScopeBuilder
+    // let loggedOutFeatureBuilder: LoggedOutFeatureBuilder
 
     // @Propagate
     // let loggedInScopeBuilder: LoggedInScopeBuilder
@@ -68,7 +68,7 @@ final class LoadingScopeImplementation: Scope<LoadingScopeImplementationDependen
 
         // Register Plugins
         let scopeInitializationPlugins: [any ScopeInitializationPlugin] = [
-            self.loggedOutScopeInitializationPlugin
+            self.loadingScopeInitializationPlugin
         ]
         self.registerPlugins(plugins: scopeInitializationPlugins)
 
@@ -101,9 +101,9 @@ extension LoadingScopeImplementation: UserSessionStorageServiceProvider {
 }
 
 // TODO: Generate from the @Propagate macro.
-extension LoadingScopeImplementation: LoggedOutScopeBuilderProvider {
-    var loggedOutScopeBuilder: any Builder<LoggedOutScopeArguments, AnyObject> {
-        return self.dependencies.loggedOutScopeBuilder
+extension LoadingScopeImplementation: LoggedOutFeatureBuilderProvider {
+    var loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController> {
+        return self.dependencies.loggedOutFeatureBuilder
     }
 }
 
@@ -134,7 +134,7 @@ extension LoadingScopeImplementation: LoadingFeatureBuilderProvider {
 
 // TODO: Generate from @Instantiate macro.
 extension LoadingScopeImplementation {
-    public var loggedOutScopeInitializationPlugin: LoadingScopeInitializationPluginImplementation {
+    public var loadingScopeInitializationPlugin: LoadingScopeInitializationPluginImplementation {
         return self.strong { [unowned self] in
             LoadingScopeInitializationPluginImplementation(dependencies: self)
         }
