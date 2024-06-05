@@ -3,7 +3,7 @@ import UIKit
 
 // @ServiceProvider
 public protocol WindowService {
-    var openWindows: [UIWindow] { get }
+    func register(rootViewControllerBuilder: @escaping () -> UIViewController)
     func opened(window: UIWindow)
     func closed(window: UIWindow)
 }

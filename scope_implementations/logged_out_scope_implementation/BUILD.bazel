@@ -10,6 +10,7 @@ swift_library(
         "//feature_interfaces/authentication_feature_interface",
         "//foundations/dependency_foundation",
         "//foundations/swift_foundation",
+        "//plugin_implementations/logged_out_scope_initialization_plugin_implementation",
         "//scope_interfaces/loading_scope_interface",
         "//scope_interfaces/logged_out_scope_interface",
         "//service_implementations/user_session_service_implementation",

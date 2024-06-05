@@ -1,3 +1,4 @@
+import RootScopeImplementation
 import UIKit
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -8,14 +9,12 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let windowScene = (scene as? UIWindowScene) else { return }
+        guard let applicationDelegate = UIApplication.shared.delegate as? ApplicationDelegate else { return }
 
         // Setup the window:
         let window = UIWindow(windowScene: windowScene)
-        let viewController = UIViewController()
-        viewController.view.backgroundColor = .red
-        window.rootViewController = viewController
+        applicationDelegate.rootScopeImplementation.windowService.opened(window: window)
         window.windowScene = windowScene
-        window.makeKeyAndVisible()
         self.window = window
     }
 
@@ -24,6 +23,12 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // This occurs shortly after the scene enters the background, or when its session is discarded.
         // Release any resources associated with this scene that can be re-created the next time the scene connects.
         // The scene may re-connect later, as its session was not necessarily discarded (see `application:didDiscardSceneSessions` instead).
+        guard let window = self.window else { return }
+        guard let applicationDelegate = UIApplication.shared.delegate as? ApplicationDelegate else { return }
+
+        // Tear down the window:
+        applicationDelegate.rootScopeImplementation.windowService.closed(window: window)
+        self.window = nil
     }
 
     func sceneDidBecomeActive(_ scene: UIScene) {

@@ -5,5 +5,8 @@ swift_library(
     srcs = ["WindowServiceImplementation.swift"],
     module_name = "WindowServiceImplementation",
     visibility = ["//visibility:public"],
-    deps = ["//service_interfaces/window_service_interface"],
+    deps = [
+        "//foundations/dependency_foundation",
+        "//service_interfaces/window_service_interface",
+    ],
 )
