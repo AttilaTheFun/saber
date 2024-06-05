@@ -5,7 +5,7 @@ import LoadingFeatureInterface
 import LoadingScopeImplementation
 import LoggedInFeatureInterface
 import LoggedInScopeImplementation
-import RootScopeInterface
+import RootFeatureInterface
 import RootScopeInitializationPluginImplementation
 import ScopeInitializationPluginInterface
 import UserSessionServiceInterface
@@ -23,6 +23,9 @@ public typealias RootScopeImplementationDependencies
 // @Injectable
 @MainActor
 public final class RootScopeImplementation: Scope<RootScopeImplementationDependencies> {
+
+    // @Arguments
+    public let rootFeatureArguments: RootFeatureArguments
 
     // @Provide(UserSessionStorageService.self)
     // @Instantiate
@@ -52,12 +55,9 @@ public final class RootScopeImplementation: Scope<RootScopeImplementationDepende
     // @Instantiate
     // let rootScopeInitializationPlugin: RootScopeInitializationPluginImplementation
 
-    // @Arguments
-    public let rootScopeArguments: RootScopeArguments
-
     // TODO: Generate with @Injectable macro.
-    public init(dependencies: RootScopeImplementationDependencies, arguments: RootScopeArguments) {
-        self.rootScopeArguments = arguments
+    public init(dependencies: RootScopeImplementationDependencies, arguments: RootFeatureArguments) {
+        self.rootFeatureArguments = arguments
         super.init(dependencies: dependencies)
 
         // Register Plugins
@@ -137,4 +137,4 @@ extension RootScopeImplementation {
 }
 
 // TODO: Generate from @Arguments macro.
-extension RootScopeImplementation: RootScopeArgumentsProvider {}
+extension RootScopeImplementation: RootFeatureArgumentsProvider {}

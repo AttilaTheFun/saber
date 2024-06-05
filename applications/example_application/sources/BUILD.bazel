@@ -11,6 +11,5 @@ swift_library(
     deps = [
         "//foundations/dependency_foundation",
         "//scope_implementations/root_scope_implementation",
-        "//scope_interfaces/root_scope_interface",
     ],
 )

@@ -1,5 +1,5 @@
 import DependencyFoundation
-import RootScopeInterface
+import RootFeatureInterface
 import RootScopeImplementation
 import UIKit
 
@@ -7,7 +7,7 @@ import UIKit
 final class ApplicationDelegate: UIResponder, UIApplicationDelegate {
     let rootScopeImplementation = RootScopeImplementation(
         dependencies: EmptyDependencyProvider(),
-        arguments: RootScopeArguments(endpointURL: URL(string: "https://example.com")!)
+        arguments: RootFeatureArguments(endpointURL: URL(string: "https://example.com")!)
     )
 
     func application(
