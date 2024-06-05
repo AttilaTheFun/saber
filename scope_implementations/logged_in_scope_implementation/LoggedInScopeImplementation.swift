@@ -1,8 +1,7 @@
 import DependencyFoundation
-import LoggedInScopeInterface
+import LoggedInFeatureInterface
 import LoggedInFeatureInterface
 import LoggedInFeatureImplementation
-import LoggedInScopeInitializationPluginImplementation
 import LoggedOutFeatureInterface
 import ScopeInitializationPluginInterface
 import UIKit
@@ -11,9 +10,17 @@ import UserSessionServiceInterface
 import UserSessionServiceImplementation
 import WindowServiceInterface
 
+// TODO: Generate with @FeaatureScopeBuilder macro.
+public final class LoggedInFeatureBuilder: DependencyContainer<LoggedInScopeImplementationDependencies>, Builder {
+    public func build(arguments: LoggedInFeatureArguments) -> UIViewController {
+        let scope = LoggedInScopeImplementation(dependencies: self.dependencies, arguments: arguments)
+        return scope.loggedInFeatureViewControllerBuilder.build(arguments: arguments)
+    }
+}
+
 // TODO: Generate with @Buildable macro.
 public final class LoggedInScopeImplementationBuilder: DependencyContainer<LoggedInScopeImplementationDependencies>, Builder {
-    public func build(arguments: LoggedInScopeArguments) -> AnyObject {
+    public func build(arguments: LoggedInFeatureArguments) -> AnyObject {
         return LoggedInScopeImplementation(dependencies: self.dependencies, arguments: arguments)
     }
 }
@@ -31,7 +38,7 @@ public typealias LoggedInScopeImplementationDependencies
 final class LoggedInScopeImplementation: Scope<LoggedInScopeImplementationDependencies> {
 
     // @Arguments
-    let loggedInScopeArguments: LoggedInScopeArguments
+    let loggedInFeatureArguments: LoggedInFeatureArguments
 
     // @Propagate
     // let userStorageService: UserStorageService
@@ -48,25 +55,10 @@ final class LoggedInScopeImplementation: Scope<LoggedInScopeImplementationDepend
     // @Instantiate(UserSessionServiceImplementation.self)
     // let userSessionService: UserSessionService
 
-    // @Plugin(ScopeInitializationPlugin.self)
-    // @Instantiate
-    // let loggedInScopeInitializationPlugin: LoggedInScopeInitializationPluginImplementation
-
     // TODO: Generate with @Injectable macro.
-    init(dependencies: LoggedInScopeImplementationDependencies, arguments: LoggedInScopeArguments) {
-        self.loggedInScopeArguments = arguments
+    init(dependencies: LoggedInScopeImplementationDependencies, arguments: LoggedInFeatureArguments) {
+        self.loggedInFeatureArguments = arguments
         super.init(dependencies: dependencies)
-
-        // Register Plugins
-        let scopeInitializationPlugins: [any ScopeInitializationPlugin] = [
-            self.loggedInScopeInitializationPlugin
-        ]
-        self.registerPlugins(plugins: scopeInitializationPlugins)
-
-        // Execute Scope Initialization Plugins
-        for plugin in self.getPlugins(type: ScopeInitializationPlugin.self) {
-            plugin.execute()
-        }
     }
 }
 
@@ -108,22 +100,13 @@ extension LoggedInScopeImplementation: UserSessionServiceProvider {
 }
 
 // TODO: Generate from the @Instantiate macro.
-extension LoggedInScopeImplementation: LoggedInFeatureBuilderProvider {
-    var loggedInFeatureBuilder: any Builder<LoggedInFeatureArguments, UIViewController> {
-        return self.strong { [unowned self] in
-            return LoggedInFeatureBuilder(dependencies: self)
-        }
-    }
-}
-
-// TODO: Generate from @Instantiate macro.
 extension LoggedInScopeImplementation {
-    public var loggedInScopeInitializationPlugin: LoggedInScopeInitializationPluginImplementation {
+    var loggedInFeatureViewControllerBuilder: any Builder<LoggedInFeatureArguments, UIViewController> {
         return self.strong { [unowned self] in
-            LoggedInScopeInitializationPluginImplementation(dependencies: self)
+            return LoggedInFeatureViewControllerBuilder(dependencies: self)
         }
     }
 }
 
 // TODO: Generate from @Arguments macro.
-extension LoggedInScopeImplementation: LoggedInScopeArgumentsProvider {}
+extension LoggedInScopeImplementation: LoggedInFeatureArgumentsProvider {}

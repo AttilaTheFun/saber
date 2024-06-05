@@ -5,5 +5,9 @@ swift_library(
     srcs = ["LoggedInFeatureArguments.swift"],
     module_name = "LoggedInFeatureInterface",
     visibility = ["//visibility:public"],
-    deps = ["//foundations/dependency_foundation"],
+    deps = [
+        "//foundations/dependency_foundation",
+        "//service_interfaces/user_service_interface",
+        "//service_interfaces/user_session_service_interface",
+    ],
 )

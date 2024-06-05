@@ -133,7 +133,7 @@ final class LoggedOutFeatureViewController: UIViewController {
                     username: self.textField.text ?? "",
                     password: "1234"
                 )
-                self.userSessionStorageService.userSession = userSession
+
                 await self.buildLoadingFeature(userSession: userSession)
             } catch {
                 print(error)
@@ -143,6 +143,7 @@ final class LoggedOutFeatureViewController: UIViewController {
 
     @MainActor
     private func buildLoadingFeature(userSession: UserSession) {
+        self.userSessionStorageService.userSession = userSession
         let builder = self.loadingFeatureBuilder
         self.windowService.register {
             let arguments = LoadingFeatureArguments(userSession: userSession)

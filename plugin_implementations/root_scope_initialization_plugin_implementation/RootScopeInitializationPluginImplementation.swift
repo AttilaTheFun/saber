@@ -1,6 +1,6 @@
 import DependencyFoundation
 import LoggedOutFeatureInterface
-import LoggedInScopeInterface
+import LoggedInFeatureInterface
 import LoadingFeatureInterface
 import ScopeInitializationPluginInterface
 import UserServiceInterface
@@ -11,14 +11,15 @@ import UIKit
 // TODO: Generate with @Injectable macro.
 public typealias RootScopeInitializationPluginImplementationDependencies
     = DependencyProvider
-    & LoggedInScopeBuilderProvider
     & LoggedOutFeatureBuilderProvider
     & LoadingFeatureBuilderProvider
+    & LoggedInFeatureBuilderProvider
     & UserSessionStorageServiceProvider
     & UserStorageServiceProvider
     & WindowServiceProvider
 
 // @Injectable
+@MainActor
 public final class RootScopeInitializationPluginImplementation: ScopeInitializationPlugin {
 
     // @Inject
@@ -37,7 +38,7 @@ public final class RootScopeInitializationPluginImplementation: ScopeInitializat
     private let loadingFeatureBuilder: any Builder<LoadingFeatureArguments, UIViewController>
 
     // @Inject
-    private let loggedInScopeBuilder: any Builder<LoggedInScopeArguments, AnyObject>
+    private let loggedInFeatureBuilder: any Builder<LoggedInFeatureArguments, UIViewController>
 
     // TODO: Generate with @Injectable macro.
     public init(dependencies: RootScopeInitializationPluginImplementationDependencies) {
@@ -46,7 +47,7 @@ public final class RootScopeInitializationPluginImplementation: ScopeInitializat
         self.windowService = dependencies.windowService
         self.loggedOutFeatureBuilder = dependencies.loggedOutFeatureBuilder
         self.loadingFeatureBuilder = dependencies.loadingFeatureBuilder
-        self.loggedInScopeBuilder = dependencies.loggedInScopeBuilder
+        self.loggedInFeatureBuilder = dependencies.loggedInFeatureBuilder
     }
 
     public func execute() {
@@ -71,7 +72,10 @@ public final class RootScopeInitializationPluginImplementation: ScopeInitializat
             return
         }
 
-        let arguments = LoggedInScopeArguments(userSession: userSession, user: user)
-        self.loggedInScopeBuilder.build(arguments: arguments)
+        let builder = self.loggedInFeatureBuilder
+        self.windowService.register {
+            let arguments = LoggedInFeatureArguments(userSession: userSession, user: user)
+            return builder.build(arguments: arguments)
+        }
     }
 }

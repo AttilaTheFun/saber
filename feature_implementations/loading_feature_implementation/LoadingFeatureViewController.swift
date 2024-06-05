@@ -2,7 +2,7 @@ import DependencyFoundation
 import LoadingFeatureInterface
 import LoadingFeatureInterface
 import LoggedOutFeatureInterface
-import LoggedInScopeInterface
+import LoggedInFeatureInterface
 import UserServiceInterface
 import UserSessionServiceInterface
 import UIKit
@@ -18,9 +18,8 @@ public final class LoadingFeatureViewControllerBuilder: DependencyContainer<Load
 // TODO: Generate with @Injectable macro.
 public typealias LoadingFeatureDependencies
     = DependencyProvider
-    & LoadingFeatureArgumentsProvider
-    & LoggedInScopeBuilderProvider
     & LoggedOutFeatureBuilderProvider
+    & LoggedInFeatureBuilderProvider
     & UserSessionStorageServiceProvider
     & UserServiceProvider
     & UserStorageServiceProvider
@@ -30,7 +29,7 @@ public typealias LoadingFeatureDependencies
 // @Injectable
 final class LoadingFeatureViewController: UIViewController {
 
-    // @Inject
+    // @Arguments
     private let loadingFeatureArguments: LoadingFeatureArguments
 
     // @Inject
@@ -46,24 +45,21 @@ final class LoadingFeatureViewController: UIViewController {
     private let windowService: WindowService
 
     // @Inject
-    private let loggedInScopeBuilder: any Builder<LoggedInScopeArguments, AnyObject>
-
-    // @Inject
     private let loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController>
 
-    // @Arguments
-    private let arguments: LoadingFeatureArguments
+    // @Inject
+    private let loggedInFeatureBuilder: any Builder<LoggedInFeatureArguments, UIViewController>
 
     // TODO: Generate with @Injectable macro.
     init(dependencies: LoadingFeatureDependencies, arguments: LoadingFeatureArguments) {
-        self.loadingFeatureArguments = dependencies.loadingFeatureArguments
+        self.loadingFeatureArguments = arguments
         self.userSessionStorageService = dependencies.userSessionStorageService
         self.userService = dependencies.userService
         self.userStorageService = dependencies.userStorageService
         self.windowService = dependencies.windowService
-        self.loggedInScopeBuilder = dependencies.loggedInScopeBuilder
+        self.loggedInFeatureBuilder = dependencies.loggedInFeatureBuilder
         self.loggedOutFeatureBuilder = dependencies.loggedOutFeatureBuilder
-        self.arguments = arguments
+
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -88,11 +84,9 @@ final class LoadingFeatureViewController: UIViewController {
         Task.detached {
             do {
                 let user = try await self.userService.getCurrentUser()
-                self.userStorageService.user = user
-                await self.buildLoggedInScope(userSession: self.loadingFeatureArguments.userSession, user: user)
+                await self.buildLoggedInFeature(userSession: self.loadingFeatureArguments.userSession, user: user)
             } catch {
                 print(error)
-                self.userSessionStorageService.userSession = nil
                 await self.buildLoggedOutFeature()
             }
         }
@@ -101,13 +95,18 @@ final class LoadingFeatureViewController: UIViewController {
     // MARK: Private
 
     @MainActor
-    private func buildLoggedInScope(userSession: UserSession, user: User) {
-        let arguments = LoggedInScopeArguments(userSession: userSession, user: user)
-        self.loggedInScopeBuilder.build(arguments: arguments)
+    private func buildLoggedInFeature(userSession: UserSession, user: User) {
+        self.userStorageService.user = user
+        let builder = self.loggedInFeatureBuilder
+        self.windowService.register {
+            let arguments = LoggedInFeatureArguments(userSession: userSession, user: user)
+            return builder.build(arguments: arguments)
+        }
     }
 
     @MainActor
     private func buildLoggedOutFeature() {
+        self.userSessionStorageService.userSession = nil
         let builder = self.loggedOutFeatureBuilder
         self.windowService.register {
             let arguments = LoggedOutFeatureArguments()

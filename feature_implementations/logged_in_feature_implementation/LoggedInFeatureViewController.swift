@@ -1,6 +1,6 @@
 import DependencyFoundation
 import LoggedInFeatureInterface
-import LoggedInScopeInterface
+import LoggedInFeatureInterface
 import LoggedOutFeatureInterface
 import UserSessionServiceInterface
 import UserServiceInterface
@@ -8,7 +8,7 @@ import UIKit
 import WindowServiceInterface
 
 // TODO: Generate with @Builder macro.
-public final class LoggedInFeatureBuilder: DependencyContainer<LoggedInFeatureDependencies>, Builder {
+public final class LoggedInFeatureViewControllerBuilder: DependencyContainer<LoggedInFeatureDependencies>, Builder {
     public func build(arguments: LoggedInFeatureArguments) -> UIViewController {
         return LoggedInFeatureViewController(dependencies: self.dependencies, arguments: arguments)
     }
@@ -17,7 +17,6 @@ public final class LoggedInFeatureBuilder: DependencyContainer<LoggedInFeatureDe
 // TODO: Generate with @Injectable macro.
 public typealias LoggedInFeatureDependencies
     = DependencyProvider
-    & LoggedInScopeArgumentsProvider
     & LoggedOutFeatureBuilderProvider
     & UserSessionServiceProvider
     & UserSessionStorageServiceProvider
@@ -28,8 +27,8 @@ public typealias LoggedInFeatureDependencies
 // @Injectable
 final class LoggedInFeatureViewController: UIViewController {
 
-    // @Inject
-    private let loggedInScopeArguments: LoggedInScopeArguments
+    // @Arguments
+    private let loggedInFeatureArguments: LoggedInFeatureArguments
 
     // @Inject
     private let userSessionService: UserSessionService
@@ -46,22 +45,18 @@ final class LoggedInFeatureViewController: UIViewController {
     // @Inject
     private let loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController>
 
-    // @Arguments
-    private let loggedInFeatureArguments: LoggedInFeatureArguments
-
     private let label = UILabel()
     private let labelContainerView = UIView()
     private let logOutButton = UIButton()
 
     // TODO: Generate with @Injectable macro.
     init(dependencies: LoggedInFeatureDependencies, arguments: LoggedInFeatureArguments) {
-        self.loggedInScopeArguments = dependencies.loggedInScopeArguments
+        self.loggedInFeatureArguments = arguments
         self.userStorageService = dependencies.userStorageService
         self.userSessionService = dependencies.userSessionService
         self.userSessionStorageService = dependencies.userSessionStorageService
         self.windowService = dependencies.windowService
         self.loggedOutFeatureBuilder = dependencies.loggedOutFeatureBuilder
-        self.loggedInFeatureArguments = arguments
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -88,7 +83,7 @@ final class LoggedInFeatureViewController: UIViewController {
         self.label.backgroundColor = .systemGroupedBackground
         self.label.clipsToBounds = true
         self.label.layer.cornerRadius = 16
-        self.label.text = "Logged in as \(self.loggedInScopeArguments.user.username)"
+        self.label.text = "Logged in as \(self.loggedInFeatureArguments.user.username)"
 
         // Configure the text field container view:
         self.labelContainerView.translatesAutoresizingMaskIntoConstraints = false
@@ -142,19 +137,19 @@ final class LoggedInFeatureViewController: UIViewController {
     private func logOutButtonTapped() {
         Task.detached {
             do {
-                try await self.userSessionService.deleteSession(id: self.loggedInScopeArguments.userSession.id)
+                try await self.userSessionService.deleteSession(id: self.loggedInFeatureArguments.userSession.id)
             } catch {
                 print(error)
             }
 
-            self.userSessionStorageService.userSession = nil
-            self.userStorageService.user = nil
             await self.buildLoggedOutFeature()
         }
     }
 
     @MainActor
     private func buildLoggedOutFeature() {
+        self.userStorageService.user = nil
+        self.userSessionStorageService.userSession = nil
         let builder = self.loggedOutFeatureBuilder
         self.windowService.register {
             let arguments = LoggedOutFeatureArguments()

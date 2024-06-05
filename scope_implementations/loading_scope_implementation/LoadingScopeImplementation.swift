@@ -2,7 +2,7 @@ import DependencyFoundation
 import LoadingFeatureInterface
 import LoadingFeatureImplementation
 import LoggedOutFeatureInterface
-import LoggedInScopeInterface
+import LoggedInFeatureInterface
 import ScopeInitializationPluginInterface
 import UIKit
 import UserSessionServiceInterface
@@ -21,7 +21,7 @@ public final class LoadingFeatureBuilder: DependencyContainer<LoadingScopeImplem
 // TODO: Generate with @Injectable macro.
 public typealias LoadingScopeImplementationDependencies
     = DependencyProvider
-    & LoggedInScopeBuilderProvider
+    & LoggedInFeatureBuilderProvider
     & LoggedOutFeatureBuilderProvider
     & UserSessionStorageServiceProvider
     & UserStorageServiceProvider
@@ -47,7 +47,7 @@ final class LoadingScopeImplementation: Scope<LoadingScopeImplementationDependen
     // let loggedOutFeatureBuilder: LoggedOutFeatureBuilder
 
     // @Propagate
-    // let loggedInScopeBuilder: LoggedInScopeBuilder
+    // let loggedInFeatureBuilder: LoggedInFeatureBuilder
 
     // @Instantiate(UserServiceImplementation.self)
     // let userService: UserService
@@ -92,9 +92,9 @@ extension LoadingScopeImplementation: LoggedOutFeatureBuilderProvider {
 }
 
 // TODO: Generate from the @Propagate macro.
-extension LoadingScopeImplementation: LoggedInScopeBuilderProvider {
-    var loggedInScopeBuilder: any Builder<LoggedInScopeArguments, AnyObject> {
-        return self.dependencies.loggedInScopeBuilder
+extension LoadingScopeImplementation: LoggedInFeatureBuilderProvider {
+    var loggedInFeatureBuilder: any Builder<LoggedInFeatureArguments, UIViewController> {
+        return self.dependencies.loggedInFeatureBuilder
     }
 }
 

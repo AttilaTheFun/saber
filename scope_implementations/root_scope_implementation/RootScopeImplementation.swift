@@ -1,10 +1,10 @@
 import DependencyFoundation
-import LoggedInScopeInterface
-import LoggedInScopeImplementation
 import LoggedOutFeatureInterface
 import LoggedOutScopeImplementation
 import LoadingFeatureInterface
 import LoadingScopeImplementation
+import LoggedInFeatureInterface
+import LoggedInScopeImplementation
 import RootScopeInterface
 import RootScopeInitializationPluginImplementation
 import ScopeInitializationPluginInterface
@@ -21,6 +21,7 @@ public typealias RootScopeImplementationDependencies
     = DependencyProvider
 
 // @Injectable
+@MainActor
 public final class RootScopeImplementation: Scope<RootScopeImplementationDependencies> {
 
     // @Provide(UserSessionStorageService.self)
@@ -43,7 +44,7 @@ public final class RootScopeImplementation: Scope<RootScopeImplementationDepende
     // @Instantiate
     // let loadingScopeBuilder: LoadingScopeImplementationBuilder
 
-    // @Provide(Builder<LoggedInScopeArguments, AnyObject>.self)
+    // @Provide(Builder<LoggedInFeatureArguments, AnyObject>.self)
     // @Instantiate
     // let loggedInScopeBuilder: LoggedInScopeImplementationBuilder
 
@@ -102,7 +103,7 @@ extension RootScopeImplementation: WindowServiceProvider {
 // TODO: Generate from @Instantiate and @Provide macros.
 extension RootScopeImplementation: LoggedOutFeatureBuilderProvider {
     public var loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController> {
-        return self.new { [unowned self] in
+        return self.strong { [unowned self] in
             LoggedOutFeatureBuilder(dependencies: self)
         }
     }
@@ -111,17 +112,17 @@ extension RootScopeImplementation: LoggedOutFeatureBuilderProvider {
 // TODO: Generate from @Instantiate and @Provide macros.
 extension RootScopeImplementation: LoadingFeatureBuilderProvider {
     public var loadingFeatureBuilder: any Builder<LoadingFeatureArguments, UIViewController> {
-        return self.new { [unowned self] in
+        return self.strong { [unowned self] in
             LoadingFeatureBuilder(dependencies: self)
         }
     }
 }
 
 // TODO: Generate from @Instantiate and @Provide macros.
-extension RootScopeImplementation: LoggedInScopeBuilderProvider {
-    public var loggedInScopeBuilder: any Builder<LoggedInScopeArguments, AnyObject> {
-        return self.new { [unowned self] in
-            LoggedInScopeImplementationBuilder(dependencies: self)
+extension RootScopeImplementation: LoggedInFeatureBuilderProvider {
+    public var loggedInFeatureBuilder: any Builder<LoggedInFeatureArguments, UIViewController> {
+        return self.strong { [unowned self] in
+            LoggedInFeatureBuilder(dependencies: self)
         }
     }
 }
@@ -129,7 +130,7 @@ extension RootScopeImplementation: LoggedInScopeBuilderProvider {
 // TODO: Generate from @Instantiate macro.
 extension RootScopeImplementation {
     public var rootScopeInitializationPlugin: RootScopeInitializationPluginImplementation {
-        return self.new { [unowned self] in
+        return self.strong { [unowned self] in
             RootScopeInitializationPluginImplementation(dependencies: self)
         }
     }

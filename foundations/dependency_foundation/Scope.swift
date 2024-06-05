@@ -1,5 +1,6 @@
 import SwiftFoundation
 
+@MainActor
 open class Scope<Dependencies>: DependencyContainer<Dependencies> {
     private var factories = [ObjectIdentifier : Any]()
     private var instances = [ObjectIdentifier : Any]()
