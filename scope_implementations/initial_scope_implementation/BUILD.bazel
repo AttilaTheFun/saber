@@ -7,6 +7,8 @@ swift_library(
     visibility = ["//visibility:public"],
     deps = [
         "//foundations/dependency_foundation",
+        "//plugin_implementations/initial_scope_initialization_plugin_implementation",
+        "//plugin_interfaces/scope_initialization_plugin_interface",
         "//scope_interfaces/initial_scope_interface",
     ],
 )

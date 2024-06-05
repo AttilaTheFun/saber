@@ -1,5 +1,7 @@
 import DependencyFoundation
 import InitialScopeInterface
+import ScopeInitializationPluginInterface
+import InitialScopeInitializationPluginImplementation
 
 // TODO: Generate with @Buildable macro.
 public final class InitialScopeImplementationBuilder: DependencyContainer<InitialScopeImplementationDependencies>, Builder {

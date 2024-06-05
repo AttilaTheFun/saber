@@ -3,8 +3,6 @@ import UserSessionServiceInterface
 import UserSessionServiceImplementation
 import UserServiceInterface
 import UserServiceImplementation
-import InitialScopeInterface
-import InitialScopeImplementation
 import LoggedInScopeInterface
 import LoggedInScopeImplementation
 import LoggedOutScopeInterface
@@ -12,6 +10,8 @@ import LoggedOutScopeImplementation
 import LoadingScopeInterface
 import LoadingScopeImplementation
 import RootScopeInterface
+import ScopeInitializationPluginInterface
+import InitialScopeInitializationPluginImplementation
 
 // TODO: Generate with @Injectable macro.
 public typealias RootScopeImplementationDependencies
@@ -20,26 +20,33 @@ public typealias RootScopeImplementationDependencies
 // @Injectable
 public final class RootScopeImplementation: Scope<RootScopeImplementationDependencies> {
 
-    // @Instantiate(UserSessionStorageServiceImplementation.self)
-    // let userSessionStorageService: UserSessionStorageService
+    // @Provide(UserSessionStorageService.self)
+    // @Instantiate
+    // let userSessionStorageService: UserSessionStorageServiceImplementation
 
-    // @Instantiate(UserSessionServiceImplementation.self)
-    // let userSessionService: UserSessionService
+    // @Provide(UserSessionService.self)
+    // @Instantiate
+    // let userSessionService: UserSessionServiceImplementation
 
-    // @Instantiate(UserStorageServiceImplementation.self)
-    // let userStorageService: UserStorageService
+    // @Provide(UserStorageService.self)
+    // @Instantiate
+    // let userStorageService: UserStorageServiceImplementation
 
-    // @Instantiate(InitialScopeImplementationBuilder.swift)
-    // let initialScopeBuilder: Builder<InitialScopeArguments, AnyObject>
+    // @Provide(Builder<LoggedOutScopeArguments, AnyObject>.self)
+    // @Instantiate
+    // let loggedOutScopeBuilder: LoggedOutScopeImplementationBuilder
 
-    // @Instantiate(LoggedOutScopeImplementationBuilder.swift)
-    // let loggedOutScopeBuilder: Builder<LoggedOutScopeArguments, AnyObject>
+    // @Provide(Builder<LoadingScopeArguments, AnyObject>.self)
+    // @Instantiate
+    // let loadingScopeBuilder: LoadingScopeImplementationBuilder
 
-    // @Instantiate(LoadingScopeImplementationBuilder.swift)
-    // let loadingScopeBuilder: Builder<LoadingScopeArguments, AnyObject>
+    // @Provide(Builder<LoggedInScopeArguments, AnyObject>.self)
+    // @Instantiate
+    // let loggedInScopeBuilder: LoggedInScopeImplementationBuilder
 
-    // @Instantiate(LoggedInScopeImplementationBuilder.swift)
-    // let loggedInScopeBuilder: Builder<LoggedInScopeArguments, AnyObject>
+    // @Plugin(ScopeInitializationPlugin.self)
+    // @Instantiate
+    // let initialScopeInitializationPlugin: InitialScopeInitializationPluginImplementation
 
     // @Arguments
     public let arguments: RootScopeArguments
@@ -48,10 +55,21 @@ public final class RootScopeImplementation: Scope<RootScopeImplementationDepende
     public init(dependencies: RootScopeImplementationDependencies, arguments: RootScopeArguments) {
         self.arguments = arguments
         super.init(dependencies: dependencies)
+
+        // Register Plugins
+        let scopeInitializationPlugins: [any ScopeInitializationPlugin] = [
+            self.initialScopeInitializationPlugin
+        ]
+        self.registerPlugins(plugins: scopeInitializationPlugins)
+
+        // Execute Scope Initialization Plugins
+        for plugin in self.getPlugins(type: ScopeInitializationPlugin.self) {
+            plugin.execute()
+        }
     }
 }
 
-// TODO: Generate from @Instantiate macro.
+// TODO: Generate from @Instantiate and @Provide macros.
 extension RootScopeImplementation: UserSessionStorageServiceProvider {
     public var userSessionStorageService: any UserSessionStorageService {
         return self.strong { [unowned self] in
@@ -60,7 +78,7 @@ extension RootScopeImplementation: UserSessionStorageServiceProvider {
     }
 }
 
-// TODO: Generate from @Instantiate macro.
+// TODO: Generate from @Instantiate and @Provide macros.
 extension RootScopeImplementation: UserSessionServiceProvider {
     public var userSessionService: any UserSessionService {
         return self.strong { [unowned self] in
@@ -69,7 +87,7 @@ extension RootScopeImplementation: UserSessionServiceProvider {
     }
 }
 
-// TODO: Generate from @Instantiate macro.
+// TODO: Generate from @Instantiate and @Provide macros.
 extension RootScopeImplementation: UserStorageServiceProvider {
     public var userStorageService: any UserStorageService {
         return self.strong { [unowned self] in
@@ -78,16 +96,7 @@ extension RootScopeImplementation: UserStorageServiceProvider {
     }
 }
 
-// TODO: Generate from @Instantiate macro.
-extension RootScopeImplementation: InitialScopeBuilderProvider {
-    public var initialScopeBuilder: any Builder<InitialScopeArguments, AnyObject> {
-        return self.new { [unowned self] in
-            InitialScopeImplementationBuilder(dependencies: self)
-        }
-    }
-}
-
-// TODO: Generate from @Instantiate macro.
+// TODO: Generate from @Instantiate and @Provide macros.
 extension RootScopeImplementation: LoggedOutScopeBuilderProvider {
     public var loggedOutScopeBuilder: any Builder<LoggedOutScopeArguments, AnyObject> {
         return self.new { [unowned self] in
@@ -96,7 +105,7 @@ extension RootScopeImplementation: LoggedOutScopeBuilderProvider {
     }
 }
 
-// TODO: Generate from @Instantiate macro.
+// TODO: Generate from @Instantiate and @Provide macros.
 extension RootScopeImplementation: LoadingScopeBuilderProvider {
     public var loadingScopeBuilder: any Builder<LoadingScopeArguments, AnyObject> {
         return self.new { [unowned self] in
@@ -105,11 +114,20 @@ extension RootScopeImplementation: LoadingScopeBuilderProvider {
     }
 }
 
-// TODO: Generate from @Instantiate macro.
+// TODO: Generate from @Instantiate and @Provide macros.
 extension RootScopeImplementation: LoggedInScopeBuilderProvider {
     public var loggedInScopeBuilder: any Builder<LoggedInScopeArguments, AnyObject> {
         return self.new { [unowned self] in
             LoggedInScopeImplementationBuilder(dependencies: self)
+        }
+    }
+}
+
+// TODO: Generate from @Instantiate macro.
+extension RootScopeImplementation {
+    public var initialScopeInitializationPlugin: InitialScopeInitializationPluginImplementation {
+        return self.new { [unowned self] in
+            InitialScopeInitializationPluginImplementation(dependencies: self)
         }
     }
 }

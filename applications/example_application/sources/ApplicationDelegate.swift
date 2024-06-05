@@ -1,7 +1,15 @@
+import DependencyFoundation
+import RootScopeInterface
+import RootScopeImplementation
 import UIKit
 
 @main
 final class ApplicationDelegate: UIResponder, UIApplicationDelegate {
+    let rootScopeImplementation = RootScopeImplementation(
+        dependencies: EmptyDependencyProvider(),
+        arguments: RootScopeArguments(endpointURL: URL(string: "https://example.com")!)
+    )
+
     func application(
         _ application: UIApplication, 
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) 
