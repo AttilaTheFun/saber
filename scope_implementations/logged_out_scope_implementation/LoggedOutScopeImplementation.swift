@@ -1,8 +1,7 @@
 import LoggedOutFeatureInterface
 import LoggedOutFeatureImplementation
 import DependencyFoundation
-import LoggedOutScopeInitializationPluginImplementation
-import LoadingScopeInterface
+import LoadingFeatureInterface
 import ScopeInitializationPluginInterface
 import SwiftFoundation
 import UserSessionServiceInterface
@@ -10,7 +9,7 @@ import UserSessionServiceImplementation
 import UIKit
 import WindowServiceInterface
 
-// TODO: Generate with @Buildable macro.
+// TODO: Generate with @FeaatureScopeBuilder macro.
 public final class LoggedOutFeatureBuilder: DependencyContainer<LoggedOutScopeImplementationDependencies>, Builder {
     public func build(arguments: LoggedOutFeatureArguments) -> UIViewController {
         let scope = LoggedOutScopeImplementation(dependencies: self.dependencies, arguments: arguments)
@@ -21,11 +20,11 @@ public final class LoggedOutFeatureBuilder: DependencyContainer<LoggedOutScopeIm
 // TODO: Generate with @Injectable macro.
 public typealias LoggedOutScopeImplementationDependencies
     = DependencyProvider
-    & LoadingScopeBuilderProvider
+    & LoadingFeatureBuilderProvider
     & UserSessionStorageServiceProvider
     & WindowServiceProvider
 
-// @Buildable(building: AnyObject.self)
+// @FeaatureScopeBuilder(building: UIViewController.self)
 // @Injectable
 final class LoggedOutScopeImplementation: Scope<LoggedOutScopeImplementationDependencies> {
 
@@ -39,7 +38,7 @@ final class LoggedOutScopeImplementation: Scope<LoggedOutScopeImplementationDepe
     // let userSessionStorageService: UserSessionStorageService
 
     // @Propagate
-    // let loadingScopeBuilder: LoadingScopeBuilder
+    // let loadingFeatureBuilder: LoadingFeatureBuilder
 
     // @Instantiate(UserSessionServiceImplementation.self)
     // let userSessionService: UserSessionService
@@ -48,26 +47,11 @@ final class LoggedOutScopeImplementation: Scope<LoggedOutScopeImplementationDepe
     // @Instantiate
     // let loggedOutFeatureBuilder: LoggedOutFeatureBuilder
 
-    // @Plugin(ScopeInitializationPlugin.self)
-    // @Instantiate
-    // let loggedOutScopeInitializationPlugin: LoggedOutScopeInitializationPluginImplementation
-
     // TODO: Generate with @Injectable macro.
     init(dependencies: LoggedOutScopeImplementationDependencies, arguments: LoggedOutFeatureArguments) {
         self.loggedOutFeatureArguments = arguments
 
         super.init(dependencies: dependencies)
-
-//        // Register Plugins
-//        let scopeInitializationPlugins: [any ScopeInitializationPlugin] = [
-//            self.loggedOutScopeInitializationPlugin
-//        ]
-//        self.registerPlugins(plugins: scopeInitializationPlugins)
-//
-//        // Execute Scope Initialization Plugins
-//        for plugin in self.getPlugins(type: ScopeInitializationPlugin.self) {
-//            plugin.execute()
-//        }
     }
 }
 
@@ -86,9 +70,9 @@ extension LoggedOutScopeImplementation: WindowServiceProvider {
 }
 
 // TODO: Generate from the @Propagate macro.
-extension LoggedOutScopeImplementation: LoadingScopeBuilderProvider {
-    var loadingScopeBuilder: any Builder<LoadingScopeArguments, AnyObject> {
-        return self.dependencies.loadingScopeBuilder
+extension LoggedOutScopeImplementation: LoadingFeatureBuilderProvider {
+    var loadingFeatureBuilder: any Builder<LoadingFeatureArguments, UIViewController> {
+        return self.dependencies.loadingFeatureBuilder
     }
 }
 
@@ -109,15 +93,6 @@ extension LoggedOutScopeImplementation {
         }
     }
 }
-
-//// TODO: Generate from @Instantiate macro.
-//extension LoggedOutScopeImplementation {
-//    public var loggedOutScopeInitializationPlugin: LoggedOutScopeInitializationPluginImplementation {
-//        return self.strong { [unowned self] in
-//            LoggedOutScopeInitializationPluginImplementation(dependencies: self)
-//        }
-//    }
-//}
 
 // TODO: Generate from @Arguments macro.
 extension LoggedOutScopeImplementation: LoggedOutFeatureArgumentsProvider {}

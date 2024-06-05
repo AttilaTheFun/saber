@@ -9,7 +9,6 @@ swift_library(
         "//feature_interfaces/loading_feature_interface",
         "//feature_interfaces/logged_out_feature_interface",
         "//foundations/dependency_foundation",
-        "//scope_interfaces/loading_scope_interface",
         "//scope_interfaces/logged_in_scope_interface",
         "//service_interfaces/user_service_interface",
         "//service_interfaces/user_session_service_interface",

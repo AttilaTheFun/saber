@@ -1,8 +1,9 @@
 import LoggedOutFeatureInterface
 import DependencyFoundation
-import LoadingScopeInterface
+import LoadingFeatureInterface
 import UserSessionServiceInterface
 import UIKit
+import WindowServiceInterface
 
 // TODO: Generate with @Builder macro.
 public final class LoggedOutFeatureViewControllerBuilder: DependencyContainer<LoggedOutFeatureDependencies>, Builder {
@@ -14,9 +15,10 @@ public final class LoggedOutFeatureViewControllerBuilder: DependencyContainer<Lo
 // TODO: Generate with @Injectable macro.
 public typealias LoggedOutFeatureDependencies
     = DependencyProvider
-    & LoadingScopeBuilderProvider
+    & LoadingFeatureBuilderProvider
     & UserSessionServiceProvider
     & UserSessionStorageServiceProvider
+    & WindowServiceProvider
 
 // @Builder(building: UIViewController.self)
 // @Injectable
@@ -29,7 +31,10 @@ final class LoggedOutFeatureViewController: UIViewController {
     private let userSessionStorageService: UserSessionStorageService
 
     // @Inject
-    private let loadingScopeBuilder: any Builder<LoadingScopeArguments, AnyObject>
+    private let windowService: WindowService
+
+    // @Inject
+    private let loadingFeatureBuilder: any Builder<LoadingFeatureArguments, UIViewController>
 
     // @Arguments
     private let arguments: LoggedOutFeatureArguments
@@ -42,7 +47,8 @@ final class LoggedOutFeatureViewController: UIViewController {
     init(dependencies: LoggedOutFeatureDependencies, arguments: LoggedOutFeatureArguments) {
         self.userSessionService = dependencies.userSessionService
         self.userSessionStorageService = dependencies.userSessionStorageService
-        self.loadingScopeBuilder = dependencies.loadingScopeBuilder
+        self.windowService = dependencies.windowService
+        self.loadingFeatureBuilder = dependencies.loadingFeatureBuilder
         self.arguments = arguments
         super.init(nibName: nil, bundle: nil)
     }
@@ -128,7 +134,7 @@ final class LoggedOutFeatureViewController: UIViewController {
                     password: "1234"
                 )
                 self.userSessionStorageService.userSession = userSession
-                await self.buildLoadingScope(userSession: userSession)
+                await self.buildLoadingFeature(userSession: userSession)
             } catch {
                 print(error)
             }
@@ -136,8 +142,11 @@ final class LoggedOutFeatureViewController: UIViewController {
     }
 
     @MainActor
-    private func buildLoadingScope(userSession: UserSession) {
-        let arguments = LoadingScopeArguments(userSession: userSession)
-        self.loadingScopeBuilder.build(arguments: arguments)
+    private func buildLoadingFeature(userSession: UserSession) {
+        let builder = self.loadingFeatureBuilder
+        self.windowService.register {
+            let arguments = LoadingFeatureArguments(userSession: userSession)
+            return builder.build(arguments: arguments)
+        }
     }
 }

@@ -1,7 +1,7 @@
 import DependencyFoundation
 import LoggedOutFeatureInterface
 import LoggedInScopeInterface
-import LoadingScopeInterface
+import LoadingFeatureInterface
 import ScopeInitializationPluginInterface
 import UserServiceInterface
 import UserSessionServiceInterface
@@ -13,7 +13,7 @@ public typealias RootScopeInitializationPluginImplementationDependencies
     = DependencyProvider
     & LoggedInScopeBuilderProvider
     & LoggedOutFeatureBuilderProvider
-    & LoadingScopeBuilderProvider
+    & LoadingFeatureBuilderProvider
     & UserSessionStorageServiceProvider
     & UserStorageServiceProvider
     & WindowServiceProvider
@@ -34,7 +34,7 @@ public final class RootScopeInitializationPluginImplementation: ScopeInitializat
     private let loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController>
 
     // @Inject
-    private let loadingScopeBuilder: any Builder<LoadingScopeArguments, AnyObject>
+    private let loadingFeatureBuilder: any Builder<LoadingFeatureArguments, UIViewController>
 
     // @Inject
     private let loggedInScopeBuilder: any Builder<LoggedInScopeArguments, AnyObject>
@@ -45,12 +45,14 @@ public final class RootScopeInitializationPluginImplementation: ScopeInitializat
         self.userStorageService = dependencies.userStorageService
         self.windowService = dependencies.windowService
         self.loggedOutFeatureBuilder = dependencies.loggedOutFeatureBuilder
-        self.loadingScopeBuilder = dependencies.loadingScopeBuilder
+        self.loadingFeatureBuilder = dependencies.loadingFeatureBuilder
         self.loggedInScopeBuilder = dependencies.loggedInScopeBuilder
     }
 
     public func execute() {
         guard let userSession = self.userSessionStorageService.userSession else {
+            self.userSessionStorageService.userSession = nil
+            self.userStorageService.user = nil
             let builder = self.loggedOutFeatureBuilder
             self.windowService.register {
                 let arguments = LoggedOutFeatureArguments()
@@ -60,8 +62,12 @@ public final class RootScopeInitializationPluginImplementation: ScopeInitializat
         }
 
         guard let user = self.userStorageService.user, user.id == userSession.userID else {
-            let arguments = LoadingScopeArguments(userSession: userSession)
-            self.loadingScopeBuilder.build(arguments: arguments)
+            self.userStorageService.user = nil
+            let builder = self.loadingFeatureBuilder
+            self.windowService.register {
+                let arguments = LoadingFeatureArguments(userSession: userSession)
+                return builder.build(arguments: arguments)
+            }
             return
         }
 

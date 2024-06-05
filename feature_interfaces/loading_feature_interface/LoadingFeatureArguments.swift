@@ -1,9 +1,20 @@
 import DependencyFoundation
 import UIKit
+import UserSessionServiceInterface
 
 // @BuilderProvider(building: UIViewController.self)
+// @Provider
 public struct LoadingFeatureArguments {
-    public init() {}
+    public let userSession: UserSession
+
+    public init(userSession: UserSession) {
+        self.userSession = userSession
+    }
+}
+
+// TODO: Generate with @Provider macro.
+public protocol LoadingFeatureArgumentsProvider {
+    var loadingFeatureArguments: LoadingFeatureArguments { get }
 }
 
 // TODO: Generate with @BuilderProvider macro.

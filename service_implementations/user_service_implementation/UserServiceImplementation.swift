@@ -1,14 +1,14 @@
 import DependencyFoundation
 import Foundation
 import UserServiceInterface
-import LoadingScopeInterface
+import LoadingFeatureInterface
 
 private let userIDsToUsersKey = "UserIDsToUsers"
 
 // TODO: Generate with @Injectable macro.
 public typealias UserServiceImplementationDependencies
     = DependencyProvider
-    & LoadingScopeArgumentsProvider
+    & LoadingFeatureArgumentsProvider
 
 // @Injectable
 public final class UserServiceImplementation: UserService {
@@ -32,11 +32,11 @@ public final class UserServiceImplementation: UserService {
     }
 
     // @Inject
-    private let loadingScopeArguments: LoadingScopeArguments
+    private let loadingFeatureArguments: LoadingFeatureArguments
 
     // TODO: Generate with @Injectable macro.
     public init(dependencies: UserServiceImplementationDependencies) {
-        self.loadingScopeArguments = dependencies.loadingScopeArguments
+        self.loadingFeatureArguments = dependencies.loadingFeatureArguments
     }
 
     private enum UserServiceImplementationError: Error {
@@ -44,7 +44,7 @@ public final class UserServiceImplementation: UserService {
     }
 
     public func getCurrentUser() async throws -> User {
-        guard let user = self.userIDsToUsers[self.loadingScopeArguments.userSession.userID] else {
+        guard let user = self.userIDsToUsers[self.loadingFeatureArguments.userSession.userID] else {
             throw UserServiceImplementationError.missingUser
         }
 

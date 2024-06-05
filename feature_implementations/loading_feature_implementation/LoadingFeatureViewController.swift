@@ -1,6 +1,6 @@
 import DependencyFoundation
 import LoadingFeatureInterface
-import LoadingScopeInterface
+import LoadingFeatureInterface
 import LoggedOutFeatureInterface
 import LoggedInScopeInterface
 import UserServiceInterface
@@ -9,7 +9,7 @@ import UIKit
 import WindowServiceInterface
 
 // TODO: Generate with @Builder macro.
-public final class LoadingFeatureBuilder: DependencyContainer<LoadingFeatureDependencies>, Builder {
+public final class LoadingFeatureViewControllerBuilder: DependencyContainer<LoadingFeatureDependencies>, Builder {
     public func build(arguments: LoadingFeatureArguments) -> UIViewController {
         return LoadingFeatureViewController(dependencies: self.dependencies, arguments: arguments)
     }
@@ -18,7 +18,7 @@ public final class LoadingFeatureBuilder: DependencyContainer<LoadingFeatureDepe
 // TODO: Generate with @Injectable macro.
 public typealias LoadingFeatureDependencies
     = DependencyProvider
-    & LoadingScopeArgumentsProvider
+    & LoadingFeatureArgumentsProvider
     & LoggedInScopeBuilderProvider
     & LoggedOutFeatureBuilderProvider
     & UserSessionStorageServiceProvider
@@ -31,7 +31,7 @@ public typealias LoadingFeatureDependencies
 final class LoadingFeatureViewController: UIViewController {
 
     // @Inject
-    private let loadingScopeArguments: LoadingScopeArguments
+    private let loadingFeatureArguments: LoadingFeatureArguments
 
     // @Inject
     private let userSessionStorageService: UserSessionStorageService
@@ -56,7 +56,7 @@ final class LoadingFeatureViewController: UIViewController {
 
     // TODO: Generate with @Injectable macro.
     init(dependencies: LoadingFeatureDependencies, arguments: LoadingFeatureArguments) {
-        self.loadingScopeArguments = dependencies.loadingScopeArguments
+        self.loadingFeatureArguments = dependencies.loadingFeatureArguments
         self.userSessionStorageService = dependencies.userSessionStorageService
         self.userService = dependencies.userService
         self.userStorageService = dependencies.userStorageService
@@ -89,7 +89,7 @@ final class LoadingFeatureViewController: UIViewController {
             do {
                 let user = try await self.userService.getCurrentUser()
                 self.userStorageService.user = user
-                await self.buildLoggedInScope(userSession: self.loadingScopeArguments.userSession, user: user)
+                await self.buildLoggedInScope(userSession: self.loadingFeatureArguments.userSession, user: user)
             } catch {
                 print(error)
                 self.userSessionStorageService.userSession = nil

@@ -3,7 +3,7 @@ import LoggedInScopeInterface
 import LoggedInScopeImplementation
 import LoggedOutFeatureInterface
 import LoggedOutScopeImplementation
-import LoadingScopeInterface
+import LoadingFeatureInterface
 import LoadingScopeImplementation
 import RootScopeInterface
 import RootScopeInitializationPluginImplementation
@@ -39,7 +39,7 @@ public final class RootScopeImplementation: Scope<RootScopeImplementationDepende
     // @Instantiate
     // let loggedOutScopeBuilder: LoggedOutScopeImplementationBuilder
 
-    // @Provide(Builder<LoadingScopeArguments, AnyObject>.self)
+    // @Provide(Builder<LoadingFeatureArguments, AnyObject>.self)
     // @Instantiate
     // let loadingScopeBuilder: LoadingScopeImplementationBuilder
 
@@ -109,10 +109,10 @@ extension RootScopeImplementation: LoggedOutFeatureBuilderProvider {
 }
 
 // TODO: Generate from @Instantiate and @Provide macros.
-extension RootScopeImplementation: LoadingScopeBuilderProvider {
-    public var loadingScopeBuilder: any Builder<LoadingScopeArguments, AnyObject> {
+extension RootScopeImplementation: LoadingFeatureBuilderProvider {
+    public var loadingFeatureBuilder: any Builder<LoadingFeatureArguments, UIViewController> {
         return self.new { [unowned self] in
-            LoadingScopeImplementationBuilder(dependencies: self)
+            LoadingFeatureBuilder(dependencies: self)
         }
     }
 }
