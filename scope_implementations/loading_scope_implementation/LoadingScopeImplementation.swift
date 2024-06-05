@@ -34,27 +34,27 @@ final class LoadingScopeImplementation: Scope<LoadingScopeImplementationDependen
     // @Arguments
     let loadingFeatureArguments: LoadingFeatureArguments
 
-    // @Propagate
-    // let windowService: WindowService
-
-    // @Propagate
+    // @Propagate(type: UserStorageServiceProvider.self)
     // let userStorageService: UserStorageService
 
-    // @Propagate
+    // @Propagate(type: UserSessionStorageServiceProvider.self)
     // let userSessionStorageService: UserSessionStorageService
 
-    // @Propagate
-    // let loggedOutFeatureBuilder: LoggedOutFeatureBuilder
+    // @Propagate(type: WindowServiceProvider.self)
+    // let windowService: WindowService
 
-    // @Propagate
-    // let loggedInFeatureBuilder: LoggedInFeatureBuilder
+    // @Propagate(type: LoggedOutFeatureBuilderProvider.self)
+    // let loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController>
 
-    // @Instantiate(UserServiceImplementation.self)
+    // @Propagate(type: LoggedInFeatureBuilderProvider.self)
+    // let loggedInFeatureBuilder: any Builder<LoggedInFeatureArguments, UIViewController>
+
+    // @Provide(type: UserServiceProvider.self)
+    // @Instantiate(type: UserServiceImplementation.self)
     // let userService: UserService
 
-    // @Provide(Builder<LoadingFeatureArguments, UIViewController>.self)
-    // @Instantiate
-    // let loadingFeatureBuilder: LoadingFeatureBuilder
+    // @Instantiate(type: LoadingFeatureBuilder.self)
+    // let loadingFeatureBuilder: any Builder<LoadingFeatureArguments, UIViewController>
 
     // TODO: Generate with @Injectable macro.
     init(dependencies: LoadingScopeImplementationDependencies, arguments: LoadingFeatureArguments) {
@@ -62,6 +62,9 @@ final class LoadingScopeImplementation: Scope<LoadingScopeImplementationDependen
         super.init(dependencies: dependencies)
     }
 }
+
+// TODO: Generate from @Arguments macro.
+extension LoadingScopeImplementation: LoadingFeatureArgumentsProvider {}
 
 // TODO: Generate from the @Propagate macro.
 extension LoadingScopeImplementation: WindowServiceProvider {
@@ -98,7 +101,7 @@ extension LoadingScopeImplementation: LoggedInFeatureBuilderProvider {
     }
 }
 
-// TODO: Generate from the @Instantiate macro.
+// TODO: Generate from @Provide and @Instantiate macros.
 extension LoadingScopeImplementation: UserServiceProvider {
     var userService: any UserService {
         return self.strong { [unowned self] in
@@ -115,7 +118,3 @@ extension LoadingScopeImplementation {
         }
     }
 }
-
-// TODO: Generate from @Arguments macro.
-extension LoadingScopeImplementation: LoadingFeatureArgumentsProvider {}
-

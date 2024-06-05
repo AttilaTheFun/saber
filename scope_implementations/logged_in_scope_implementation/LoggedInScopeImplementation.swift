@@ -18,13 +18,6 @@ public final class LoggedInFeatureBuilder: DependencyContainer<LoggedInScopeImpl
     }
 }
 
-// TODO: Generate with @Buildable macro.
-public final class LoggedInScopeImplementationBuilder: DependencyContainer<LoggedInScopeImplementationDependencies>, Builder {
-    public func build(arguments: LoggedInFeatureArguments) -> AnyObject {
-        return LoggedInScopeImplementation(dependencies: self.dependencies, arguments: arguments)
-    }
-}
-
 // TODO: Generate with @Injectable macro.
 public typealias LoggedInScopeImplementationDependencies
     = DependencyProvider
@@ -40,19 +33,20 @@ final class LoggedInScopeImplementation: Scope<LoggedInScopeImplementationDepend
     // @Arguments
     let loggedInFeatureArguments: LoggedInFeatureArguments
 
-    // @Propagate
+    // @Propagate(type: UserStorageServiceProvider.self)
     // let userStorageService: UserStorageService
 
-    // @Propagate
+    // @Propagate(type: UserSessionStorageServiceProvider.self
     // let userSessionStorageService: UserSessionStorageService
 
-    // @Propagate
+    // @Propagate(type: WindowServiceProvider.self)
     // let windowService: WindowService
 
-    // @Propagate
-    // let loggedOutFeatureBuilder: LoggedOutFeatureBuilder
+    // @Propagate(type: LoggedOutFeatureBuilderProvider.self)
+    // let loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController>
 
-    // @Instantiate(UserSessionServiceImplementation.self)
+    // @Provide(type: UserSessionServiceProvider.self)
+    // @Instantiate(type: UserSessionServiceImplementation.self)
     // let userSessionService: UserSessionService
 
     // TODO: Generate with @Injectable macro.
@@ -61,6 +55,9 @@ final class LoggedInScopeImplementation: Scope<LoggedInScopeImplementationDepend
         super.init(dependencies: dependencies)
     }
 }
+
+// TODO: Generate from @Arguments macro.
+extension LoggedInScopeImplementation: LoggedInFeatureArgumentsProvider {}
 
 // TODO: Generate from the @Propagate macro.
 extension LoggedInScopeImplementation: UserStorageServiceProvider {
@@ -90,7 +87,7 @@ extension LoggedInScopeImplementation: LoggedOutFeatureBuilderProvider {
     }
 }
 
-// TODO: Generate from the @Instantiate macro.
+// TODO: Generate from @Provide and @Instantiate macros.
 extension LoggedInScopeImplementation: UserSessionServiceProvider {
     var userSessionService: any UserSessionService {
         return self.strong { [unowned self] in
@@ -107,6 +104,3 @@ extension LoggedInScopeImplementation {
         }
     }
 }
-
-// TODO: Generate from @Arguments macro.
-extension LoggedInScopeImplementation: LoggedInFeatureArgumentsProvider {}

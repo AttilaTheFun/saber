@@ -31,29 +31,31 @@ final class LoggedOutScopeImplementation: Scope<LoggedOutScopeImplementationDepe
     // @Arguments
     let loggedOutFeatureArguments: LoggedOutFeatureArguments
 
-    // @Propagate
-    // let windowService: WindowService
-
-    // @Propagate
+    // @Propagate(type: UserSessionStorageServiceProvider.self)
     // let userSessionStorageService: UserSessionStorageService
 
-    // @Propagate
-    // let loadingFeatureBuilder: LoadingFeatureBuilder
+    // @Propagate(type: WindowServiceProvider.self)
+    // let windowService: WindowService
 
-    // @Instantiate(UserSessionServiceImplementation.self)
+    // @Propagate(type: LoadingFeatureBuilderProvider.self)
+    // let loadingFeatureBuilder: any Builder<LoadingFeatureArguments, UIViewController>
+
+    // @Provide(type: UserSessionServiceProvider.self)
+    // @Instantiate(type: UserSessionServiceImplementation.self)
     // let userSessionService: UserSessionService
 
-    // @Provide(Builder<LoggedOutFeatureArguments, UIViewController>.self)
-    // @Instantiate
-    // let loggedOutFeatureBuilder: LoggedOutFeatureBuilder
+    // @Instantiate(type: LoggedOutFeatureViewControllerBuilder.self)
+    // let loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController>
 
     // TODO: Generate with @Injectable macro.
     init(dependencies: LoggedOutScopeImplementationDependencies, arguments: LoggedOutFeatureArguments) {
         self.loggedOutFeatureArguments = arguments
-
         super.init(dependencies: dependencies)
     }
 }
+
+// TODO: Generate from @Arguments macro.
+extension LoggedOutScopeImplementation: LoggedOutFeatureArgumentsProvider {}
 
 // TODO: Generate from the @Propagate macro.
 extension LoggedOutScopeImplementation: UserSessionStorageServiceProvider {
@@ -76,7 +78,7 @@ extension LoggedOutScopeImplementation: LoadingFeatureBuilderProvider {
     }
 }
 
-// TODO: Generate from the @Instantiate macro.
+// TODO: Generate from @Provide and @Instantiate macros.
 extension LoggedOutScopeImplementation: UserSessionServiceProvider {
     var userSessionService: any UserSessionService {
         return self.strong { [unowned self] in
@@ -93,6 +95,3 @@ extension LoggedOutScopeImplementation {
         }
     }
 }
-
-// TODO: Generate from @Arguments macro.
-extension LoggedOutScopeImplementation: LoggedOutFeatureArgumentsProvider {}
