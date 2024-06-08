@@ -1,5 +1,5 @@
 load("@build_bazel_rules_apple//apple:apple.bzl", "local_provisioning_profile")
-load("@build_bazel_rules_apple//apple:ios.bzl", "ios_application")
+load("@build_bazel_rules_apple//apple:ios.bzl", "ios_application", "ios_unit_test")
 load("@build_bazel_rules_apple//apple:versioning.bzl", "apple_bundle_version")
 load("@rules_xcodeproj//xcodeproj:defs.bzl", "top_level_target", "xcode_provisioning_profile", "xcodeproj")
 
@@ -46,6 +46,15 @@ ios_application(
     deps = ["//applications/example_application/sources"],
 )
 
+ios_unit_test(
+    name = "example_application_tests",
+    bundle_id = BUNDLE_ID + ".Tests",
+    minimum_os_version = "16.0",
+    test_host = ":example_application",
+    visibility = ["//visibility:public"],
+    deps = ["//macros/stringify_macro_tests"],
+)
+
 xcodeproj(
     name = "example_application_project",
     build_mode = "bazel",
@@ -59,5 +68,6 @@ xcodeproj(
                 "simulator",
             ],
         ),
+        ":example_application_tests",
     ],
 )

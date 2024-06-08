@@ -12,7 +12,6 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if canImport(SwiftCompilerPlugin)
 import SwiftCompilerPlugin
 import SwiftSyntaxMacros
 
@@ -22,4 +21,3 @@ struct StringifyMacroPlugin: CompilerPlugin {
     StringifyMacro.self
   ]
 }
-#endif

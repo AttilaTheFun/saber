@@ -1,6 +1,6 @@
 load("@build_bazel_rules_swift//swift:swift.bzl", "swift_test")
 
-package(default_visibility = ["//macros:__subpackages__"])
+package(default_visibility = ["//visibility:public"])
 
 swift_test(
     name = "stringify_macro_tests",

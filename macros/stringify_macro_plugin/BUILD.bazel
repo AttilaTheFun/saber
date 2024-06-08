@@ -1,6 +1,6 @@
 load("@build_bazel_rules_swift//swift:swift_compiler_plugin.bzl", "swift_compiler_plugin")
 
-package(default_visibility = ["//macros:__subpackages__"])
+package(default_visibility = ["//visibility:public"])
 
 swift_compiler_plugin(
     name = "stringify_macro_plugin",

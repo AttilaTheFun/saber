@@ -8,4 +8,4 @@ swift_library(
     visibility = ["//visibility:public"],
 )
 
-package(default_visibility = ["//macros:__subpackages__"])
+package(default_visibility = ["//visibility:public"])
