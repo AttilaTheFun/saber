@@ -4,7 +4,6 @@ import LoadingFeatureInterface
 import UserSessionServiceInterface
 import UIKit
 import WindowServiceInterface
-import StringifyMacro
 
 // TODO: Generate with @Builder macro.
 public final class LoggedOutFeatureViewControllerBuilder: DependencyContainer<LoggedOutFeatureDependencies>, Builder {
@@ -46,7 +45,6 @@ final class LoggedOutFeatureViewController: UIViewController {
 
     // TODO: Generate with @Injectable macro.
     init(dependencies: LoggedOutFeatureDependencies, arguments: LoggedOutFeatureArguments) {
-        print(#stringify(1 + 2))
         self.userSessionService = dependencies.userSessionService
         self.userSessionStorageService = dependencies.userSessionStorageService
         self.windowService = dependencies.windowService

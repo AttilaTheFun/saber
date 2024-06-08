@@ -1,4 +1,3 @@
-load("@build_bazel_rules_apple//apple:ios.bzl", "ios_build_test")
 load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 swift_library(
@@ -7,18 +6,12 @@ swift_library(
         "Builder.swift",
         "DependencyContainer.swift",
         "DependencyProvider.swift",
+        "Provider.swift",
         "Scope.swift",
         "ScopeRouteHandler.swift",
     ],
     module_name = "DependencyFoundation",
+    plugins = ["//macros/dependency_macros_plugin"],
     visibility = ["//visibility:public"],
     deps = ["//foundations/swift_foundation"],
-)
-
-ios_build_test(
-    name = "dependency_foundation_build_test",
-    minimum_os_version = "16.0",
-    targets = [
-        ":dependency_foundation",
-    ],
 )

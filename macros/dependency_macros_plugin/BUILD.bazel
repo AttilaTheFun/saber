@@ -3,12 +3,12 @@ load("@build_bazel_rules_swift//swift:swift_compiler_plugin.bzl", "swift_compile
 package(default_visibility = ["//visibility:public"])
 
 swift_compiler_plugin(
-    name = "stringify_macro_plugin",
+    name = "dependency_macros_plugin",
     srcs = [
-        "StringifyMacro.swift",
-        "StringifyMacroPlugin.swift",
+        "DependencyMacrosPlugin.swift",
+        "ProviderMacro.swift",
     ],
-    module_name = "StringifyMacroPlugin",
+    module_name = "DependencyMacrosPlugin",
     visibility = ["//visibility:public"],
     deps = [
         "@swiftpkg_swift_syntax//:SwiftCompilerPlugin",
