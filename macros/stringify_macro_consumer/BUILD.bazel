@@ -1,0 +1,11 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_binary")
+
+package(default_visibility = ["//macros:__subpackages__"])
+
+swift_binary(
+    name = "stringify_macro_consumer",
+    srcs = ["StringifyMacroConsumer.swift"],
+    module_name = "StringifyMacroConsumer",
+    visibility = ["//visibility:public"],
+    deps = ["//macros/stringify_macro"],
+)

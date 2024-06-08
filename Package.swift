@@ -8,6 +8,7 @@ let package = Package(
 
         // MARK: First Party Dependencies
 
+        .package(url: "https://github.com/apple/swift-syntax.git", from: "510.0.2"),
         .package(url: "https://github.com/apple/swift-async-algorithms.git", from: "1.0.0"),
 
         // MARK: Third Party Dependencies

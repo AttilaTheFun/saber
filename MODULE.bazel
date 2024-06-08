@@ -53,5 +53,6 @@ use_repo(
     swift_deps,
     "swiftpkg_asyncextensions",
     "swiftpkg_swift_async_algorithms",
+    "swiftpkg_swift_syntax",
 )
 # swift_deps END

@@ -1,0 +1,13 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_test")
+
+package(default_visibility = ["//macros:__subpackages__"])
+
+swift_test(
+    name = "stringify_macro_tests",
+    srcs = ["StringifyMacroTests.swift"],
+    module_name = "StringifyMacroTests",
+    deps = [
+        "//macros/stringify_macro_plugin",
+        "@swiftpkg_swift_syntax//:SwiftSyntaxMacroExpansion",
+    ],
+)

@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 6,
-  "moduleFileHash": "c34c2defddfaff357c6efe8610edfd7f8cc93c612e740b5d85ba3fb42b5478c4",
+  "moduleFileHash": "7f53c48be1712af0ec57be9cea3feefbbd1ad62212a64374a3874adb3f9888f1",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -35,7 +35,8 @@
           },
           "imports": {
             "swiftpkg_asyncextensions": "swiftpkg_asyncextensions",
-            "swiftpkg_swift_async_algorithms": "swiftpkg_swift_async_algorithms"
+            "swiftpkg_swift_async_algorithms": "swiftpkg_swift_async_algorithms",
+            "swiftpkg_swift_syntax": "swiftpkg_swift_syntax"
           },
           "devImports": [],
           "tags": [
@@ -3231,7 +3232,7 @@
       "general": {
         "bzlTransitiveDigest": "6l2zsx0cqTtMqy8Iqgd0Dh9ePjYCUdvPDGPecHxDGrw=",
         "recordedFileInputs": {
-          "@@//swift_deps_index.json": "60cdf25eaa9622b480d54395c493f313d39b6e83a6ea90481ebd2c82f1c8827c"
+          "@@//swift_deps_index.json": "4c5891fab186e1dd341a00725cadb072dd19602b356ef01e56cfdddb78be2225"
         },
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -3243,6 +3244,25 @@
               "bazel_package_name": "swiftpkg_asyncextensions",
               "commit": "1f0729e4f1f6c7166acfac3cec43b3cbe83be0e6",
               "remote": "https://github.com/sideeffect-io/AsyncExtensions.git",
+              "dependencies_index": "@@//:swift_deps_index.json",
+              "init_submodules": false,
+              "recursive_init_submodules": false,
+              "patch_args": [
+                "-p0"
+              ],
+              "patch_cmds": [],
+              "patch_cmds_win": [],
+              "patch_tool": "",
+              "patches": []
+            }
+          },
+          "swiftpkg_swift_syntax": {
+            "bzlFile": "@@rules_swift_package_manager~//swiftpkg/internal:swift_package.bzl",
+            "ruleClassName": "swift_package",
+            "attributes": {
+              "bazel_package_name": "swiftpkg_swift_syntax",
+              "commit": "303e5c5c36d6a558407d364878df131c3546fad8",
+              "remote": "https://github.com/apple/swift-syntax.git",
               "dependencies_index": "@@//:swift_deps_index.json",
               "init_submodules": false,
               "recursive_init_submodules": false,

@@ -1,0 +1,3 @@
+# gazelle:default_visibility //macros:__subpackages__
+
+package(default_visibility = ["//macros:__subpackages__"])

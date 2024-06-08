@@ -4,6 +4,7 @@ load("@rules_swift_package_manager//swiftpkg:defs.bzl", "swift_update_packages")
 # gazelle directives
 
 # gazelle:swift_module_naming_convention pascal_case
+# gazelle:resolve swift StringifyMacroPlugin //macros/stringify_macro_plugin
 # gazelle:exclude .build
 # gazelle:exclude .bazel
 
@@ -12,6 +13,7 @@ load("@rules_swift_package_manager//swiftpkg:defs.bzl", "swift_update_packages")
 gazelle_binary(
     name = "gazelle_bin",
     languages = [
+        "@bazel_gazelle//language/bazel/visibility",
         "@rules_swift_package_manager//gazelle",
     ],
 )

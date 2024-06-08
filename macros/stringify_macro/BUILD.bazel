@@ -1,0 +1,11 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "stringify_macro",
+    srcs = ["Stringify.swift"],
+    module_name = "StringifyMacro",
+    plugins = ["//macros/stringify_macro_plugin"],
+    visibility = ["//visibility:public"],
+)
+
+package(default_visibility = ["//macros:__subpackages__"])
