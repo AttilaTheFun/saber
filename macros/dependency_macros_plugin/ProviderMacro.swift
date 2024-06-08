@@ -14,26 +14,32 @@ public struct ProviderMacro: PeerMacro {
     ) throws -> [DeclSyntax] {
 
         // Extract the name of the type:
-        let typeNameToken: TokenSyntax
+        let name: TokenSyntax
+        let modifiers: DeclModifierListSyntax
         if let declaration = declaration.as(ProtocolDeclSyntax.self) {
-            typeNameToken = declaration.name
+            name = declaration.name
+            modifiers = declaration.modifiers
         } else if let declaration = declaration.as(ClassDeclSyntax.self) {
-            typeNameToken = declaration.name
+            name = declaration.name
+            modifiers = declaration.modifiers
         } else if let declaration = declaration.as(ActorDeclSyntax.self) {
-            typeNameToken = declaration.name
+            name = declaration.name
+            modifiers = declaration.modifiers
         } else if let declaration = declaration.as(StructDeclSyntax.self) {
-            typeNameToken = declaration.name
+            name = declaration.name
+            modifiers = declaration.modifiers
         } else if let declaration = declaration.as(EnumDeclSyntax.self) {
-            typeNameToken = declaration.name
+            name = declaration.name
+            modifiers = declaration.modifiers
         } else {
             throw ProviderMacroError.invalidDeclSyntax(declaration)
         }
 
         // Create the provider protocol declaration:
-        let typeName = typeNameToken.text
+        let typeName = name.text
         let declSyntax: [DeclSyntax] = [
             """
-            protocol \(raw: typeName)Provider {
+            \(modifiers.trimmed) protocol \(raw: typeName)Provider {
                 var \(raw: typeName.lowercasedFirstCharacter()): \(raw: typeName) { get }
             }
             """

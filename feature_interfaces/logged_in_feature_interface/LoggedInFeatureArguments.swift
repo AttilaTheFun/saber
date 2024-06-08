@@ -4,7 +4,7 @@ import UserSessionServiceInterface
 import UserServiceInterface
 
 // @BuilderProvider(building: UIViewController.self)
-// @Provider
+@Provider
 public struct LoggedInFeatureArguments {
     public let userSession: UserSession
     public let user: User
@@ -13,11 +13,6 @@ public struct LoggedInFeatureArguments {
         self.userSession = userSession
         self.user = user
     }
-}
-
-// TODO: Generate with @Provider macro.
-public protocol LoggedInFeatureArgumentsProvider {
-    var loggedInFeatureArguments: LoggedInFeatureArguments { get }
 }
 
 // TODO: Generate with @BuilderProvider macro.
