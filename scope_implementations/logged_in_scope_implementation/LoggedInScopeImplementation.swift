@@ -12,7 +12,7 @@ import WindowServiceInterface
 
 // TODO: Generate with @FeaatureScopeBuilder macro.
 public final class LoggedInFeatureBuilder: DependencyContainer<LoggedInScopeImplementationDependencies>, Builder {
-    public func build(arguments: LoggedInFeatureArguments) -> UIViewController {
+    public func build(arguments: LoggedInFeature) -> UIViewController {
         let scope = LoggedInScopeImplementation(dependencies: self.dependencies, arguments: arguments)
         return scope.loggedInFeatureViewControllerBuilder.build(arguments: arguments)
     }
@@ -31,7 +31,7 @@ public typealias LoggedInScopeImplementationDependencies
 final class LoggedInScopeImplementation: Scope<LoggedInScopeImplementationDependencies> {
 
     // @Arguments
-    let loggedInFeatureArguments: LoggedInFeatureArguments
+    let loggedInFeature: LoggedInFeature
 
     // @Propagate(type: UserStorageServiceProvider.self)
     // let userStorageService: UserStorageService
@@ -43,21 +43,21 @@ final class LoggedInScopeImplementation: Scope<LoggedInScopeImplementationDepend
     // let windowService: WindowService
 
     // @Propagate(type: LoggedOutFeatureBuilderProvider.self)
-    // let loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController>
+    // let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
 
     // @Provide(type: UserSessionServiceProvider.self)
     // @Instantiate(type: UserSessionServiceImplementation.self)
     // let userSessionService: UserSessionService
 
     // TODO: Generate with @Injectable macro.
-    init(dependencies: LoggedInScopeImplementationDependencies, arguments: LoggedInFeatureArguments) {
-        self.loggedInFeatureArguments = arguments
+    init(dependencies: LoggedInScopeImplementationDependencies, arguments: LoggedInFeature) {
+        self.loggedInFeature = arguments
         super.init(dependencies: dependencies)
     }
 }
 
 // TODO: Generate from @Arguments macro.
-extension LoggedInScopeImplementation: LoggedInFeatureArgumentsProvider {}
+extension LoggedInScopeImplementation: LoggedInFeatureProvider {}
 
 // TODO: Generate from the @Propagate macro.
 extension LoggedInScopeImplementation: UserStorageServiceProvider {
@@ -82,7 +82,7 @@ extension LoggedInScopeImplementation: WindowServiceProvider {
 
 // TODO: Generate from the @Propagate macro.
 extension LoggedInScopeImplementation: LoggedOutFeatureBuilderProvider {
-    var loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController> {
+    var loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController> {
         return self.dependencies.loggedOutFeatureBuilder
     }
 }
@@ -98,7 +98,7 @@ extension LoggedInScopeImplementation: UserSessionServiceProvider {
 
 // TODO: Generate from the @Instantiate macro.
 extension LoggedInScopeImplementation {
-    var loggedInFeatureViewControllerBuilder: any Builder<LoggedInFeatureArguments, UIViewController> {
+    var loggedInFeatureViewControllerBuilder: any Builder<LoggedInFeature, UIViewController> {
         return self.strong { [unowned self] in
             return LoggedInFeatureViewControllerBuilder(dependencies: self)
         }

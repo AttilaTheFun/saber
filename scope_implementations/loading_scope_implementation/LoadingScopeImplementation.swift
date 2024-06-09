@@ -12,7 +12,7 @@ import WindowServiceInterface
 
 // TODO: Generate with @FeaatureScopeBuilder macro.
 public final class LoadingFeatureBuilder: DependencyContainer<LoadingScopeImplementationDependencies>, Builder {
-    public func build(arguments: LoadingFeatureArguments) -> UIViewController {
+    public func build(arguments: LoadingFeature) -> UIViewController {
         let scope = LoadingScopeImplementation(dependencies: self.dependencies, arguments: arguments)
         return scope.loadingFeatureViewControllerBuilder.build(arguments: arguments)
     }
@@ -32,7 +32,7 @@ public typealias LoadingScopeImplementationDependencies
 final class LoadingScopeImplementation: Scope<LoadingScopeImplementationDependencies> {
 
     // @Arguments
-    let loadingFeatureArguments: LoadingFeatureArguments
+    let loadingFeature: LoadingFeature
 
     // @Propagate(type: UserStorageServiceProvider.self)
     // let userStorageService: UserStorageService
@@ -44,27 +44,27 @@ final class LoadingScopeImplementation: Scope<LoadingScopeImplementationDependen
     // let windowService: WindowService
 
     // @Propagate(type: LoggedOutFeatureBuilderProvider.self)
-    // let loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController>
+    // let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
 
     // @Propagate(type: LoggedInFeatureBuilderProvider.self)
-    // let loggedInFeatureBuilder: any Builder<LoggedInFeatureArguments, UIViewController>
+    // let loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController>
 
     // @Provide(type: UserServiceProvider.self)
     // @Instantiate(type: UserServiceImplementation.self)
     // let userService: UserService
 
     // @Instantiate(type: LoadingFeatureBuilder.self)
-    // let loadingFeatureBuilder: any Builder<LoadingFeatureArguments, UIViewController>
+    // let loadingFeatureBuilder: any Builder<LoadingFeature, UIViewController>
 
     // TODO: Generate with @Injectable macro.
-    init(dependencies: LoadingScopeImplementationDependencies, arguments: LoadingFeatureArguments) {
-        self.loadingFeatureArguments = arguments
+    init(dependencies: LoadingScopeImplementationDependencies, arguments: LoadingFeature) {
+        self.loadingFeature = arguments
         super.init(dependencies: dependencies)
     }
 }
 
 // TODO: Generate from @Arguments macro.
-extension LoadingScopeImplementation: LoadingFeatureArgumentsProvider {}
+extension LoadingScopeImplementation: LoadingFeatureProvider {}
 
 // TODO: Generate from the @Propagate macro.
 extension LoadingScopeImplementation: WindowServiceProvider {
@@ -89,14 +89,14 @@ extension LoadingScopeImplementation: UserSessionStorageServiceProvider {
 
 // TODO: Generate from the @Propagate macro.
 extension LoadingScopeImplementation: LoggedOutFeatureBuilderProvider {
-    var loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController> {
+    var loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController> {
         return self.dependencies.loggedOutFeatureBuilder
     }
 }
 
 // TODO: Generate from the @Propagate macro.
 extension LoadingScopeImplementation: LoggedInFeatureBuilderProvider {
-    var loggedInFeatureBuilder: any Builder<LoggedInFeatureArguments, UIViewController> {
+    var loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController> {
         return self.dependencies.loggedInFeatureBuilder
     }
 }
@@ -112,7 +112,7 @@ extension LoadingScopeImplementation: UserServiceProvider {
 
 // TODO: Generate from the @Instantiate macro.
 extension LoadingScopeImplementation {
-    var loadingFeatureViewControllerBuilder: any Builder<LoadingFeatureArguments, UIViewController> {
+    var loadingFeatureViewControllerBuilder: any Builder<LoadingFeature, UIViewController> {
         return self.strong { [unowned self] in
             return LoadingFeatureViewControllerBuilder(dependencies: self)
         }

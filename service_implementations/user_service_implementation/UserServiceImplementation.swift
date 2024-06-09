@@ -8,7 +8,7 @@ private let userIDsToUsersKey = "UserIDsToUsers"
 // TODO: Generate with @Injectable macro.
 public typealias UserServiceImplementationDependencies
     = DependencyProvider
-    & LoadingFeatureArgumentsProvider
+    & LoadingFeatureProvider
 
 // @Injectable
 public final class UserServiceImplementation: UserService {
@@ -32,11 +32,11 @@ public final class UserServiceImplementation: UserService {
     }
 
     // @Inject
-    private let loadingFeatureArguments: LoadingFeatureArguments
+    private let loadingFeature: LoadingFeature
 
     // TODO: Generate with @Injectable macro.
     public init(dependencies: UserServiceImplementationDependencies) {
-        self.loadingFeatureArguments = dependencies.loadingFeatureArguments
+        self.loadingFeature = dependencies.loadingFeature
     }
 
     private enum UserServiceImplementationError: Error {
@@ -44,7 +44,7 @@ public final class UserServiceImplementation: UserService {
     }
 
     public func getCurrentUser() async throws -> User {
-        guard let user = self.userIDsToUsers[self.loadingFeatureArguments.userSession.userID] else {
+        guard let user = self.userIDsToUsers[self.loadingFeature.userSession.userID] else {
             throw UserServiceImplementationError.missingUser
         }
 

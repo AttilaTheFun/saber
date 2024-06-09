@@ -10,7 +10,7 @@ import WindowServiceInterface
 
 // TODO: Generate with @Builder macro.
 public final class LoadingFeatureViewControllerBuilder: DependencyContainer<LoadingFeatureDependencies>, Builder {
-    public func build(arguments: LoadingFeatureArguments) -> UIViewController {
+    public func build(arguments: LoadingFeature) -> UIViewController {
         return LoadingFeatureViewController(dependencies: self.dependencies, arguments: arguments)
     }
 }
@@ -30,7 +30,7 @@ public typealias LoadingFeatureDependencies
 final class LoadingFeatureViewController: UIViewController {
 
     // @Arguments
-    private let loadingFeatureArguments: LoadingFeatureArguments
+    private let loadingFeature: LoadingFeature
 
     // @Inject
     private let userSessionStorageService: UserSessionStorageService
@@ -45,14 +45,14 @@ final class LoadingFeatureViewController: UIViewController {
     private let windowService: WindowService
 
     // @Inject
-    private let loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController>
+    private let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
 
     // @Inject
-    private let loggedInFeatureBuilder: any Builder<LoggedInFeatureArguments, UIViewController>
+    private let loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController>
 
     // TODO: Generate with @Injectable macro.
-    init(dependencies: LoadingFeatureDependencies, arguments: LoadingFeatureArguments) {
-        self.loadingFeatureArguments = arguments
+    init(dependencies: LoadingFeatureDependencies, arguments: LoadingFeature) {
+        self.loadingFeature = arguments
         self.userSessionStorageService = dependencies.userSessionStorageService
         self.userService = dependencies.userService
         self.userStorageService = dependencies.userStorageService
@@ -84,7 +84,7 @@ final class LoadingFeatureViewController: UIViewController {
         Task.detached {
             do {
                 let user = try await self.userService.getCurrentUser()
-                await self.buildLoggedInFeature(userSession: self.loadingFeatureArguments.userSession, user: user)
+                await self.buildLoggedInFeature(userSession: self.loadingFeature.userSession, user: user)
             } catch {
                 print(error)
                 await self.buildLoggedOutFeature()
@@ -99,7 +99,7 @@ final class LoadingFeatureViewController: UIViewController {
         self.userStorageService.user = user
         let builder = self.loggedInFeatureBuilder
         self.windowService.register {
-            let arguments = LoggedInFeatureArguments(userSession: userSession, user: user)
+            let arguments = LoggedInFeature(userSession: userSession, user: user)
             return builder.build(arguments: arguments)
         }
     }
@@ -109,7 +109,7 @@ final class LoadingFeatureViewController: UIViewController {
         self.userSessionStorageService.userSession = nil
         let builder = self.loggedOutFeatureBuilder
         self.windowService.register {
-            let arguments = LoggedOutFeatureArguments()
+            let arguments = LoggedOutFeature()
             return builder.build(arguments: arguments)
         }
     }

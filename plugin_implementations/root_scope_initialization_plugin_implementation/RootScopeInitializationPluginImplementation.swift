@@ -32,13 +32,13 @@ public final class RootScopeInitializationPluginImplementation: ScopeInitializat
     private let windowService: WindowService
 
     // @Inject
-    private let loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController>
+    private let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
 
     // @Inject
-    private let loadingFeatureBuilder: any Builder<LoadingFeatureArguments, UIViewController>
+    private let loadingFeatureBuilder: any Builder<LoadingFeature, UIViewController>
 
     // @Inject
-    private let loggedInFeatureBuilder: any Builder<LoggedInFeatureArguments, UIViewController>
+    private let loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController>
 
     // TODO: Generate with @Injectable macro.
     public init(dependencies: RootScopeInitializationPluginImplementationDependencies) {
@@ -56,7 +56,7 @@ public final class RootScopeInitializationPluginImplementation: ScopeInitializat
             self.userStorageService.user = nil
             let builder = self.loggedOutFeatureBuilder
             self.windowService.register {
-                let arguments = LoggedOutFeatureArguments()
+                let arguments = LoggedOutFeature()
                 return builder.build(arguments: arguments)
             }
             return
@@ -66,7 +66,7 @@ public final class RootScopeInitializationPluginImplementation: ScopeInitializat
             self.userStorageService.user = nil
             let builder = self.loadingFeatureBuilder
             self.windowService.register {
-                let arguments = LoadingFeatureArguments(userSession: userSession)
+                let arguments = LoadingFeature(userSession: userSession)
                 return builder.build(arguments: arguments)
             }
             return
@@ -74,7 +74,7 @@ public final class RootScopeInitializationPluginImplementation: ScopeInitializat
 
         let builder = self.loggedInFeatureBuilder
         self.windowService.register {
-            let arguments = LoggedInFeatureArguments(userSession: userSession, user: user)
+            let arguments = LoggedInFeature(userSession: userSession, user: user)
             return builder.build(arguments: arguments)
         }
     }

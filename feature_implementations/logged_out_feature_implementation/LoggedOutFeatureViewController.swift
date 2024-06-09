@@ -7,7 +7,7 @@ import WindowServiceInterface
 
 // TODO: Generate with @Builder macro.
 public final class LoggedOutFeatureViewControllerBuilder: DependencyContainer<LoggedOutFeatureDependencies>, Builder {
-    public func build(arguments: LoggedOutFeatureArguments) -> UIViewController {
+    public func build(arguments: LoggedOutFeature) -> UIViewController {
         return LoggedOutFeatureViewController(dependencies: self.dependencies, arguments: arguments)
     }
 }
@@ -34,17 +34,17 @@ final class LoggedOutFeatureViewController: UIViewController {
     private let windowService: WindowService
 
     // @Inject
-    private let loadingFeatureBuilder: any Builder<LoadingFeatureArguments, UIViewController>
+    private let loadingFeatureBuilder: any Builder<LoadingFeature, UIViewController>
 
     // @Arguments
-    private let arguments: LoggedOutFeatureArguments
+    private let arguments: LoggedOutFeature
 
     private let textField = UITextField()
     private let textFieldContainerView = UIView()
     private let logInButton = UIButton()
 
     // TODO: Generate with @Injectable macro.
-    init(dependencies: LoggedOutFeatureDependencies, arguments: LoggedOutFeatureArguments) {
+    init(dependencies: LoggedOutFeatureDependencies, arguments: LoggedOutFeature) {
         self.userSessionService = dependencies.userSessionService
         self.userSessionStorageService = dependencies.userSessionStorageService
         self.windowService = dependencies.windowService
@@ -146,7 +146,7 @@ final class LoggedOutFeatureViewController: UIViewController {
         self.userSessionStorageService.userSession = userSession
         let builder = self.loadingFeatureBuilder
         self.windowService.register {
-            let arguments = LoadingFeatureArguments(userSession: userSession)
+            let arguments = LoadingFeature(userSession: userSession)
             return builder.build(arguments: arguments)
         }
     }

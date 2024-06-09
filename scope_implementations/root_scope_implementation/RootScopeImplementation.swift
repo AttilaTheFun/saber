@@ -25,7 +25,7 @@ public typealias RootScopeImplementationDependencies
 public final class RootScopeImplementation: Scope<RootScopeImplementationDependencies> {
 
     // @Arguments
-    public let rootFeatureArguments: RootFeatureArguments
+    public let rootFeature: RootFeature
 
     // @Provide(type: UserSessionStorageServiceProvider.self)
     // @Instantiate(type: UserSessionStorageServiceImplementation.self)
@@ -41,23 +41,23 @@ public final class RootScopeImplementation: Scope<RootScopeImplementationDepende
 
     // @Provide(type: LoggedOutFeatureBuilderProvider.self)
     // @Instantiate(type: LoggedOutFeatureBuilder.self)
-    // let loggedOutScopeBuilder: any Builder<LoggedOutFeatureArguments, AnyObject>
+    // let loggedOutScopeBuilder: any Builder<LoggedOutFeature, AnyObject>
 
     // @Provide(type: LoadingFeatureBuilderProvider.self)
     // @Instantiate(type: LoadingFeatureBuilder.self)
-    // let loadingScopeBuilder: any Builder<LoadingFeatureArguments, AnyObject>
+    // let loadingScopeBuilder: any Builder<LoadingFeature, AnyObject>
 
     // @Provide(type: LoggedInFeatureBuilderProvider.self)
     // @Instantiate(type: LoggedInFeatureBuilder.self)
-    // let loggedInScopeBuilder: any Builder<LoggedInFeatureArguments, AnyObject>
+    // let loggedInScopeBuilder: any Builder<LoggedInFeature, AnyObject>
 
     // @Plugin(type: ScopeInitializationPlugin.self)
     // @Instantiate(type: RootScopeInitializationPluginImplementation.self)
     // let rootScopeInitializationPlugin: ScopeInitializationPlugin
 
     // TODO: Generate with @Injectable macro.
-    public init(dependencies: RootScopeImplementationDependencies, arguments: RootFeatureArguments) {
-        self.rootFeatureArguments = arguments
+    public init(dependencies: RootScopeImplementationDependencies, arguments: RootFeature) {
+        self.rootFeature = arguments
         super.init(dependencies: dependencies)
 
         // Register Plugins
@@ -102,7 +102,7 @@ extension RootScopeImplementation: WindowServiceProvider {
 
 // TODO: Generate from @Provide and @Instantiate macros.
 extension RootScopeImplementation: LoggedOutFeatureBuilderProvider {
-    public var loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController> {
+    public var loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController> {
         return self.strong { [unowned self] in
             LoggedOutFeatureBuilder(dependencies: self)
         }
@@ -111,7 +111,7 @@ extension RootScopeImplementation: LoggedOutFeatureBuilderProvider {
 
 // TODO: Generate from @Provide and @Instantiate macros.
 extension RootScopeImplementation: LoadingFeatureBuilderProvider {
-    public var loadingFeatureBuilder: any Builder<LoadingFeatureArguments, UIViewController> {
+    public var loadingFeatureBuilder: any Builder<LoadingFeature, UIViewController> {
         return self.strong { [unowned self] in
             LoadingFeatureBuilder(dependencies: self)
         }
@@ -120,7 +120,7 @@ extension RootScopeImplementation: LoadingFeatureBuilderProvider {
 
 // TODO: Generate from @Provide and @Instantiate macros.
 extension RootScopeImplementation: LoggedInFeatureBuilderProvider {
-    public var loggedInFeatureBuilder: any Builder<LoggedInFeatureArguments, UIViewController> {
+    public var loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController> {
         return self.strong { [unowned self] in
             LoggedInFeatureBuilder(dependencies: self)
         }
@@ -137,4 +137,4 @@ extension RootScopeImplementation {
 }
 
 // TODO: Generate from @Arguments macro.
-extension RootScopeImplementation: RootFeatureArgumentsProvider {}
+extension RootScopeImplementation: RootFeatureProvider {}

@@ -2,7 +2,7 @@ import DependencyFoundation
 import Foundation
 
 @Provider
-public struct RootFeatureArguments {
+public struct RootFeature {
     public init(endpointURL: URL) {
         self.endpointURL = endpointURL
     }

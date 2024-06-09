@@ -9,7 +9,7 @@ import WindowServiceInterface
 
 // TODO: Generate with @Builder macro.
 public final class LoggedInFeatureViewControllerBuilder: DependencyContainer<LoggedInFeatureDependencies>, Builder {
-    public func build(arguments: LoggedInFeatureArguments) -> UIViewController {
+    public func build(arguments: LoggedInFeature) -> UIViewController {
         return LoggedInFeatureViewController(dependencies: self.dependencies, arguments: arguments)
     }
 }
@@ -28,7 +28,7 @@ public typealias LoggedInFeatureDependencies
 final class LoggedInFeatureViewController: UIViewController {
 
     // @Arguments
-    private let loggedInFeatureArguments: LoggedInFeatureArguments
+    private let loggedInFeature: LoggedInFeature
 
     // @Inject
     private let userSessionService: UserSessionService
@@ -43,15 +43,15 @@ final class LoggedInFeatureViewController: UIViewController {
     private let windowService: WindowService
 
     // @Inject
-    private let loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController>
+    private let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
 
     private let label = UILabel()
     private let labelContainerView = UIView()
     private let logOutButton = UIButton()
 
     // TODO: Generate with @Injectable macro.
-    init(dependencies: LoggedInFeatureDependencies, arguments: LoggedInFeatureArguments) {
-        self.loggedInFeatureArguments = arguments
+    init(dependencies: LoggedInFeatureDependencies, arguments: LoggedInFeature) {
+        self.loggedInFeature = arguments
         self.userStorageService = dependencies.userStorageService
         self.userSessionService = dependencies.userSessionService
         self.userSessionStorageService = dependencies.userSessionStorageService
@@ -83,7 +83,7 @@ final class LoggedInFeatureViewController: UIViewController {
         self.label.backgroundColor = .systemGroupedBackground
         self.label.clipsToBounds = true
         self.label.layer.cornerRadius = 16
-        self.label.text = "Logged in as \(self.loggedInFeatureArguments.user.username)"
+        self.label.text = "Logged in as \(self.loggedInFeature.user.username)"
 
         // Configure the text field container view:
         self.labelContainerView.translatesAutoresizingMaskIntoConstraints = false
@@ -137,7 +137,7 @@ final class LoggedInFeatureViewController: UIViewController {
     private func logOutButtonTapped() {
         Task.detached {
             do {
-                try await self.userSessionService.deleteSession(id: self.loggedInFeatureArguments.userSession.id)
+                try await self.userSessionService.deleteSession(id: self.loggedInFeature.userSession.id)
             } catch {
                 print(error)
             }
@@ -152,7 +152,7 @@ final class LoggedInFeatureViewController: UIViewController {
         self.userSessionStorageService.userSession = nil
         let builder = self.loggedOutFeatureBuilder
         self.windowService.register {
-            let arguments = LoggedOutFeatureArguments()
+            let arguments = LoggedOutFeature()
             return builder.build(arguments: arguments)
         }
     }

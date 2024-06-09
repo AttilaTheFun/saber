@@ -2,7 +2,7 @@ load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 swift_library(
     name = "loading_feature_interface",
-    srcs = ["LoadingFeatureArguments.swift"],
+    srcs = ["LoadingFeature.swift"],
     module_name = "LoadingFeatureInterface",
     visibility = ["//visibility:public"],
     deps = [

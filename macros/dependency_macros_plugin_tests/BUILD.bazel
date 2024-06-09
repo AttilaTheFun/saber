@@ -4,7 +4,10 @@ package(default_visibility = ["//visibility:public"])
 
 swift_test(
     name = "dependency_macros_plugin_tests",
-    srcs = ["ProviderMacroTests.swift"],
+    srcs = [
+        "BuilderProviderMacroTests.swift",
+        "ProviderMacroTests.swift",
+    ],
     module_name = "DependencyMacrosPluginTests",
     deps = [
         "//macros/dependency_macros_plugin",

@@ -11,7 +11,7 @@ import WindowServiceInterface
 
 // TODO: Generate with @FeaatureScopeBuilder macro.
 public final class LoggedOutFeatureBuilder: DependencyContainer<LoggedOutScopeImplementationDependencies>, Builder {
-    public func build(arguments: LoggedOutFeatureArguments) -> UIViewController {
+    public func build(arguments: LoggedOutFeature) -> UIViewController {
         let scope = LoggedOutScopeImplementation(dependencies: self.dependencies, arguments: arguments)
         return scope.loggedOutFeatureViewControllerBuilder.build(arguments: arguments)
     }
@@ -29,7 +29,7 @@ public typealias LoggedOutScopeImplementationDependencies
 final class LoggedOutScopeImplementation: Scope<LoggedOutScopeImplementationDependencies> {
 
     // @Arguments
-    let loggedOutFeatureArguments: LoggedOutFeatureArguments
+    let loggedOutFeature: LoggedOutFeature
 
     // @Propagate(type: UserSessionStorageServiceProvider.self)
     // let userSessionStorageService: UserSessionStorageService
@@ -38,24 +38,24 @@ final class LoggedOutScopeImplementation: Scope<LoggedOutScopeImplementationDepe
     // let windowService: WindowService
 
     // @Propagate(type: LoadingFeatureBuilderProvider.self)
-    // let loadingFeatureBuilder: any Builder<LoadingFeatureArguments, UIViewController>
+    // let loadingFeatureBuilder: any Builder<LoadingFeature, UIViewController>
 
     // @Provide(type: UserSessionServiceProvider.self)
     // @Instantiate(type: UserSessionServiceImplementation.self)
     // let userSessionService: UserSessionService
 
     // @Instantiate(type: LoggedOutFeatureViewControllerBuilder.self)
-    // let loggedOutFeatureBuilder: any Builder<LoggedOutFeatureArguments, UIViewController>
+    // let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
 
     // TODO: Generate with @Injectable macro.
-    init(dependencies: LoggedOutScopeImplementationDependencies, arguments: LoggedOutFeatureArguments) {
-        self.loggedOutFeatureArguments = arguments
+    init(dependencies: LoggedOutScopeImplementationDependencies, arguments: LoggedOutFeature) {
+        self.loggedOutFeature = arguments
         super.init(dependencies: dependencies)
     }
 }
 
 // TODO: Generate from @Arguments macro.
-extension LoggedOutScopeImplementation: LoggedOutFeatureArgumentsProvider {}
+extension LoggedOutScopeImplementation: LoggedOutFeatureProvider {}
 
 // TODO: Generate from the @Propagate macro.
 extension LoggedOutScopeImplementation: UserSessionStorageServiceProvider {
@@ -73,7 +73,7 @@ extension LoggedOutScopeImplementation: WindowServiceProvider {
 
 // TODO: Generate from the @Propagate macro.
 extension LoggedOutScopeImplementation: LoadingFeatureBuilderProvider {
-    var loadingFeatureBuilder: any Builder<LoadingFeatureArguments, UIViewController> {
+    var loadingFeatureBuilder: any Builder<LoadingFeature, UIViewController> {
         return self.dependencies.loadingFeatureBuilder
     }
 }
@@ -89,7 +89,7 @@ extension LoggedOutScopeImplementation: UserSessionServiceProvider {
 
 // TODO: Generate from the @Instantiate macro.
 extension LoggedOutScopeImplementation {
-    var loggedOutFeatureViewControllerBuilder: any Builder<LoggedOutFeatureArguments, UIViewController> {
+    var loggedOutFeatureViewControllerBuilder: any Builder<LoggedOutFeature, UIViewController> {
         return self.strong { [unowned self] in
             return LoggedOutFeatureViewControllerBuilder(dependencies: self)
         }

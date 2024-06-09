@@ -7,7 +7,7 @@ import UIKit
 final class ApplicationDelegate: UIResponder, UIApplicationDelegate {
     let rootScopeImplementation = RootScopeImplementation(
         dependencies: EmptyDependencyProvider(),
-        arguments: RootFeatureArguments(endpointURL: URL(string: "https://example.com")!)
+        arguments: RootFeature(endpointURL: URL(string: "https://example.com")!)
     )
 
     func application(
