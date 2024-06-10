@@ -5,23 +5,16 @@ import UserSessionServiceInterface
 import UIKit
 import WindowServiceInterface
 
-// TODO: Generate with @Builder macro.
-public final class LoggedOutFeatureViewControllerBuilder: DependencyContainer<LoggedOutFeatureDependencies>, Builder {
-    public func build(arguments: LoggedOutFeature) -> UIViewController {
-        return LoggedOutFeatureViewController(dependencies: self.dependencies, arguments: arguments)
-    }
-}
-
 // TODO: Generate with @Injectable macro.
-public typealias LoggedOutFeatureDependencies
+public typealias LoggedOutFeatureViewControllerDependencies
     = DependencyProvider
     & LoadingFeatureBuilderProvider
     & UserSessionServiceProvider
     & UserSessionStorageServiceProvider
     & WindowServiceProvider
 
-// @Builder(building: UIViewController.self)
 // @Injectable
+@ViewControllerBuilder(arguments: LoggedOutFeature.self)
 final class LoggedOutFeatureViewController: UIViewController {
 
     // @Inject
@@ -44,7 +37,7 @@ final class LoggedOutFeatureViewController: UIViewController {
     private let logInButton = UIButton()
 
     // TODO: Generate with @Injectable macro.
-    init(dependencies: LoggedOutFeatureDependencies, arguments: LoggedOutFeature) {
+    init(dependencies: LoggedOutFeatureViewControllerDependencies, arguments: LoggedOutFeature) {
         self.userSessionService = dependencies.userSessionService
         self.userSessionStorageService = dependencies.userSessionStorageService
         self.windowService = dependencies.windowService

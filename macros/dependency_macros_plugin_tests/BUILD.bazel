@@ -7,6 +7,8 @@ swift_test(
     srcs = [
         "BuilderProviderMacroTests.swift",
         "ProviderMacroTests.swift",
+        "ScopeFeatureBuilderMacroTests.swift",
+        "ViewControllerBuilderMacroTests.swift",
     ],
     module_name = "DependencyMacrosPluginTests",
     deps = [

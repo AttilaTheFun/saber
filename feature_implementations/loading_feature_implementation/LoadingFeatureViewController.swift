@@ -8,15 +8,8 @@ import UserSessionServiceInterface
 import UIKit
 import WindowServiceInterface
 
-// TODO: Generate with @Builder macro.
-public final class LoadingFeatureViewControllerBuilder: DependencyContainer<LoadingFeatureDependencies>, Builder {
-    public func build(arguments: LoadingFeature) -> UIViewController {
-        return LoadingFeatureViewController(dependencies: self.dependencies, arguments: arguments)
-    }
-}
-
 // TODO: Generate with @Injectable macro.
-public typealias LoadingFeatureDependencies
+public typealias LoadingFeatureViewControllerDependencies
     = DependencyProvider
     & LoggedOutFeatureBuilderProvider
     & LoggedInFeatureBuilderProvider
@@ -25,8 +18,8 @@ public typealias LoadingFeatureDependencies
     & UserStorageServiceProvider
     & WindowServiceProvider
 
-// @Builder(building: UIViewController.self)
 // @Injectable
+@ViewControllerBuilder(arguments: LoadingFeature.self)
 final class LoadingFeatureViewController: UIViewController {
 
     // @Arguments
@@ -51,7 +44,7 @@ final class LoadingFeatureViewController: UIViewController {
     private let loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController>
 
     // TODO: Generate with @Injectable macro.
-    init(dependencies: LoadingFeatureDependencies, arguments: LoadingFeature) {
+    init(dependencies: LoadingFeatureViewControllerDependencies, arguments: LoadingFeature) {
         self.loadingFeature = arguments
         self.userSessionStorageService = dependencies.userSessionStorageService
         self.userService = dependencies.userService

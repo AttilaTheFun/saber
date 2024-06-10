@@ -38,14 +38,14 @@ final class LoggedOutScopeImplementation: Scope<LoggedOutScopeImplementationDepe
     // let windowService: WindowService
 
     // @Propagate(type: LoadingFeatureBuilderProvider.self)
-    // let loadingFeatureBuilder: any Builder<LoadingFeature, UIViewController>
+    // let loadingFeatureViewControllerBuilder: any Builder<LoadingFeature, UIViewController>
 
     // @Provide(type: UserSessionServiceProvider.self)
     // @Instantiate(type: UserSessionServiceImplementation.self)
     // let userSessionService: UserSessionService
 
     // @Instantiate(type: LoggedOutFeatureViewControllerBuilder.self)
-    // let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
+    // let loggedOutFeatureViewControllerBuilder: any Builder<LoggedOutFeature, UIViewController>
 
     // TODO: Generate with @Injectable macro.
     init(dependencies: LoggedOutScopeImplementationDependencies, arguments: LoggedOutFeature) {

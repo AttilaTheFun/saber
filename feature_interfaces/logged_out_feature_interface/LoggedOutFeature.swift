@@ -1,8 +1,8 @@
 import DependencyFoundation
 import UIKit
 
-@BuilderProvider(UIViewController.self)
 @Provider
+@BuilderProvider
 public struct LoggedOutFeature {
     public init() {}
 }

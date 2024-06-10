@@ -8,15 +8,15 @@ final class BuilderProviderMacroTests: XCTestCase {
     func testMacro() throws {
         assertMacroExpansion(
             """
-            @BuilderProvider(UIViewController.self)
-            public struct Foo {}
+            @BuilderProvider
+            public struct FooFeature {}
             """,
             expandedSource:
             """
-            public struct Foo {}
+            public struct FooFeature {}
 
-            public protocol FooBuilderProvider {
-                var fooBuilder: any Builder<Foo, UIViewController> {
+            public protocol FooFeatureBuilderProvider {
+                var fooFeatureBuilder: any Builder<FooFeature, UIViewController> {
                     get
                 }
             }

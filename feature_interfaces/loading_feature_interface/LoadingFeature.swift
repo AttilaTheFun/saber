@@ -2,8 +2,8 @@ import DependencyFoundation
 import UIKit
 import UserSessionServiceInterface
 
-@BuilderProvider(UIViewController.self)
 @Provider
+@BuilderProvider
 public struct LoadingFeature {
     public let userSession: UserSession
 

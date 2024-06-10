@@ -40,15 +40,15 @@ public final class RootScopeImplementation: Scope<RootScopeImplementationDepende
     // let windowService: WindowService
 
     // @Provide(type: LoggedOutFeatureBuilderProvider.self)
-    // @Instantiate(type: LoggedOutFeatureBuilder.self)
+    // @Instantiate(type: LoggedOutFeatureViewControllerBuilder.self)
     // let loggedOutScopeBuilder: any Builder<LoggedOutFeature, AnyObject>
 
     // @Provide(type: LoadingFeatureBuilderProvider.self)
-    // @Instantiate(type: LoadingFeatureBuilder.self)
+    // @Instantiate(type: LoadingFeatureViewControllerBuilder.self)
     // let loadingScopeBuilder: any Builder<LoadingFeature, AnyObject>
 
     // @Provide(type: LoggedInFeatureBuilderProvider.self)
-    // @Instantiate(type: LoggedInFeatureBuilder.self)
+    // @Instantiate(type: LoggedInFeatureViewControllerBuilder.self)
     // let loggedInScopeBuilder: any Builder<LoggedInFeature, AnyObject>
 
     // @Plugin(type: ScopeInitializationPlugin.self)

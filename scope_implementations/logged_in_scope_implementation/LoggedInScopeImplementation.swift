@@ -43,7 +43,7 @@ final class LoggedInScopeImplementation: Scope<LoggedInScopeImplementationDepend
     // let windowService: WindowService
 
     // @Propagate(type: LoggedOutFeatureBuilderProvider.self)
-    // let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
+    // let loggedOutFeatureViewControllerBuilder: any Builder<LoggedOutFeature, UIViewController>
 
     // @Provide(type: UserSessionServiceProvider.self)
     // @Instantiate(type: UserSessionServiceImplementation.self)

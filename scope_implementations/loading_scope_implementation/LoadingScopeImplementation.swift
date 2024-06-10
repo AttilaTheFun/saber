@@ -44,17 +44,17 @@ final class LoadingScopeImplementation: Scope<LoadingScopeImplementationDependen
     // let windowService: WindowService
 
     // @Propagate(type: LoggedOutFeatureBuilderProvider.self)
-    // let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
+    // let loggedOutFeatureViewControllerBuilder: any Builder<LoggedOutFeature, UIViewController>
 
     // @Propagate(type: LoggedInFeatureBuilderProvider.self)
-    // let loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController>
+    // let loggedInFeatureViewControllerBuilder: any Builder<LoggedInFeature, UIViewController>
 
     // @Provide(type: UserServiceProvider.self)
     // @Instantiate(type: UserServiceImplementation.self)
     // let userService: UserService
 
-    // @Instantiate(type: LoadingFeatureBuilder.self)
-    // let loadingFeatureBuilder: any Builder<LoadingFeature, UIViewController>
+    // @Instantiate(type: LoadingFeatureViewControllerBuilder.self)
+    // let loadingFeatureViewControllerBuilder: any Builder<LoadingFeature, UIViewController>
 
     // TODO: Generate with @Injectable macro.
     init(dependencies: LoadingScopeImplementationDependencies, arguments: LoadingFeature) {
