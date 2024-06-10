@@ -23,7 +23,7 @@ public typealias LoadingFeatureViewControllerDependencies
 @ViewControllerBuilder(arguments: LoadingFeature.self)
 final class LoadingFeatureViewController: UIViewController {
 
-    // @Arguments
+    @Arguments
     private let loadingFeature: LoadingFeature
 
     // @Inject

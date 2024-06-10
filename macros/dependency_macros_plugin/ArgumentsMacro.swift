@@ -6,6 +6,7 @@ import DependencyMacrosLibrary
 public enum ArgumentsMacroError: Error {
     case notDecoratingBinding
     case decoratingStatic
+    case missingArgumentsMacro
 }
 
 public struct ArgumentsMacro: PeerMacro {
@@ -22,19 +23,13 @@ public struct ArgumentsMacro: PeerMacro {
             throw ArgumentsMacroError.decoratingStatic
         }
 
-        // Extract the name and modifiers of the type:
-        let nominalType = try Parsers.parseConcreteNominalTypeSyntax(declaration: declaration)
+//        guard let argumentsMacro = variableDecl.attributes.argumentsMacro else {
+//            throw ArgumentsMacroError.missingArgumentsMacro
+//        }
+//
+//        print(argumentsMacro)
 
-        // Create the provider protocol declaration:
-        let argumentsTypeName = nominalType.name.text
-        let declSyntax: [DeclSyntax] = [
-            """
-            public protocol \(raw: argumentsTypeName)Arguments {
-            var \(raw: argumentsTypeName.lowercasedFirstCharacter())Builder: any Builder<\(raw: argumentsTypeName), UIViewController> { get }
-            }
-            """
-        ]
-
-        return declSyntax
+        // This macro does not expand.
+        return []
     }
 }

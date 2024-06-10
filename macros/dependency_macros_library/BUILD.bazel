@@ -4,6 +4,7 @@ swift_library(
     name = "dependency_macros_library",
     srcs = [
         "AttributeListSyntax.Element+Extensions.swift",
+        "AttributeListSyntax+Extensions.swift",
         "Constants.swift",
         "DeclModifierListSyntax+Extensions.swift",
         "Parsers.swift",
