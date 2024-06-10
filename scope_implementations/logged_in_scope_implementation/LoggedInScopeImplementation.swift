@@ -10,14 +10,6 @@ import UserSessionServiceInterface
 import UserSessionServiceImplementation
 import WindowServiceInterface
 
-// TODO: Generate with @FeaatureScopeBuilder macro.
-public final class LoggedInFeatureBuilder: DependencyContainer<LoggedInScopeImplementationDependencies>, Builder {
-    public func build(arguments: LoggedInFeature) -> UIViewController {
-        let scope = LoggedInScopeImplementation(dependencies: self.dependencies, arguments: arguments)
-        return scope.loggedInFeatureViewControllerBuilder.build(arguments: arguments)
-    }
-}
-
 // TODO: Generate with @Injectable macro.
 public typealias LoggedInScopeImplementationDependencies
     = DependencyProvider
@@ -28,6 +20,7 @@ public typealias LoggedInScopeImplementationDependencies
 
 // @Buildable(building: AnyObject.self)
 // @Injectable
+@ScopeViewControllerBuilder(arguments: LoggedInFeature.self)
 final class LoggedInScopeImplementation: Scope<LoggedInScopeImplementationDependencies> {
 
     // @Arguments

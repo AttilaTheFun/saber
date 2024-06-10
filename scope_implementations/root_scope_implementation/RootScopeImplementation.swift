@@ -104,7 +104,7 @@ extension RootScopeImplementation: WindowServiceProvider {
 extension RootScopeImplementation: LoggedOutFeatureBuilderProvider {
     public var loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController> {
         return self.strong { [unowned self] in
-            LoggedOutFeatureBuilder(dependencies: self)
+            LoggedOutScopeImplementationBuilder(dependencies: self)
         }
     }
 }
@@ -113,7 +113,7 @@ extension RootScopeImplementation: LoggedOutFeatureBuilderProvider {
 extension RootScopeImplementation: LoadingFeatureBuilderProvider {
     public var loadingFeatureBuilder: any Builder<LoadingFeature, UIViewController> {
         return self.strong { [unowned self] in
-            LoadingFeatureBuilder(dependencies: self)
+            LoadingScopeImplementationBuilder(dependencies: self)
         }
     }
 }
@@ -122,7 +122,7 @@ extension RootScopeImplementation: LoadingFeatureBuilderProvider {
 extension RootScopeImplementation: LoggedInFeatureBuilderProvider {
     public var loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController> {
         return self.strong { [unowned self] in
-            LoggedInFeatureBuilder(dependencies: self)
+            LoggedInScopeImplementationBuilder(dependencies: self)
         }
     }
 }

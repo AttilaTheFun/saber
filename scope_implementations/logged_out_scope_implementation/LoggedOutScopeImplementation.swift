@@ -10,12 +10,12 @@ import UIKit
 import WindowServiceInterface
 
 // TODO: Generate with @FeaatureScopeBuilder macro.
-public final class LoggedOutFeatureBuilder: DependencyContainer<LoggedOutScopeImplementationDependencies>, Builder {
-    public func build(arguments: LoggedOutFeature) -> UIViewController {
-        let scope = LoggedOutScopeImplementation(dependencies: self.dependencies, arguments: arguments)
-        return scope.loggedOutFeatureViewControllerBuilder.build(arguments: arguments)
-    }
-}
+//public final class LoggedOutFeatureBuilder: DependencyContainer<LoggedOutScopeImplementationDependencies>, Builder {
+//    public func build(arguments: LoggedOutFeature) -> UIViewController {
+//        let scope = LoggedOutScopeImplementation(dependencies: self.dependencies, arguments: arguments)
+//        return scope.loggedOutFeatureViewControllerBuilder.build(arguments: arguments)
+//    }
+//}
 
 // TODO: Generate with @Injectable macro.
 public typealias LoggedOutScopeImplementationDependencies
@@ -26,6 +26,7 @@ public typealias LoggedOutScopeImplementationDependencies
 
 // @FeaatureScopeBuilder(building: UIViewController.self)
 // @Injectable
+@ScopeViewControllerBuilder(arguments: LoggedOutFeature.self)
 final class LoggedOutScopeImplementation: Scope<LoggedOutScopeImplementationDependencies> {
 
     // @Arguments

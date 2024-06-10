@@ -10,14 +10,6 @@ import UserServiceInterface
 import UserServiceImplementation
 import WindowServiceInterface
 
-// TODO: Generate with @FeaatureScopeBuilder macro.
-public final class LoadingFeatureBuilder: DependencyContainer<LoadingScopeImplementationDependencies>, Builder {
-    public func build(arguments: LoadingFeature) -> UIViewController {
-        let scope = LoadingScopeImplementation(dependencies: self.dependencies, arguments: arguments)
-        return scope.loadingFeatureViewControllerBuilder.build(arguments: arguments)
-    }
-}
-
 // TODO: Generate with @Injectable macro.
 public typealias LoadingScopeImplementationDependencies
     = DependencyProvider
@@ -29,6 +21,7 @@ public typealias LoadingScopeImplementationDependencies
 
 // @FeaatureScopeBuilder(building: UIViewController.self)
 // @Injectable
+@ScopeViewControllerBuilder(arguments: LoadingFeature.self)
 final class LoadingScopeImplementation: Scope<LoadingScopeImplementationDependencies> {
 
     // @Arguments

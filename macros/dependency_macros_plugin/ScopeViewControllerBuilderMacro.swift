@@ -37,7 +37,8 @@ public struct ScopeViewControllerBuilderMacro: PeerMacro {
             """
             public final class \(raw: nominalTypeName)Builder: DependencyContainer<\(raw: nominalTypeName)Dependencies>, Builder {
             public func build(arguments: \(raw: argumentsTypeName)) -> UIViewController {
-            return \(raw: nominalTypeName)(dependencies: self.dependencies, arguments: arguments)
+            let scope = \(raw: nominalTypeName)(dependencies: self.dependencies, arguments: arguments)
+            return scope.\(raw: argumentsTypeName.lowercasedFirstCharacter())ViewControllerBuilder.build(arguments: arguments)
             }
             }
             """

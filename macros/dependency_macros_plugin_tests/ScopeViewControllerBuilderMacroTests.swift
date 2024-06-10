@@ -9,17 +9,18 @@ final class ScopeViewControllerBuilderMacroTests: XCTestCase {
         assertMacroExpansion(
             """
             @ScopeViewControllerBuilder(arguments: FooFeature.self)
-            final class FooFeatureViewController: UIViewController {
+            final class FooScope: Scope<FooScopeDependencies> {
             }
             """,
             expandedSource:
             """
-            final class FooFeatureViewController: UIViewController {
+            final class FooScope: Scope<FooScopeDependencies> {
             }
 
-            public final class FooFeatureScopeViewControllerBuilder: DependencyContainer<FooFeatureViewControllerDependencies>, Builder {
+            public final class FooScopeBuilder: DependencyContainer<FooScopeDependencies>, Builder {
                 public func build(arguments: FooFeature) -> UIViewController {
-                    return FooFeatureViewController(dependencies: self.dependencies, arguments: arguments)
+                    let scope = FooScope(dependencies: self.dependencies, arguments: arguments)
+                    return scope.fooFeatureViewControllerBuilder.build(arguments: arguments)
                 }
             }
             """,
