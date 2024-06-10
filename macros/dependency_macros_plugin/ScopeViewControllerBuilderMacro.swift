@@ -1,6 +1,7 @@
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
+import DependencyMacrosLibrary
 
 public enum ScopeViewControllerBuilderMacroError: Error {
     case missingArgumentsSuffix

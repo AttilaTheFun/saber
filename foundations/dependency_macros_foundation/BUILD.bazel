@@ -1,0 +1,15 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "dependency_macros_foundation",
+    srcs = [
+        "Arguments.swift",
+        "BuilderProvider.swift",
+        "Provider.swift",
+        "ScopeViewControllerBuilder.swift",
+        "ViewControllerBuilder.swift",
+    ],
+    module_name = "DependencyMacrosFoundation",
+    plugins = ["//macros/dependency_macros_plugin"],
+    visibility = ["//visibility:public"],
+)

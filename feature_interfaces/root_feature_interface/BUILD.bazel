@@ -5,5 +5,5 @@ swift_library(
     srcs = ["RootFeature.swift"],
     module_name = "RootFeatureInterface",
     visibility = ["//visibility:public"],
-    deps = ["//foundations/dependency_foundation"],
+    deps = ["//foundations/dependency_macros_foundation"],
 )

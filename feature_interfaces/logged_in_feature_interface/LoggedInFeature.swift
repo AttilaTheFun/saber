@@ -1,4 +1,5 @@
 import DependencyFoundation
+import DependencyMacrosFoundation
 import UIKit
 import UserSessionServiceInterface
 import UserServiceInterface

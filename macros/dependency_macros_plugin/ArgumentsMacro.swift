@@ -3,17 +3,24 @@ import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 import DependencyMacrosLibrary
 
-public enum BuilderProviderMacroError: Error {
-    case missingArgumentsSuffix
-    case invalidDeclSyntax(any DeclSyntaxProtocol)
+public enum ArgumentsMacroError: Error {
+    case notDecoratingBinding
+    case decoratingStatic
 }
 
-public struct BuilderProviderMacro: PeerMacro {
+public struct ArgumentsMacro: PeerMacro {
     public static func expansion(
         of node: AttributeSyntax,
         providingPeersOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
+        guard let variableDecl = VariableDeclSyntax(declaration) else {
+            throw ArgumentsMacroError.notDecoratingBinding
+        }
+
+        guard variableDecl.modifiers.staticModifier == nil else {
+            throw ArgumentsMacroError.decoratingStatic
+        }
 
         // Extract the name and modifiers of the type:
         let nominalType = try Parsers.parseConcreteNominalTypeSyntax(declaration: declaration)
@@ -22,7 +29,7 @@ public struct BuilderProviderMacro: PeerMacro {
         let argumentsTypeName = nominalType.name.text
         let declSyntax: [DeclSyntax] = [
             """
-            public protocol \(raw: argumentsTypeName)BuilderProvider {
+            public protocol \(raw: argumentsTypeName)Arguments {
             var \(raw: argumentsTypeName.lowercasedFirstCharacter())Builder: any Builder<\(raw: argumentsTypeName), UIViewController> { get }
             }
             """

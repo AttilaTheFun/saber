@@ -1,4 +1,4 @@
-import DependencyFoundation
+import DependencyMacrosFoundation
 
 @Provider
 public protocol UserService: AnyObject {

@@ -5,5 +5,8 @@ swift_library(
     srcs = ["LoggedOutFeature.swift"],
     module_name = "LoggedOutFeatureInterface",
     visibility = ["//visibility:public"],
-    deps = ["//foundations/dependency_foundation"],
+    deps = [
+        "//foundations/dependency_foundation",
+        "//foundations/dependency_macros_foundation",
+    ],
 )

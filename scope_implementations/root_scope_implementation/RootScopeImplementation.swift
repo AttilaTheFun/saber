@@ -1,4 +1,5 @@
 import DependencyFoundation
+import DependencyMacrosFoundation
 import LoggedOutFeatureInterface
 import LoggedOutScopeImplementation
 import LoadingFeatureInterface

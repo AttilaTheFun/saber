@@ -1,5 +1,6 @@
 import LoggedOutFeatureInterface
 import DependencyFoundation
+import DependencyMacrosFoundation
 import LoadingFeatureInterface
 import UserSessionServiceInterface
 import UIKit

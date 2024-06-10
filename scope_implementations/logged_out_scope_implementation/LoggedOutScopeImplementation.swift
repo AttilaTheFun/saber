@@ -1,6 +1,7 @@
+import DependencyFoundation
+import DependencyMacrosFoundation
 import LoggedOutFeatureInterface
 import LoggedOutFeatureImplementation
-import DependencyFoundation
 import LoadingFeatureInterface
 import ScopeInitializationPluginInterface
 import SwiftFoundation

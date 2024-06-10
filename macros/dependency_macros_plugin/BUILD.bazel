@@ -5,18 +5,18 @@ package(default_visibility = ["//visibility:public"])
 swift_compiler_plugin(
     name = "dependency_macros_plugin",
     srcs = [
+        "ArgumentsMacro.swift",
         "BuilderProviderMacro.swift",
         "DependencyMacrosPlugin.swift",
         "MacroError.swift",
-        "Parsers.swift",
         "ProviderMacro.swift",
         "ScopeViewControllerBuilderMacro.swift",
-        "String+Extensions.swift",
         "ViewControllerBuilderMacro.swift",
     ],
     module_name = "DependencyMacrosPlugin",
     visibility = ["//visibility:public"],
     deps = [
+        "//macros/dependency_macros_library",
         "@swiftpkg_swift_syntax//:SwiftCompilerPlugin",
         "@swiftpkg_swift_syntax//:SwiftSyntax",
         "@swiftpkg_swift_syntax//:SwiftSyntaxBuilder",
