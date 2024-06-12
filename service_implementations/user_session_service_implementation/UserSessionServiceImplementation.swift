@@ -1,4 +1,5 @@
 import DependencyFoundation
+import DependencyMacros
 import Foundation
 import UserServiceInterface
 import UserSessionServiceInterface
@@ -7,11 +8,7 @@ private let userSessionIDsToUserSessionsKey = "UserSessionIDsToUserSessions"
 private let userIDsToUsersKey = "UserIDsToUsers"
 private let usernamesToUsersKey = "UsernamesToUsers"
 
-// TODO: Generate with @Injectable macro.
-public typealias UserSessionServiceImplementationDependencies
-    = DependencyProvider
-
-// @Injectable
+@Injectable
 public final class UserSessionServiceImplementation: UserSessionService {
 
     private var userSessionIDsToUserSessions: [UUID : UserSession] {
@@ -67,9 +64,6 @@ public final class UserSessionServiceImplementation: UserSessionService {
             }
         }
     }
-
-    // TODO: Generate with @Injectable macro.
-    public init(dependencies: UserSessionServiceImplementationDependencies) {}
 
     public func createSession(username: String, password: String) async throws -> UserSession {
         let user = self.usernamesToUsers[username] ?? User(id: UUID(), username: username)

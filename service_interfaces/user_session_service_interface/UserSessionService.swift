@@ -1,4 +1,4 @@
-import DependencyMacrosFoundation
+import DependencyMacros
 import Foundation
 
 @Provider

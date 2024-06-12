@@ -1,5 +1,5 @@
 import DependencyFoundation
-import DependencyMacrosFoundation
+import DependencyMacros
 import LoggedInFeatureInterface
 import LoggedInFeatureInterface
 import LoggedInFeatureImplementation
@@ -80,6 +80,9 @@ extension LoggedInScopeImplementation: LoggedOutFeatureBuilderProvider {
         return self.dependencies.loggedOutFeatureBuilder
     }
 }
+
+// TODO: Generate this with macro.
+extension LoggedInScopeImplementation: UserSessionServiceImplementationDependencies {}
 
 // TODO: Generate from @Provide and @Instantiate macros.
 extension LoggedInScopeImplementation: UserSessionServiceProvider {

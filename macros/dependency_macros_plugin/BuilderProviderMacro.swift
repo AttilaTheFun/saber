@@ -16,7 +16,7 @@ public struct BuilderProviderMacro: PeerMacro {
     ) throws -> [DeclSyntax] {
 
         // Extract the name and modifiers of the type:
-        let nominalType = try Parsers.parseConcreteNominalTypeSyntax(declaration: declaration)
+        let nominalType = try Parsers.parseNominalTypeSyntax(declaration: declaration)
 
         // Create the provider protocol declaration:
         let argumentsTypeName = nominalType.name.text

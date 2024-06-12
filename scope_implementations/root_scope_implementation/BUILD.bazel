@@ -11,7 +11,7 @@ swift_library(
         "//feature_interfaces/logged_out_feature_interface",
         "//feature_interfaces/root_feature_interface",
         "//foundations/dependency_foundation",
-        "//foundations/dependency_macros_foundation",
+        "//macros/dependency_macros",
         "//plugin_implementations/root_scope_initialization_plugin_implementation",
         "//plugin_interfaces/scope_initialization_plugin_interface",
         "//scope_implementations/loading_scope_implementation",

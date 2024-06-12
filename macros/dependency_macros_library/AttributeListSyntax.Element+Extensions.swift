@@ -2,7 +2,11 @@ import SwiftSyntax
 
 extension AttributeListSyntax.Element {
     public var argumentsMacro: AttributeSyntax? {
-        self.attributeIfNameEquals(Constants.argumentsMacroName)
+        self.attributeIfNameEquals("Arguments")
+    }
+
+    public var injectMacro: AttributeSyntax? {
+        self.attributeIfNameEquals("Inject")
     }
 
     private func attributeIfNameEquals(_ expectedName: String) -> AttributeSyntax? {
@@ -11,9 +15,9 @@ extension AttributeListSyntax.Element {
             let identifier = IdentifierTypeSyntax(attribute.attributeName),
             identifier.name.text == expectedName
         {
-            attribute
-        } else {
-            nil
+            return attribute
         }
+
+        return nil
     }
 }

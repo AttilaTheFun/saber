@@ -1,15 +1,19 @@
 load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
+package(default_visibility = ["//visibility:public"])
+
 swift_library(
-    name = "dependency_macros_foundation",
+    name = "dependency_macros",
     srcs = [
         "Arguments.swift",
         "BuilderProvider.swift",
+        "Inject.swift",
+        "Injectable.swift",
         "Provider.swift",
         "ScopeViewControllerBuilder.swift",
         "ViewControllerBuilder.swift",
     ],
-    module_name = "DependencyMacrosFoundation",
+    module_name = "DependencyMacros",
     plugins = ["//macros/dependency_macros_plugin"],
     visibility = ["//visibility:public"],
 )

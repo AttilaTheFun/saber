@@ -1,10 +1,14 @@
 load("@build_bazel_rules_swift//swift:swift.bzl", "swift_test")
 
+package(default_visibility = ["//visibility:public"])
+
 swift_test(
     name = "dependency_macros_plugin_tests",
     srcs = [
         "ArgumentsMacroTests.swift",
         "BuilderProviderMacroTests.swift",
+        "InjectMacroTests.swift",
+        "InjectableMacroTests.swift",
         "ProviderMacroTests.swift",
         "ScopeViewControllerBuilderMacroTests.swift",
         "ViewControllerBuilderMacroTests.swift",
@@ -17,5 +21,3 @@ swift_test(
         "@swiftpkg_swift_syntax//:SwiftSyntaxMacrosTestSupport",
     ],
 )
-
-package(default_visibility = ["//visibility:public"])

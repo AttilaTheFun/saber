@@ -8,7 +8,7 @@ public struct NominalTypeSyntax {
 
 public enum ParserError: Error {
     case invalidExprSyntax(ExprSyntax)
-    case invalidDeclSyntax(any DeclSyntaxProtocol)
+    case invalidDeclSyntax(any SyntaxProtocol)
 }
 
 public enum Parsers {
@@ -26,7 +26,7 @@ public enum Parsers {
         return declarationReferenceExpression.baseName
     }
 
-    public static func parseClassNominalTypeSyntaxOptional(declaration: DeclSyntaxProtocol) -> NominalTypeSyntax? {
+    public static func parseClassNominalTypeSyntaxOptional(declaration: some SyntaxProtocol) -> NominalTypeSyntax? {
         if let declaration = declaration.as(ClassDeclSyntax.self) {
             return NominalTypeSyntax(
                 modifiers: declaration.modifiers,
@@ -38,7 +38,7 @@ public enum Parsers {
         return nil
     }
 
-    public static func parseConcreteNominalTypeSyntaxOptional(declaration: DeclSyntaxProtocol) -> NominalTypeSyntax? {
+    public static func parseConcreteNominalTypeSyntaxOptional(declaration: some SyntaxProtocol) -> NominalTypeSyntax? {
         if let nominalType = self.parseClassNominalTypeSyntaxOptional(declaration: declaration) {
             return nominalType
         }
@@ -67,15 +67,7 @@ public enum Parsers {
         return nil
     }
 
-    public static func parseConcreteNominalTypeSyntax(declaration: DeclSyntaxProtocol) throws -> NominalTypeSyntax {
-        if let nominalType = self.parseConcreteNominalTypeSyntaxOptional(declaration: declaration) {
-            return nominalType
-        }
-
-        throw ParserError.invalidDeclSyntax(declaration)
-    }
-
-    public static func parseNominalTypeSyntax(declaration: DeclSyntaxProtocol) throws -> NominalTypeSyntax {
+    public static func parseNominalTypeSyntax(declaration: some SyntaxProtocol) throws -> NominalTypeSyntax {
         if let nominalType = self.parseConcreteNominalTypeSyntaxOptional(declaration: declaration) {
             return nominalType
         }

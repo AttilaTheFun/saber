@@ -8,6 +8,8 @@ swift_compiler_plugin(
         "ArgumentsMacro.swift",
         "BuilderProviderMacro.swift",
         "DependencyMacrosPlugin.swift",
+        "InjectMacro.swift",
+        "InjectableMacro.swift",
         "MacroError.swift",
         "ProviderMacro.swift",
         "ScopeViewControllerBuilderMacro.swift",

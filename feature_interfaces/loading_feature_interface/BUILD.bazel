@@ -7,7 +7,7 @@ swift_library(
     visibility = ["//visibility:public"],
     deps = [
         "//foundations/dependency_foundation",
-        "//foundations/dependency_macros_foundation",
+        "//macros/dependency_macros",
         "//service_interfaces/user_session_service_interface",
     ],
 )

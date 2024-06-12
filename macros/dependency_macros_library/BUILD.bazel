@@ -1,18 +1,20 @@
 load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
+package(default_visibility = ["//visibility:public"])
+
 swift_library(
     name = "dependency_macros_library",
     srcs = [
         "AttributeListSyntax.Element+Extensions.swift",
         "AttributeListSyntax+Extensions.swift",
-        "Constants.swift",
+        "ConcreteDeclSyntaxProtocol.swift",
         "DeclModifierListSyntax+Extensions.swift",
+        "InjectableVisitor.swift",
         "Parsers.swift",
+        "Property.swift",
         "String+Extensions.swift",
     ],
     module_name = "DependencyMacrosLibrary",
     visibility = ["//visibility:public"],
-    deps = ["@swiftpkg_swift_syntax//:SwiftSyntax"],
+    deps = ["@swiftpkg_swift_syntax//:SwiftDiagnostics"],
 )
-
-package(default_visibility = ["//visibility:public"])
