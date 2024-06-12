@@ -44,7 +44,7 @@ final class LoggedInScopeImplementation: Scope<LoggedInScopeImplementationDepend
     // let userSessionService: UserSessionService
 
     // TODO: Generate with @Injectable macro.
-    init(dependencies: LoggedInScopeImplementationDependencies, arguments: LoggedInFeature) {
+    init(arguments: LoggedInFeature, dependencies: LoggedInScopeImplementationDependencies) {
         self.loggedInFeature = arguments
         super.init(dependencies: dependencies)
     }
@@ -92,6 +92,9 @@ extension LoggedInScopeImplementation: UserSessionServiceProvider {
         }
     }
 }
+
+// TODO: Generate with macro.
+extension LoggedInScopeImplementation: LoggedInFeatureViewControllerDependencies {}
 
 // TODO: Generate from the @Instantiate macro.
 extension LoggedInScopeImplementation {

@@ -51,7 +51,7 @@ final class LoadingScopeImplementation: Scope<LoadingScopeImplementationDependen
     // let loadingFeatureViewControllerBuilder: any Builder<LoadingFeature, UIViewController>
 
     // TODO: Generate with @Injectable macro.
-    init(dependencies: LoadingScopeImplementationDependencies, arguments: LoadingFeature) {
+    init(arguments: LoadingFeature, dependencies: LoadingScopeImplementationDependencies) {
         self.loadingFeature = arguments
         super.init(dependencies: dependencies)
     }
@@ -103,6 +103,9 @@ extension LoadingScopeImplementation: UserServiceProvider {
         }
     }
 }
+
+// TODO: Generate with macro.
+extension LoadingScopeImplementation: LoadingFeatureViewControllerDependencies {}
 
 // TODO: Generate from the @Instantiate macro.
 extension LoadingScopeImplementation {

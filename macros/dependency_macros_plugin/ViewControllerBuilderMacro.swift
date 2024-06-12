@@ -38,7 +38,7 @@ public struct ViewControllerBuilderMacro: PeerMacro {
             """
             public final class \(raw: nominalTypeName)Builder: DependencyContainer<\(raw: nominalTypeName)Dependencies>, Builder {
             public func build(arguments: \(raw: argumentsTypeName)) -> UIViewController {
-            return \(raw: nominalTypeName)(dependencies: self.dependencies, arguments: arguments)
+            return \(raw: nominalTypeName)(arguments: arguments, dependencies: self.dependencies)
             }
             }
             """

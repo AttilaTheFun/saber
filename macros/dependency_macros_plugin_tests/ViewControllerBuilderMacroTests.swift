@@ -19,7 +19,7 @@ final class ViewControllerBuilderMacroTests: XCTestCase {
 
             public final class FooFeatureViewControllerBuilder: DependencyContainer<FooFeatureViewControllerDependencies>, Builder {
                 public func build(arguments: FooFeature) -> UIViewController {
-                    return FooFeatureViewController(dependencies: self.dependencies, arguments: arguments)
+                    return FooFeatureViewController(arguments: arguments, dependencies: self.dependencies)
                 }
             }
             """,

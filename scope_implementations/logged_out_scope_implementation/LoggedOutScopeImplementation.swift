@@ -50,7 +50,7 @@ final class LoggedOutScopeImplementation: Scope<LoggedOutScopeImplementationDepe
     // let loggedOutFeatureViewControllerBuilder: any Builder<LoggedOutFeature, UIViewController>
 
     // TODO: Generate with @Injectable macro.
-    init(dependencies: LoggedOutScopeImplementationDependencies, arguments: LoggedOutFeature) {
+    init(arguments: LoggedOutFeature, dependencies: LoggedOutScopeImplementationDependencies) {
         self.loggedOutFeature = arguments
         super.init(dependencies: dependencies)
     }
@@ -91,6 +91,9 @@ extension LoggedOutScopeImplementation: UserSessionServiceProvider {
         }
     }
 }
+
+// TODO: Generate with macro.
+extension LoggedOutScopeImplementation: LoggedOutFeatureViewControllerDependencies {}
 
 // TODO: Generate from the @Instantiate macro.
 extension LoggedOutScopeImplementation {

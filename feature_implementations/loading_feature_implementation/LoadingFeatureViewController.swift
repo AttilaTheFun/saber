@@ -9,58 +9,16 @@ import UserSessionServiceInterface
 import UIKit
 import WindowServiceInterface
 
-// TODO: Generate with @Injectable macro.
-public typealias LoadingFeatureViewControllerDependencies
-    = DependencyProvider
-    & LoggedOutFeatureBuilderProvider
-    & LoggedInFeatureBuilderProvider
-    & UserSessionStorageServiceProvider
-    & UserServiceProvider
-    & UserStorageServiceProvider
-    & WindowServiceProvider
-
-// @Injectable
 @ViewControllerBuilder(arguments: LoadingFeature.self)
+@ViewControllerInjectable
 final class LoadingFeatureViewController: UIViewController {
-
-    @Arguments
-    private let loadingFeature: LoadingFeature
-
-    // @Inject
-    private let userSessionStorageService: UserSessionStorageService
-
-    // @Inject
-    private let userService: UserService
-
-    // @Inject
-    private let userStorageService: UserStorageService
-
-    // @Inject
-    private let windowService: WindowService
-
-    // @Inject
-    private let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
-
-    // @Inject
-    private let loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController>
-
-    // TODO: Generate with @Injectable macro.
-    init(dependencies: LoadingFeatureViewControllerDependencies, arguments: LoadingFeature) {
-        self.loadingFeature = arguments
-        self.userSessionStorageService = dependencies.userSessionStorageService
-        self.userService = dependencies.userService
-        self.userStorageService = dependencies.userStorageService
-        self.windowService = dependencies.windowService
-        self.loggedInFeatureBuilder = dependencies.loggedInFeatureBuilder
-        self.loggedOutFeatureBuilder = dependencies.loggedOutFeatureBuilder
-
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    // TODO: Generate with @Injectable macro.
-    required init?(coder: NSCoder) {
-        fatalError("not implemented")
-    }
+    @Arguments private let loadingFeature: LoadingFeature
+    @Inject private let userSessionStorageService: UserSessionStorageService
+    @Inject private let userService: UserService
+    @Inject private let userStorageService: UserStorageService
+    @Inject private let windowService: WindowService
+    @Inject private let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
+    @Inject private let loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController>
 
     // MARK: View Lifecycle
 

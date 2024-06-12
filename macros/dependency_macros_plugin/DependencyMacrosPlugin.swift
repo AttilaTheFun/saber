@@ -10,6 +10,8 @@ struct DependencyMacrosPlugin: CompilerPlugin {
         InjectMacro.self,
         ProviderMacro.self,
         ScopeViewControllerBuilderMacro.self,
+        ScopeInjectableMacro.self,
         ViewControllerBuilderMacro.self,
+        ViewControllerInjectableMacro.self,
     ]
 }

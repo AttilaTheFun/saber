@@ -5,10 +5,10 @@ public struct Property: Hashable, Sendable {
 
     init(
         label: String,
-        typeName: String
+        typeDescription: TypeDescription
     ) {
         self.label = label
-        self.typeName = typeName
+        self.typeDescription = typeDescription
     }
 
     // MARK: Public
@@ -17,5 +17,5 @@ public struct Property: Hashable, Sendable {
     public let label: String
 
     /// The type to which the property conforms.
-    public let typeName: String
+    public let typeDescription: TypeDescription
 }

@@ -6,51 +6,18 @@ import UserSessionServiceInterface
 import UIKit
 import WindowServiceInterface
 
-// TODO: Generate with @Injectable macro.
-public typealias LoggedOutFeatureViewControllerDependencies
-    = DependencyProvider
-    & LoadingFeatureBuilderProvider
-    & UserSessionServiceProvider
-    & UserSessionStorageServiceProvider
-    & WindowServiceProvider
-
-// @Injectable
 @ViewControllerBuilder(arguments: LoggedOutFeature.self)
+@ViewControllerInjectable
 final class LoggedOutFeatureViewController: UIViewController {
-
-    // @Inject
-    private let userSessionService: UserSessionService
-
-    // @Inject
-    private let userSessionStorageService: UserSessionStorageService
-
-    // @Inject
-    private let windowService: WindowService
-
-    // @Inject
-    private let loadingFeatureBuilder: any Builder<LoadingFeature, UIViewController>
-
-    // @Arguments
-    private let arguments: LoggedOutFeature
+    @Arguments private let arguments: LoggedOutFeature
+    @Inject private let userSessionService: UserSessionService
+    @Inject private let userSessionStorageService: UserSessionStorageService
+    @Inject private let windowService: WindowService
+    @Inject private let loadingFeatureBuilder: any Builder<LoadingFeature, UIViewController>
 
     private let textField = UITextField()
     private let textFieldContainerView = UIView()
     private let logInButton = UIButton()
-
-    // TODO: Generate with @Injectable macro.
-    init(dependencies: LoggedOutFeatureViewControllerDependencies, arguments: LoggedOutFeature) {
-        self.userSessionService = dependencies.userSessionService
-        self.userSessionStorageService = dependencies.userSessionStorageService
-        self.windowService = dependencies.windowService
-        self.loadingFeatureBuilder = dependencies.loadingFeatureBuilder
-        self.arguments = arguments
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    // TODO: Generate with @Injectable macro.
-    required init?(coder: NSCoder) {
-        fatalError("not implemented")
-    }
 
     // MARK: View Lifecycle
 

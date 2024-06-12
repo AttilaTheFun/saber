@@ -19,7 +19,7 @@ final class ScopeViewControllerBuilderMacroTests: XCTestCase {
 
             public final class FooScopeBuilder: DependencyContainer<FooScopeDependencies>, Builder {
                 public func build(arguments: FooFeature) -> UIViewController {
-                    let scope = FooScope(dependencies: self.dependencies, arguments: arguments)
+                    let scope = FooScope(arguments: arguments, dependencies: self.dependencies)
                     return scope.fooFeatureViewControllerBuilder.build(arguments: arguments)
                 }
             }

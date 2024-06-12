@@ -8,56 +8,19 @@ import UserServiceInterface
 import UIKit
 import WindowServiceInterface
 
-// TODO: Generate with @Injectable macro.
-public typealias LoggedInFeatureViewControllerDependencies
-    = DependencyProvider
-    & LoggedOutFeatureBuilderProvider
-    & UserSessionServiceProvider
-    & UserSessionStorageServiceProvider
-    & UserStorageServiceProvider
-    & WindowServiceProvider
-
-// @Injectable
 @ViewControllerBuilder(arguments: LoggedInFeature.self)
+@ViewControllerInjectable
 final class LoggedInFeatureViewController: UIViewController {
-
-    // @Arguments
-    private let loggedInFeature: LoggedInFeature
-
-    // @Inject
-    private let userSessionService: UserSessionService
-
-    // @Inject
-    private let userSessionStorageService: UserSessionStorageService
-
-    // @Inject
-    private let userStorageService: UserStorageService
-
-    // @Inject
-    private let windowService: WindowService
-
-    // @Inject
-    private let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
+    @Arguments private let loggedInFeature: LoggedInFeature
+    @Inject private let userSessionService: UserSessionService
+    @Inject private let userSessionStorageService: UserSessionStorageService
+    @Inject private let userStorageService: UserStorageService
+    @Inject private let windowService: WindowService
+    @Inject private let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
 
     private let label = UILabel()
     private let labelContainerView = UIView()
     private let logOutButton = UIButton()
-
-    // TODO: Generate with @Injectable macro.
-    init(dependencies: LoggedInFeatureViewControllerDependencies, arguments: LoggedInFeature) {
-        self.loggedInFeature = arguments
-        self.userStorageService = dependencies.userStorageService
-        self.userSessionService = dependencies.userSessionService
-        self.userSessionStorageService = dependencies.userSessionStorageService
-        self.windowService = dependencies.windowService
-        self.loggedOutFeatureBuilder = dependencies.loggedOutFeatureBuilder
-        super.init(nibName: nil, bundle: nil)
-    }
-
-    // TODO: Generate with @Injectable macro.
-    required init?(coder: NSCoder) {
-        fatalError("not implemented")
-    }
 
     // MARK: View Lifecycle
 

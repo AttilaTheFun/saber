@@ -70,10 +70,9 @@ public final class InjectableVisitor: SyntaxVisitor {
                 let identifierPatternSyntax = binding.pattern.as(IdentifierPatternSyntax.self),
                 let typeAnnotationSyntax = binding.typeAnnotation
             {
-                if let identifierTypeSyntax = typeAnnotationSyntax.type.as(IdentifierTypeSyntax.self) {
-                    let label = identifierPatternSyntax.identifier.text
-                    let typeName = identifierTypeSyntax.name.text
-                    let property = Property(label: label, typeName: typeName)
+                let label = identifierPatternSyntax.identifier.text
+                if let typeDescription = try? TypeDescription(type: typeAnnotationSyntax.type) {
+                    let property = Property(label: label, typeDescription: typeDescription)
                     switch injectableMacroType {
                     case .arguments:
                         self.argumentsProperty = property
