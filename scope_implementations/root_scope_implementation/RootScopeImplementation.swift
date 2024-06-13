@@ -65,9 +65,6 @@ public final class RootScopeImplementation: BaseScope {
 }
 
 // TODO: Generate with macro.
-extension RootScopeImplementation: RootFeatureProvider {}
-
-// TODO: Generate with macro.
 extension RootScopeImplementation: LoadingScopeImplementationDependencies {}
 extension RootScopeImplementation: LoggedInScopeImplementationDependencies {}
 extension RootScopeImplementation: LoggedOutScopeImplementationDependencies {}

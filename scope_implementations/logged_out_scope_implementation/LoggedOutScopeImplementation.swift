@@ -27,9 +27,6 @@ final class LoggedOutScopeImplementation: BaseScope {
 }
 
 // TODO: Generate with macro.
-extension LoggedOutScopeImplementation: LoggedOutFeatureProvider {}
-
-// TODO: Generate with macro.
 extension LoggedOutScopeImplementation: UserSessionServiceImplementationDependencies {}
 extension LoggedOutScopeImplementation: LoggedOutFeatureViewControllerDependencies {}
 

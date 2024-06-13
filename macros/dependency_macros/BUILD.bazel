@@ -9,7 +9,6 @@ swift_library(
         "BuilderProvider.swift",
         "Inject.swift",
         "Injectable.swift",
-        "Provider.swift",
         "ScopeViewControllerBuilder.swift",
         "ViewControllerBuilder.swift",
     ],

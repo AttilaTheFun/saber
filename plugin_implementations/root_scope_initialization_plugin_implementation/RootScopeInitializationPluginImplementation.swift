@@ -9,7 +9,6 @@ import UserSessionServiceInterface
 import WindowServiceInterface
 import UIKit
 
-@MainActor
 @Injectable
 public final class RootScopeInitializationPluginImplementation: ScopeInitializationPlugin {
     @Inject private let userSessionStorageService: UserSessionStorageService

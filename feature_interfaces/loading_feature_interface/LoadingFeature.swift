@@ -3,7 +3,6 @@ import DependencyMacros
 import UIKit
 import UserSessionServiceInterface
 
-@Provider
 @BuilderProvider
 public struct LoadingFeature {
     public let userSession: UserSession

@@ -4,7 +4,6 @@ import UIKit
 import UserSessionServiceInterface
 import UserServiceInterface
 
-@Provider
 @BuilderProvider
 public struct LoggedInFeature {
     public let userSession: UserSession

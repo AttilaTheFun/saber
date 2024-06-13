@@ -1,7 +1,6 @@
 import DependencyMacros
 import UIKit
 
-@Provider
 public protocol WindowService {
     func register(rootViewControllerBuilder: @escaping () -> UIViewController)
     func opened(window: UIWindow)

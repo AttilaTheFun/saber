@@ -29,9 +29,6 @@ final class LoadingScopeImplementation: BaseScope {
 }
 
 // TODO: Generate with macro.
-extension LoadingScopeImplementation: LoadingFeatureProvider {}
-
-// TODO: Generate with macro.
 extension LoadingScopeImplementation: LoadingFeatureViewControllerDependencies {}
 extension LoadingScopeImplementation: UserServiceImplementationDependencies {}
 

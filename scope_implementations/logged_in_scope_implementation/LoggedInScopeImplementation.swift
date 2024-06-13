@@ -26,14 +26,11 @@ final class LoggedInScopeImplementation: BaseScope {
 }
 
 // TODO: Generate with macro.
-extension LoggedInScopeImplementation: LoggedInFeatureProvider {}
-
-// TODO: Generate with macro.
 extension LoggedInScopeImplementation: UserSessionServiceImplementationDependencies {}
 extension LoggedInScopeImplementation: LoggedInFeatureViewControllerDependencies {}
 
-// TODO: Generate from @Instantiate macros.
-extension LoggedInScopeImplementation: UserSessionServiceProvider {
+// TODO: Generate with @Instantiate macro.
+extension LoggedInScopeImplementation {
     var userSessionService: any UserSessionService {
         return self.strong { [unowned self] in
             return UserSessionServiceImplementation(dependencies: self)
@@ -41,7 +38,7 @@ extension LoggedInScopeImplementation: UserSessionServiceProvider {
     }
 }
 
-// TODO: Generate from the @Instantiate macro.
+// TODO: Generate with @Instantiate macro.
 extension LoggedInScopeImplementation {
     var loggedInFeatureViewControllerBuilder: any Builder<LoggedInFeature, UIViewController> {
         return self.strong { [unowned self] in

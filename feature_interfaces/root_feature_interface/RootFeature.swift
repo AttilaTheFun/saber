@@ -1,7 +1,6 @@
 import DependencyMacros
 import Foundation
 
-@Provider
 public struct RootFeature {
     public init(endpointURL: URL) {
         self.endpointURL = endpointURL
