@@ -138,12 +138,15 @@ final class InjectableMacroTests: XCTestCase {
             public final class FooScopeImplementation {
                 @Initialize(FooServiceImplementation.self)
                 let fooServiceType: FooService.Type
+                @Initialize(FooViewController.self, arguments: FooFeature.self)
+                let fooViewControllerType: UIViewController.Type
             }
             """,
             expandedSource:
             """
             public final class FooScopeImplementation {
                 let fooServiceType: FooService.Type
+                let fooViewControllerType: UIViewController.Type
 
                 private let dependencies: any FooScopeImplementationDependencies
 
@@ -152,6 +155,15 @@ final class InjectableMacroTests: XCTestCase {
                 ) {
                     self.dependencies = dependencies
                     self.fooServiceType = FooServiceImplementation.self
+                    self.fooViewControllerType = FooViewController.self
+                }
+
+                private func initializeFooService() -> any FooService {
+                    return FooServiceImplementation(dependencies: self)
+                }
+
+                private func initializeFooViewController() -> any UIViewController {
+                    return FooViewController(dependencies: self)
                 }
             }
 
@@ -161,6 +173,7 @@ final class InjectableMacroTests: XCTestCase {
 
             public protocol FooScopeImplementationChildDependencies
                 : FooServiceImplementationDependencies
+                & FooViewControllerDependencies
             {
             }
             """,

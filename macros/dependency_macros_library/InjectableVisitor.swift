@@ -15,7 +15,7 @@ public final class InjectableVisitor: SyntaxVisitor {
     public private(set) var diagnostics = [Diagnostic]()
     public private(set) var argumentsProperty: Property?
     public private(set) var injectedProperties: [Property] = []
-    public private(set) var initializedProperties: [Property : AttributeSyntax] = [:]
+    public private(set) var initializedProperties: [(Property,AttributeSyntax)] = []
 
     // MARK: Concrete Declarations
 
@@ -87,7 +87,7 @@ public final class InjectableVisitor: SyntaxVisitor {
                 case .inject:
                     self.injectedProperties.append(property)
                 case .initialize(let attributeSyntax):
-                    self.initializedProperties[property] = attributeSyntax
+                    self.initializedProperties.append((property, attributeSyntax))
                 }
             } else {
                 // TODO: Diagnostic.

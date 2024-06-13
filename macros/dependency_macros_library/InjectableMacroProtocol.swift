@@ -62,7 +62,7 @@ extension InjectableMacroProtocol {
         if visitor.initializedProperties.count > 0 {
             var instantiatedConcreteTypeDescriptions = [TypeDescription]()
             for (_, attributeSyntax) in visitor.initializedProperties {
-                guard let concreteTypeDescription = attributeSyntax.typeDescription else {
+                guard let concreteTypeDescription = attributeSyntax.concreteTypeArgument else {
                     // TODO: Diagnostic
                     fatalError()
                 }
@@ -96,14 +96,8 @@ extension InjectableMacroProtocol {
         -> [DeclSyntax]
     {
         // Parse the nominal type:
-        let nominalType = try Parsers.parseNominalTypeSyntax(declaration: declaration)
+        let nominalType = try Parsers.parseNominalTypeSyntax(declaration: declaration) // TODO: Use TypeDescription
         let typeName = nominalType.name.text
-
-        // Create the dependencies property:
-        let dependenciesPropertyDeclaration: DeclSyntax =
-        """
-        private let dependencies: any \(raw: typeName)Dependencies
-        """
 
         // Parse the properties:
         let visitor = InjectableVisitor()
@@ -122,7 +116,7 @@ extension InjectableMacroProtocol {
             initializerLines.append("self.\(injectedProperty.label) = dependencies.\(injectedProperty.label)")
         }
         for (initializedProperty, attributeSyntax) in visitor.initializedProperties {
-            guard let concreteTypeDescription = attributeSyntax.typeDescription else {
+            guard let concreteTypeDescription = attributeSyntax.concreteTypeArgument else {
                 // TODO: Diagnostic
                 fatalError()
             }
@@ -148,9 +142,60 @@ extension InjectableMacroProtocol {
         }
         """
 
-        return [
-            dependenciesPropertyDeclaration,
-            initializerDeclaration
-        ] + self.requiredInitializers()
+        // Create the declarations:
+        var propertyDeclarations = [DeclSyntax]()
+        let initializerDeclaractions = [initializerDeclaration] + self.requiredInitializers()
+        var functionDeclarations = [DeclSyntax]()
+
+        // Create the dependencies property:
+        let dependenciesPropertyDeclaration: DeclSyntax =
+        """
+        private let dependencies: any \(raw: typeName)Dependencies
+        """
+        propertyDeclarations.append(dependenciesPropertyDeclaration)
+
+        // Create the initializer computed properties:
+        for (initializedProperty, attributeSyntax) in visitor.initializedProperties {
+
+            // Determine the property name:
+            let typeSuffix = "Type"
+            var propertyName = initializedProperty.label
+            if propertyName.hasSuffix(typeSuffix) {
+                propertyName = String(propertyName.dropLast(typeSuffix.count)).uppercasedFirstCharacter()
+            } else {
+                // TODO: Diagnostic
+                fatalError()
+            }
+
+            // Determine the property type:
+            guard case let .metatype(description, isType) = initializedProperty.typeDescription, isType else {
+                // TODO: Diagnostic
+                fatalError()
+            }
+
+            // Determine the concrete type:
+            guard let concreteTypeDescription = attributeSyntax.concreteTypeArgument else {
+                // TODO: Diagnostic
+                fatalError()
+            }
+
+            // Parse the arguments type if provided:
+            var argumentsClause = ""
+            var propagatedArguments = ""
+            if let argumentsTypeDescription = attributeSyntax.argumentsTypeArgument {
+                argumentsClause = "arguments: " + argumentsTypeDescription.asSource
+                propagatedArguments = "arguments: arguments, "
+            }
+
+            let initializerFunctionDeclaration: DeclSyntax =
+            """
+            private func initialize\(raw: propertyName)(\(raw: argumentsClause)) -> any \(raw: description.asSource) {
+            return \(raw: concreteTypeDescription.asSource)(\(raw: propagatedArguments)dependencies: self)
+            }
+            """
+            functionDeclarations.append(initializerFunctionDeclaration)
+        }
+
+        return propertyDeclarations + initializerDeclaractions + functionDeclarations
     }
 }

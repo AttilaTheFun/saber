@@ -1,11 +1,19 @@
 import SwiftSyntax
 
 extension AttributeSyntax {
-    public var typeDescription: TypeDescription? {
+    public var concreteTypeArgument: TypeDescription? {
+        return self.argumentIfNameEquals(nil)
+    }
+
+    public var argumentsTypeArgument: TypeDescription? {
+        return self.argumentIfNameEquals("argumentsType")
+    }
+
+    private func argumentIfNameEquals(_ expectedName: String?) -> TypeDescription? {
         guard
             let arguments = self.arguments,
             let labeledExpressionList = arguments.as(LabeledExprListSyntax.self),
-            let labeledExpression = labeledExpressionList.first else
+            let labeledExpression = labeledExpressionList.first(where: { $0.label?.text == expectedName }) else
         {
             return nil
         }
