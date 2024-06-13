@@ -6,6 +6,7 @@ swift_library(
     name = "dependency_macros",
     srcs = [
         "Arguments.swift",
+        "Factory.swift",
         "Inject.swift",
         "Injectable.swift",
         "Instantiate.swift",

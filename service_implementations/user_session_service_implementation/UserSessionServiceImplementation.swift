@@ -10,7 +10,6 @@ private let usernamesToUsersKey = "UsernamesToUsers"
 
 @Injectable
 public final class UserSessionServiceImplementation: UserSessionService {
-
     private var userSessionIDsToUserSessions: [UUID : UserSession] {
         get {
             if

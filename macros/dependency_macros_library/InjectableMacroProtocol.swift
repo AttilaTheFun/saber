@@ -2,7 +2,7 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 
-public protocol InjectableMacroProtocol: PeerMacro, MemberMacro {
+public protocol InjectableMacroProtocol: MemberMacro, PeerMacro {
     static func superclassInitializerLine() -> String?
     static func requiredInitializers() -> [DeclSyntax]
 }
@@ -47,15 +47,43 @@ extension InjectableMacroProtocol {
         // Create the dependencies protocol declaration:
         let nominalType = try Parsers.parseNominalTypeSyntax(declaration: declaration)
         let typeName = nominalType.name.text
-        let declSyntax: [DeclSyntax] = [
-            """
-            \(raw: nominalTypeAccessLevel) protocol \(raw: typeName)Dependencies {
-            \(raw: protocolBody)
-            }
-            """
+        let dependenciesProtocolName = "\(typeName)Dependencies"
+        let dependenciesProtocolDeclaration: DeclSyntax =
+        """
+        \(raw: nominalTypeAccessLevel) protocol \(raw: dependenciesProtocolName) {
+        \(raw: protocolBody)
+        }
+        """
+        var declarations: [DeclSyntax] = [
+            dependenciesProtocolDeclaration
         ]
 
-        return declSyntax
+        // If there are any instantiated dependencies, create the child dependencies protocol declaration.
+        if visitor.instantiatedProperties.count > 0 {
+            var instantiatedTypeDescriptions = [TypeDescription]()
+            for (_, attributeSyntax) in visitor.instantiatedProperties {
+                guard let concreteTypeDescription = attributeSyntax.concreteTypeDescription else {
+                    // TODO: Diagnostic
+                    fatalError()
+                }
+
+                instantiatedTypeDescriptions.append(concreteTypeDescription)
+            }
+
+            let childDependenciesProtocolNames = instantiatedTypeDescriptions
+                .map { $0.name + "Dependencies" }
+                .sorted()
+            let inheritanceClause = childDependenciesProtocolNames.joined(separator: "\n    & ")
+            let childDependenciesProtocolDeclaration: DeclSyntax =
+            """
+            \(raw: nominalTypeAccessLevel) protocol \(raw: typeName)ChildDependencies
+                : \(raw: inheritanceClause)
+            {}
+            """
+            declarations.append(childDependenciesProtocolDeclaration)
+        }
+
+        return declarations
     }
 
     // MARK: MemberMacro

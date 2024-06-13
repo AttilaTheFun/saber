@@ -23,20 +23,20 @@
 /// The Dependencies protocol, initializer and stored property are always generated in @Injectable is applied even if they are otherwise unused.
 /// This is intentional because there may be dependencies instantiated and retained by the Scope abstracted through the Dependencies protocol.
 @attached(member, names: arbitrary)
-@attached(peer, names: suffixed(Dependencies))
+@attached(peer, names: suffixed(Dependencies), suffixed(ChildDependencies))
 public macro Injectable() =
     #externalMacro(module: "DependencyMacrosPlugin", type: "InjectableMacro")
 
 /// A variant of the @Injectable macro for view controllers which calls the designated initializer, `super.init(nibName: nil, bundle: nil)`,
 /// from the generated initializer, and implements the required initializer `init?(coder: NSCoder)` with a `fatalError()`.
 @attached(member, names: arbitrary)
-@attached(peer, names: suffixed(Dependencies))
+@attached(peer, names: suffixed(Dependencies), suffixed(ChildDependencies))
 public macro ViewControllerInjectable() =
     #externalMacro(module: "DependencyMacrosPlugin", type: "ViewControllerInjectableMacro")
 
 /// A variant of the @Injectable macro for view controllers which calls the designated initializer, `super.init(nibName: nil, bundle: nil)`,
 /// from the generated initializer, and implements the required initializer `init?(coder: NSCoder)` with a `fatalError()`.
 @attached(member, names: arbitrary)
-@attached(peer, names: suffixed(Dependencies))
+@attached(peer, names: suffixed(Dependencies), suffixed(ChildDependencies))
 public macro ScopeInjectable() =
     #externalMacro(module: "DependencyMacrosPlugin", type: "ScopeInjectableMacro")

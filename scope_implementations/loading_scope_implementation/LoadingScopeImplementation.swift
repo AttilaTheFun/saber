@@ -13,7 +13,7 @@ import WindowServiceInterface
 
 @ScopeViewControllerBuilder(arguments: LoadingFeature.self)
 @ScopeInjectable
-final class LoadingScopeImplementation: BaseScope {
+final class LoadingScopeImplementation: BaseScope, LoadingScopeImplementationChildDependencies {
     @Arguments let loadingFeature: LoadingFeature
     @Inject let userStorageService: UserStorageService
     @Inject let userSessionStorageService: UserSessionStorageService
@@ -21,31 +21,21 @@ final class LoadingScopeImplementation: BaseScope {
     @Inject let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
     @Inject let loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController>
 
-    // @Instantiate(type: UserServiceImplementation.self)
-    // let userService: UserService
-
-    // @Instantiate(type: LoadingFeatureViewControllerBuilder.self)
-    // let loadingFeatureViewControllerBuilder: any Builder<LoadingFeature, UIViewController>
-}
-
-// TODO: Generate with macro.
-extension LoadingScopeImplementation: LoadingFeatureViewControllerDependencies {}
-extension LoadingScopeImplementation: UserServiceImplementationDependencies {}
-
-// TODO: Generate with @Instantiate macros.
-extension LoadingScopeImplementation {
+    // TODO: Generate body with @Instantiate macros.
+    @Instantiate(UserServiceImplementation.self)
     var userService: any UserService {
         return self.strong { [unowned self] in
             return UserServiceImplementation(dependencies: self)
         }
     }
-}
 
-// TODO: Generate with @Instantiate macro.
-extension LoadingScopeImplementation {
+//    @Instantiate(LoadingFeatureViewControllerBuilder.self)
     var loadingFeatureViewControllerBuilder: any Builder<LoadingFeature, UIViewController> {
         return self.strong { [unowned self] in
             return LoadingFeatureViewControllerBuilder(dependencies: self)
         }
     }
 }
+
+// TODO: Generate with macro.
+extension LoadingScopeImplementation: LoadingFeatureViewControllerDependencies {}

@@ -9,6 +9,10 @@ extension AttributeListSyntax.Element {
         self.attributeIfNameEquals("Inject")
     }
 
+    public var instantiateMacro: AttributeSyntax? {
+        self.attributeIfNameEquals("Instantiate")
+    }
+
     private func attributeIfNameEquals(_ expectedName: String) -> AttributeSyntax? {
         if
             case let .attribute(attribute) = self,

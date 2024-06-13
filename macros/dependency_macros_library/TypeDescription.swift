@@ -2,12 +2,13 @@ import SwiftSyntax
 
 public enum TypeDescriptionError: Error {
     case unsupportedType(TypeSyntax)
+    case unsupportedExpression(ExprSyntax)
 }
 
 public struct TypeDescription: Hashable, Sendable {
     public let name: String
     
-    init(type: TypeSyntax) throws {
+    public init(type: TypeSyntax) throws {
         if let identifierTypeSyntax = type.as(IdentifierTypeSyntax.self) {
             self.name = identifierTypeSyntax.name.text
         } else if let someOrAnyTypeSyntax = type.as(SomeOrAnyTypeSyntax.self) {
@@ -31,4 +32,19 @@ public struct TypeDescription: Hashable, Sendable {
             throw TypeDescriptionError.unsupportedType(type)
         }
     }
+
+    public init(expression: ExprSyntax) throws {
+        guard let memberAccessExpression = expression.as(MemberAccessExprSyntax.self) else {
+            throw TypeDescriptionError.unsupportedExpression(expression)
+        }
+        guard let nestedExpression = memberAccessExpression.base else {
+            throw TypeDescriptionError.unsupportedExpression(expression)
+        }
+        guard let declarationReferenceExpression = nestedExpression.as(DeclReferenceExprSyntax.self) else {
+            throw TypeDescriptionError.unsupportedExpression(expression)
+        }
+
+        self.name = declarationReferenceExpression.baseName.text
+    }
+
 }

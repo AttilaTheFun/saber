@@ -11,10 +11,11 @@ public final class InjectableVisitor: SyntaxVisitor {
 
     // MARK: Properties
 
+    private(set) var isTopLevelDeclaration = true
     public private(set) var diagnostics = [Diagnostic]()
     public private(set) var argumentsProperty: Property?
     public private(set) var injectedProperties: [Property] = []
-    private(set) var isTopLevelDeclaration = true
+    public private(set) var instantiatedProperties: [Property : AttributeSyntax] = [:]
 
     // MARK: Concrete Declarations
 
@@ -78,6 +79,8 @@ public final class InjectableVisitor: SyntaxVisitor {
                         self.argumentsProperty = property
                     case .inject:
                         self.injectedProperties.append(property)
+                    case .instantiate(let attributeSyntax):
+                        self.instantiatedProperties[property] = attributeSyntax
                     }
                 } else {
                     // TODO: Do we want to handle any other type annotations?

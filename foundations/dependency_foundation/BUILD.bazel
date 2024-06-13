@@ -6,6 +6,7 @@ swift_library(
         "Builder.swift",
         "DependencyContainer.swift",
         "DependencyProvider.swift",
+        "Factory.swift",
         "Scope.swift",
     ],
     module_name = "DependencyFoundation",

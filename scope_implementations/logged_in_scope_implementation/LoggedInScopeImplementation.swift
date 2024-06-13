@@ -13,36 +13,28 @@ import WindowServiceInterface
 
 @ScopeViewControllerBuilder(arguments: LoggedInFeature.self)
 @ScopeInjectable
-final class LoggedInScopeImplementation: BaseScope {
+final class LoggedInScopeImplementation: BaseScope, LoggedInScopeImplementationChildDependencies {
     @Arguments let loggedInFeature: LoggedInFeature
     @Inject let userStorageService: UserStorageService
     @Inject let userSessionStorageService: UserSessionStorageService
     @Inject let windowService: WindowService
     @Inject let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
 
-    // @Provide(type: UserSessionServiceProvider.self)
-    // @Instantiate(type: UserSessionServiceImplementation.self)
-    // let userSessionService: UserSessionService
-}
-
-// TODO: Generate with macro.
-extension LoggedInScopeImplementation: UserSessionServiceImplementationDependencies {}
-extension LoggedInScopeImplementation: LoggedInFeatureViewControllerDependencies {}
-
-// TODO: Generate with @Instantiate macro.
-extension LoggedInScopeImplementation {
+    // TODO: Generate body with @Instantiate macros.
+    @Instantiate(UserSessionServiceImplementation.self)
     var userSessionService: any UserSessionService {
         return self.strong { [unowned self] in
             return UserSessionServiceImplementation(dependencies: self)
         }
     }
-}
 
-// TODO: Generate with @Instantiate macro.
-extension LoggedInScopeImplementation {
+    // @Instantiate(type: UserSessionServiceImplementation.self)
     var loggedInFeatureViewControllerBuilder: any Builder<LoggedInFeature, UIViewController> {
         return self.strong { [unowned self] in
             return LoggedInFeatureViewControllerBuilder(dependencies: self)
         }
     }
 }
+
+// TODO: Generate with macro.
+extension LoggedInScopeImplementation: LoggedInFeatureViewControllerDependencies {}

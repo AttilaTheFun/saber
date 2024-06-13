@@ -6,6 +6,7 @@ swift_test(
     name = "dependency_macros_plugin_tests",
     srcs = [
         "ArgumentsMacroTests.swift",
+        "FactoryMacroTests.swift",
         "InjectMacroTests.swift",
         "InjectableMacroTests.swift",
         "InstantiateMacroTests.swift",

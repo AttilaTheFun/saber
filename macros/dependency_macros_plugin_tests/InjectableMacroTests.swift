@@ -6,10 +6,11 @@ import XCTest
 
 final class InjectableMacroTests: XCTestCase {
     private let macros: [String : any Macro.Type] = [
-        "Injectable": InjectableMacro.self,
-        "ViewControllerInjectable": ViewControllerInjectableMacro.self,
         "Arguments": ArgumentsMacro.self,
         "Inject": InjectMacro.self,
+        "Instantiate": InstantiateMacro.self,
+        "Injectable": InjectableMacro.self,
+        "ViewControllerInjectable": ViewControllerInjectableMacro.self,
     ]
 
     func testWithArgumentsAndDependencies() throws {
@@ -120,6 +121,50 @@ final class InjectableMacroTests: XCTestCase {
                 var barService: BarService {
                     get
                 }
+            }
+            """,
+            macros: self.macros
+        )
+    }
+
+    func testWithInstantiate() throws {
+        assertMacroExpansion(
+            """
+            @Injectable
+            public final class FooScopeImplementation: FooScopeImplementationChildDependencies {
+                @Instantiate(FooServiceImplementation.self)
+                let fooService: FooService
+                @Instantiate(BarServiceImplementation.self, initializationType: .eager)
+                let barService: FooService
+                @Instantiate(BazServiceImplementation.self, initializationType: .lazy, referenceType: .weak)
+                let bazService: BazService
+            }
+            """,
+            expandedSource:
+            """
+            public final class FooScopeImplementation: FooScopeImplementationChildDependencies {
+                let fooService: FooService
+                let barService: FooService
+                let bazService: BazService
+
+                private let dependencies: any FooScopeImplementationDependencies
+
+                public init(
+                    dependencies: some FooScopeImplementationDependencies
+                ) {
+                    self.dependencies = dependencies
+                }
+            }
+
+            public protocol FooScopeImplementationDependencies {
+
+            }
+
+            public protocol FooScopeImplementationChildDependencies
+                : BarServiceImplementationDependencies
+                & BazServiceImplementationDependencies
+                & FooServiceImplementationDependencies
+            {
             }
             """,
             macros: self.macros
