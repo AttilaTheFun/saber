@@ -5,9 +5,5 @@ swift_library(
     srcs = ["LoadingFeature.swift"],
     module_name = "LoadingFeatureInterface",
     visibility = ["//visibility:public"],
-    deps = [
-        "//foundations/dependency_foundation",
-        "//macros/dependency_macros",
-        "//service_interfaces/user_session_service_interface",
-    ],
+    deps = ["//service_interfaces/user_session_service_interface"],
 )

@@ -6,7 +6,6 @@ import DependencyMacrosLibrary
 public enum InjectMacroError: Error {
     case notDecoratingBinding
     case decoratingStatic
-    case missingInjectMacro
 }
 
 public struct InjectMacro: PeerMacro {
@@ -22,12 +21,6 @@ public struct InjectMacro: PeerMacro {
         guard variableDecl.modifiers.staticModifier == nil else {
             throw InjectMacroError.decoratingStatic
         }
-
-//        guard let argumentsMacro = variableDecl.attributes.argumentsMacro else {
-//            throw InjectMacroError.missingInjectMacro
-//        }
-//
-//        print(argumentsMacro)
 
         // This macro does not expand.
         return []

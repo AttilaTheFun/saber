@@ -6,12 +6,10 @@ swift_compiler_plugin(
     name = "dependency_macros_plugin",
     srcs = [
         "ArgumentsMacro.swift",
-        "BuilderProviderMacro.swift",
         "DependencyMacrosPlugin.swift",
         "InjectMacro.swift",
         "InjectableMacro.swift",
-        "MacroError.swift",
-        "ProviderMacro.swift",
+        "InstantiateMacro.swift",
         "ScopeViewControllerBuilderMacro.swift",
         "ViewControllerBuilderMacro.swift",
     ],

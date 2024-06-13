@@ -3,23 +3,23 @@ import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 import DependencyMacrosLibrary
 
-public enum ArgumentsMacroError: Error {
+public enum InstantiateMacroError: Error {
     case notDecoratingBinding
     case decoratingStatic
 }
 
-public struct ArgumentsMacro: PeerMacro {
+public struct InstantiateMacro: PeerMacro {
     public static func expansion(
         of node: AttributeSyntax,
         providingPeersOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
         guard let variableDecl = VariableDeclSyntax(declaration) else {
-            throw ArgumentsMacroError.notDecoratingBinding
+            throw InstantiateMacroError.notDecoratingBinding
         }
 
         guard variableDecl.modifiers.staticModifier == nil else {
-            throw ArgumentsMacroError.decoratingStatic
+            throw InstantiateMacroError.decoratingStatic
         }
 
         // This macro does not expand.

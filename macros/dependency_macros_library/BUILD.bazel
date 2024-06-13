@@ -11,6 +11,7 @@ swift_library(
         "DeclModifierListSyntax+Extensions.swift",
         "InjectableMacroProtocol.swift",
         "InjectableVisitor.swift",
+        "MacroError.swift",
         "Parsers.swift",
         "Property.swift",
         "String+Extensions.swift",

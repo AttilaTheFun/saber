@@ -5,10 +5,9 @@ import SwiftSyntaxMacros
 struct DependencyMacrosPlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
         ArgumentsMacro.self,
-        BuilderProviderMacro.self,
         InjectableMacro.self,
         InjectMacro.self,
-        ProviderMacro.self,
+        InstantiateMacro.self,
         ScopeViewControllerBuilderMacro.self,
         ScopeInjectableMacro.self,
         ViewControllerBuilderMacro.self,

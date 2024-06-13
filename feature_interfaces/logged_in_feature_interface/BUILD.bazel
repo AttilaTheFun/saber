@@ -6,8 +6,6 @@ swift_library(
     module_name = "LoggedInFeatureInterface",
     visibility = ["//visibility:public"],
     deps = [
-        "//foundations/dependency_foundation",
-        "//macros/dependency_macros",
         "//service_interfaces/user_service_interface",
         "//service_interfaces/user_session_service_interface",
     ],

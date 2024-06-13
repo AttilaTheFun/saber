@@ -1,6 +1,6 @@
 import SwiftSyntax
 
-enum MacroError: Error {
+public enum MacroError: Error {
     case invalidArgumentsType
     case invalidNumberOfArguments
     case invalidArgumentLabel(TokenSyntax?)

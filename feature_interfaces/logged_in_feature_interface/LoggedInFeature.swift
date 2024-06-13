@@ -1,10 +1,6 @@
-import DependencyFoundation
-import DependencyMacros
-import UIKit
 import UserSessionServiceInterface
 import UserServiceInterface
 
-@BuilderProvider
 public struct LoggedInFeature {
     public let userSession: UserSession
     public let user: User

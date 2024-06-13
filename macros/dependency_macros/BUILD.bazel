@@ -6,9 +6,9 @@ swift_library(
     name = "dependency_macros",
     srcs = [
         "Arguments.swift",
-        "BuilderProvider.swift",
         "Inject.swift",
         "Injectable.swift",
+        "Instantiate.swift",
         "ScopeViewControllerBuilder.swift",
         "ViewControllerBuilder.swift",
     ],
