@@ -3,13 +3,13 @@ import DependencyMacrosPlugin
 import SwiftSyntaxMacrosTestSupport
 import XCTest
 
-final class InjectMacroTests: XCTestCase {
-    private let macros = ["Inject": InjectMacro.self]
+final class FactoryBuilderMacroTests: XCTestCase {
+    private let macros = ["FactoryBuilder": FactoryBuilderMacro.self]
 
     func testMacro() throws {
         assertMacroExpansion(
             """
-            @Inject
+            @FactoryBuilder(FooFeatureViewControllerImplementation.swift)
             let fooFeature: FooFeature
             """,
             expandedSource:

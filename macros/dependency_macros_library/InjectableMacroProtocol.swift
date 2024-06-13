@@ -34,7 +34,7 @@ extension InjectableMacroProtocol {
         // Create properties for the protocol:
         var protocolProperties = [String]()
         for injectedProperty in visitor.injectedProperties {
-            let protocolProperty = "var \(injectedProperty.label): \(injectedProperty.typeDescription.name) { get }"
+            let protocolProperty = "var \(injectedProperty.label): \(injectedProperty.typeDescription.asSource) { get }"
             protocolProperties.append(protocolProperty)
         }
         let protocolBody = protocolProperties.joined(separator: "\n")
@@ -59,19 +59,19 @@ extension InjectableMacroProtocol {
         ]
 
         // If there are any instantiated dependencies, create the child dependencies protocol declaration.
-        if visitor.instantiatedProperties.count > 0 {
-            var instantiatedTypeDescriptions = [TypeDescription]()
-            for (_, attributeSyntax) in visitor.instantiatedProperties {
-                guard let concreteTypeDescription = attributeSyntax.concreteTypeDescription else {
+        if visitor.initializedProperties.count > 0 {
+            var instantiatedConcreteTypeDescriptions = [TypeDescription]()
+            for (_, attributeSyntax) in visitor.initializedProperties {
+                guard let concreteTypeDescription = attributeSyntax.typeDescription else {
                     // TODO: Diagnostic
                     fatalError()
                 }
 
-                instantiatedTypeDescriptions.append(concreteTypeDescription)
+                instantiatedConcreteTypeDescriptions.append(concreteTypeDescription)
             }
 
-            let childDependenciesProtocolNames = instantiatedTypeDescriptions
-                .map { $0.name + "Dependencies" }
+            let childDependenciesProtocolNames = instantiatedConcreteTypeDescriptions
+                .map { $0.asSource + "Dependencies" }
                 .sorted()
             let inheritanceClause = childDependenciesProtocolNames.joined(separator: "\n    & ")
             let childDependenciesProtocolDeclaration: DeclSyntax =
@@ -113,13 +113,21 @@ extension InjectableMacroProtocol {
         var initializerArguments = [String]()
         var initializerLines = [String]()
         if let argumentsProperty = visitor.argumentsProperty {
-            initializerArguments.append("arguments: \(argumentsProperty.typeDescription.name)")
+            initializerArguments.append("arguments: \(argumentsProperty.typeDescription.asSource)")
             initializerLines.append("self.\(argumentsProperty.label) = arguments")
         }
-        initializerArguments.append("dependencies: some \(typeName)Dependencies")
+        initializerArguments.append("dependencies: any \(typeName)Dependencies")
         initializerLines.append("self.dependencies = dependencies")
         for injectedProperty in visitor.injectedProperties {
             initializerLines.append("self.\(injectedProperty.label) = dependencies.\(injectedProperty.label)")
+        }
+        for (initializedProperty, attributeSyntax) in visitor.initializedProperties {
+            guard let concreteTypeDescription = attributeSyntax.typeDescription else {
+                // TODO: Diagnostic
+                fatalError()
+            }
+
+            initializerLines.append("self.\(initializedProperty.label) = \(concreteTypeDescription.asSource).self")
         }
         if let superclassInitializer = self.superclassInitializerLine() {
             initializerLines.append(superclassInitializer)

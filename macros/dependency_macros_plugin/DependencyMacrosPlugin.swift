@@ -8,6 +8,7 @@ struct DependencyMacrosPlugin: CompilerPlugin {
         FactoryMacro.self,
         InjectableMacro.self,
         InjectMacro.self,
+        InitializeMacro.self,
         InstantiateMacro.self,
         ScopeViewControllerBuilderMacro.self,
         ScopeInjectableMacro.self,

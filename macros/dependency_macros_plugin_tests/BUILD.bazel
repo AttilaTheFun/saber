@@ -7,9 +7,9 @@ swift_test(
     srcs = [
         "ArgumentsMacroTests.swift",
         "FactoryMacroTests.swift",
+        "InitializeMacroTests.swift",
         "InjectMacroTests.swift",
         "InjectableMacroTests.swift",
-        "InstantiateMacroTests.swift",
         "ScopeViewControllerBuilderMacroTests.swift",
         "ViewControllerBuilderMacroTests.swift",
     ],

@@ -20,8 +20,11 @@ final class LoggedInScopeImplementation: BaseScope, LoggedInScopeImplementationC
     @Inject let windowService: WindowService
     @Inject let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
 
-    // TODO: Generate body with @Instantiate macros.
-    @Instantiate(UserSessionServiceImplementation.self)
+    
+    @Initialize(UserSessionServiceImplementation.self)
+    let userSessionServiceType: UserSessionService.Type
+
+    // TODO: Generate with @Initialize macros.
     var userSessionService: any UserSessionService {
         return self.strong { [unowned self] in
             return UserSessionServiceImplementation(dependencies: self)

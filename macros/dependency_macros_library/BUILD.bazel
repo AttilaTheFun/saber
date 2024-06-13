@@ -10,6 +10,7 @@ swift_library(
         "AttributeSyntax+Extensions.swift",
         "ConcreteDeclSyntaxProtocol.swift",
         "DeclModifierListSyntax+Extensions.swift",
+        "DependencyStorageTypes.swift",
         "InjectableMacroProtocol.swift",
         "InjectableVisitor.swift",
         "MacroError.swift",

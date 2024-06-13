@@ -26,3 +26,27 @@ public struct FactoryMacro: PeerMacro {
         return []
     }
 }
+
+public enum FactoryBuilderMacroError: Error {
+    case notDecoratingBinding
+    case decoratingStatic
+}
+
+public struct FactoryBuilderMacro: PeerMacro {
+    public static func expansion(
+        of node: AttributeSyntax,
+        providingPeersOf declaration: some DeclSyntaxProtocol,
+        in context: some MacroExpansionContext
+    ) throws -> [DeclSyntax] {
+        guard let variableDecl = VariableDeclSyntax(declaration) else {
+            throw FactoryBuilderMacroError.notDecoratingBinding
+        }
+
+        guard variableDecl.modifiers.staticModifier == nil else {
+            throw FactoryBuilderMacroError.decoratingStatic
+        }
+
+        // This macro does not expand.
+        return []
+    }
+}

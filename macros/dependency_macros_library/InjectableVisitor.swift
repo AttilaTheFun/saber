@@ -15,7 +15,7 @@ public final class InjectableVisitor: SyntaxVisitor {
     public private(set) var diagnostics = [Diagnostic]()
     public private(set) var argumentsProperty: Property?
     public private(set) var injectedProperties: [Property] = []
-    public private(set) var instantiatedProperties: [Property : AttributeSyntax] = [:]
+    public private(set) var initializedProperties: [Property : AttributeSyntax] = [:]
 
     // MARK: Concrete Declarations
 
@@ -72,19 +72,22 @@ public final class InjectableVisitor: SyntaxVisitor {
                 let typeAnnotationSyntax = binding.typeAnnotation
             {
                 let label = identifierPatternSyntax.identifier.text
-                if let typeDescription = try? TypeDescription(type: typeAnnotationSyntax.type) {
-                    let property = Property(label: label, typeDescription: typeDescription)
-                    switch injectableMacroType {
-                    case .arguments:
-                        self.argumentsProperty = property
-                    case .inject:
-                        self.injectedProperties.append(property)
-                    case .instantiate(let attributeSyntax):
-                        self.instantiatedProperties[property] = attributeSyntax
-                    }
-                } else {
-                    // TODO: Do we want to handle any other type annotations?
-                    fatalError()
+
+                // Parse the type description:
+                let typeDescription = typeAnnotationSyntax.type.typeDescription
+                if case .unknown(let description) = typeDescription {
+                    // TODO: Diagnostic.
+                    fatalError(description)
+                }
+                
+                let property = Property(label: label, typeDescription: typeDescription)
+                switch injectableMacroType {
+                case .arguments:
+                    self.argumentsProperty = property
+                case .inject:
+                    self.injectedProperties.append(property)
+                case .initialize(let attributeSyntax):
+                    self.initializedProperties[property] = attributeSyntax
                 }
             } else {
                 // TODO: Diagnostic.

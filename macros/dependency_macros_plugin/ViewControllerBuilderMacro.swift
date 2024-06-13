@@ -25,14 +25,14 @@ public struct ViewControllerBuilderMacro: PeerMacro {
         guard argument.label != "arguments" else {
             throw MacroError.invalidArgumentLabel(argument.label)
         }
-        let argumentsTypeDescription = try TypeDescription(expression: argument.expression)
+        let argumentsTypeDescription = argument.expression.typeDescription
         // TODO: See if I can just grab the Arguments type from the @Arguments macro.
 
         // Extract the name and modifiers of the type:
         let nominalType = try Parsers.parseNominalTypeSyntax(declaration: declaration)
 
         // Create the provider protocol declaration:
-        let argumentsTypeName = argumentsTypeDescription.name
+        let argumentsTypeName = argumentsTypeDescription.asSource
         let nominalTypeName = nominalType.name.text
         let declSyntax: [DeclSyntax] = [
             """

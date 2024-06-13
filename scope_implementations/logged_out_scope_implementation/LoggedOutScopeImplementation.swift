@@ -19,7 +19,9 @@ final class LoggedOutScopeImplementation: BaseScope, LoggedOutScopeImplementatio
     @Inject let loadingFeatureBuilder: any Builder<LoadingFeature, UIViewController>
 
     // TODO: Generate body with @Instantiate macros.
-    @Instantiate(UserSessionServiceImplementation.self)
+    @Initialize(UserSessionServiceImplementation.self)
+    let userSessionServiceType: UserSessionService.Type
+
     var userSessionService: any UserSessionService {
         return self.strong { [unowned self] in
             return UserSessionServiceImplementation(dependencies: self)
@@ -33,6 +35,8 @@ final class LoggedOutScopeImplementation: BaseScope, LoggedOutScopeImplementatio
         }
     }
 }
+
+let function = LoggedOutFeatureViewController.init
 
 // TODO: Generate with macro.
 extension LoggedOutScopeImplementation: LoggedOutFeatureViewControllerDependencies {}

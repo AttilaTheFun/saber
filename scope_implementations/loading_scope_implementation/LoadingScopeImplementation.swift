@@ -22,7 +22,9 @@ final class LoadingScopeImplementation: BaseScope, LoadingScopeImplementationChi
     @Inject let loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController>
 
     // TODO: Generate body with @Instantiate macros.
-    @Instantiate(UserServiceImplementation.self)
+    @Initialize(UserServiceImplementation.self)
+    let userServiceType: UserService.Type
+
     var userService: any UserService {
         return self.strong { [unowned self] in
             return UserServiceImplementation(dependencies: self)

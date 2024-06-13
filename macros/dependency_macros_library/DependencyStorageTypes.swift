@@ -25,10 +25,3 @@ public enum ReferenceType: String {
     // Repeated access to the same property will a new instance every time.
     case none
 }
-
-@attached(peer)
-public macro Instantiate(
-    _ concreteType: Any.Type,
-    initializationType: InitializationType = .lazy,
-    referenceType: ReferenceType = .strong
-) = #externalMacro(module: "DependencyMacrosPlugin", type: "InstantiateMacro")

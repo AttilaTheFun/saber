@@ -7,9 +7,9 @@ swift_library(
     srcs = [
         "Arguments.swift",
         "Factory.swift",
+        "Initialize.swift",
         "Inject.swift",
         "Injectable.swift",
-        "Instantiate.swift",
         "ScopeViewControllerBuilder.swift",
         "ViewControllerBuilder.swift",
     ],

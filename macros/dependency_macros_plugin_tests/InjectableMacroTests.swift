@@ -6,11 +6,15 @@ import XCTest
 
 final class InjectableMacroTests: XCTestCase {
     private let macros: [String : any Macro.Type] = [
+        "Instantiate": InstantiateMacro.self, // TODO: Delete
+
         "Arguments": ArgumentsMacro.self,
         "Inject": InjectMacro.self,
-        "Instantiate": InstantiateMacro.self,
+        "Initialize": InitializeMacro.self,
+
         "Injectable": InjectableMacro.self,
         "ViewControllerInjectable": ViewControllerInjectableMacro.self,
+        "ScopeInjectable": ScopeInjectableMacro.self,
     ]
 
     func testWithArgumentsAndDependencies() throws {
@@ -34,7 +38,7 @@ final class InjectableMacroTests: XCTestCase {
 
                 public init(
                     arguments: FooArguments,
-                    dependencies: some FooScopeImplementationDependencies
+                    dependencies: any FooScopeImplementationDependencies
                 ) {
                     self.fooArguments = arguments
                     self.dependencies = dependencies
@@ -73,7 +77,7 @@ final class InjectableMacroTests: XCTestCase {
 
                 public init(
                     arguments: FooArguments,
-                    dependencies: some FooScopeImplementationDependencies
+                    dependencies: any FooScopeImplementationDependencies
                 ) {
                     self.fooArguments = arguments
                     self.dependencies = dependencies
@@ -106,7 +110,7 @@ final class InjectableMacroTests: XCTestCase {
                 private let dependencies: any FooScopeImplementationDependencies
 
                 public init(
-                    dependencies: some FooScopeImplementationDependencies
+                    dependencies: any FooScopeImplementationDependencies
                 ) {
                     self.dependencies = dependencies
                     self.fooService = dependencies.fooService
@@ -127,32 +131,27 @@ final class InjectableMacroTests: XCTestCase {
         )
     }
 
-    func testWithInstantiate() throws {
+    func testWithInitialize() throws {
         assertMacroExpansion(
             """
             @Injectable
-            public final class FooScopeImplementation: FooScopeImplementationChildDependencies {
-                @Instantiate(FooServiceImplementation.self)
-                let fooService: FooService
-                @Instantiate(BarServiceImplementation.self, initializationType: .eager)
-                let barService: FooService
-                @Instantiate(BazServiceImplementation.self, initializationType: .lazy, referenceType: .weak)
-                let bazService: BazService
+            public final class FooScopeImplementation {
+                @Initialize(FooServiceImplementation.self)
+                let fooServiceType: FooService.Type
             }
             """,
             expandedSource:
             """
-            public final class FooScopeImplementation: FooScopeImplementationChildDependencies {
-                let fooService: FooService
-                let barService: FooService
-                let bazService: BazService
+            public final class FooScopeImplementation {
+                let fooServiceType: FooService.Type
 
                 private let dependencies: any FooScopeImplementationDependencies
 
                 public init(
-                    dependencies: some FooScopeImplementationDependencies
+                    dependencies: any FooScopeImplementationDependencies
                 ) {
                     self.dependencies = dependencies
+                    self.fooServiceType = FooServiceImplementation.self
                 }
             }
 
@@ -161,9 +160,7 @@ final class InjectableMacroTests: XCTestCase {
             }
 
             public protocol FooScopeImplementationChildDependencies
-                : BarServiceImplementationDependencies
-                & BazServiceImplementationDependencies
-                & FooServiceImplementationDependencies
+                : FooServiceImplementationDependencies
             {
             }
             """,
@@ -194,7 +191,7 @@ final class InjectableMacroTests: XCTestCase {
 
                 public init(
                     arguments: FooArguments,
-                    dependencies: some FooViewControllerDependencies
+                    dependencies: any FooViewControllerDependencies
                 ) {
                     self.fooArguments = arguments
                     self.dependencies = dependencies

@@ -8,7 +8,7 @@ import WindowServiceInterface
 
 @ViewControllerBuilder(arguments: LoggedOutFeature.self)
 @ViewControllerInjectable
-final class LoggedOutFeatureViewController: UIViewController {
+public final class LoggedOutFeatureViewController: UIViewController {
     @Arguments private let arguments: LoggedOutFeature
     @Inject private let userSessionService: UserSessionService
     @Inject private let userSessionStorageService: UserSessionStorageService
@@ -21,7 +21,7 @@ final class LoggedOutFeatureViewController: UIViewController {
 
     // MARK: View Lifecycle
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
 
         // Configure the view:
@@ -79,7 +79,7 @@ final class LoggedOutFeatureViewController: UIViewController {
         self.logInButton.addTarget(self, action: #selector(logInButtonTapped), for: .touchUpInside)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.textField.becomeFirstResponder()
     }
