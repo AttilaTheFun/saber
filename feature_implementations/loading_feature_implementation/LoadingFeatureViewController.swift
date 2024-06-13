@@ -9,10 +9,15 @@ import UserSessionServiceInterface
 import UIKit
 import WindowServiceInterface
 
+// SceneDelegate -> UIWindow -> UIViewController -> Scope -> Other Dependencies
+// SceneDelegate -> UIWindow -> UIViewController -> Other Dependencies
+
 @ViewControllerBuilder(arguments: LoadingFeature.self)
 @ViewControllerInjectable
 final class LoadingFeatureViewController: UIViewController {
     @Arguments private let loadingFeature: LoadingFeature
+//    @Inject private var userSessionStorageService: UserSessionStorageService { self.dependencies.userSessionStorageService }
+//    @Inject(.lazy) private lazy var userSessionStorageService: UserSessionStorageService = { self.dependencies.userSessionStorageService }()
     @Inject private let userSessionStorageService: UserSessionStorageService
     @Inject private let userService: UserService
     @Inject private let userStorageService: UserStorageService

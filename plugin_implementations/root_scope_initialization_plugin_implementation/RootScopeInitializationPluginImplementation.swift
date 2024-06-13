@@ -1,4 +1,5 @@
 import DependencyFoundation
+import DependencyMacros
 import LoggedOutFeatureInterface
 import LoggedInFeatureInterface
 import LoadingFeatureInterface
@@ -8,47 +9,15 @@ import UserSessionServiceInterface
 import WindowServiceInterface
 import UIKit
 
-// TODO: Generate with @Injectable macro.
-public typealias RootScopeInitializationPluginImplementationDependencies
-    = DependencyProvider
-    & LoggedOutFeatureBuilderProvider
-    & LoadingFeatureBuilderProvider
-    & LoggedInFeatureBuilderProvider
-    & UserSessionStorageServiceProvider
-    & UserStorageServiceProvider
-    & WindowServiceProvider
-
-// @Injectable
 @MainActor
+@Injectable
 public final class RootScopeInitializationPluginImplementation: ScopeInitializationPlugin {
-
-    // @Inject
-    private let userSessionStorageService: UserSessionStorageService
-
-    // @Inject
-    private let userStorageService: UserStorageService
-
-    // @Inject
-    private let windowService: WindowService
-
-    // @Inject
-    private let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
-
-    // @Inject
-    private let loadingFeatureBuilder: any Builder<LoadingFeature, UIViewController>
-
-    // @Inject
-    private let loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController>
-
-    // TODO: Generate with @Injectable macro.
-    public init(dependencies: RootScopeInitializationPluginImplementationDependencies) {
-        self.userSessionStorageService = dependencies.userSessionStorageService
-        self.userStorageService = dependencies.userStorageService
-        self.windowService = dependencies.windowService
-        self.loggedOutFeatureBuilder = dependencies.loggedOutFeatureBuilder
-        self.loadingFeatureBuilder = dependencies.loadingFeatureBuilder
-        self.loggedInFeatureBuilder = dependencies.loggedInFeatureBuilder
-    }
+    @Inject private let userSessionStorageService: UserSessionStorageService
+    @Inject private let userStorageService: UserStorageService
+    @Inject private let windowService: WindowService
+    @Inject private let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
+    @Inject private let loadingFeatureBuilder: any Builder<LoadingFeature, UIViewController>
+    @Inject private let loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController>
 
     public func execute() {
         guard let userSession = self.userSessionStorageService.userSession else {

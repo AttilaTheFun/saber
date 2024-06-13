@@ -1,19 +1,11 @@
-import DependencyFoundation
+import DependencyMacros
 import Foundation
 import UserServiceInterface
 
 private let userKey = "User"
 
-// TODO: Generate with @Injectable macro.
-public typealias UserStorageServiceImplementationDependencies
-    = DependencyProvider
-
-// @Injectable
+@Injectable
 public final class UserStorageServiceImplementation: UserStorageService {
-
-    // TODO: Generate with @Injectable macro.
-    public init(dependencies: UserStorageServiceImplementationDependencies) {}
-
     public var user: User? {
         get {
             if

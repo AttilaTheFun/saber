@@ -11,92 +11,32 @@ import UserServiceInterface
 import UserServiceImplementation
 import WindowServiceInterface
 
-// TODO: Generate with @Injectable macro.
-public typealias LoadingScopeImplementationDependencies
-    = DependencyProvider
-    & LoggedInFeatureBuilderProvider
-    & LoggedOutFeatureBuilderProvider
-    & UserSessionStorageServiceProvider
-    & UserStorageServiceProvider
-    & WindowServiceProvider
-
-// @FeaatureScopeBuilder(building: UIViewController.self)
-// @Injectable
 @ScopeViewControllerBuilder(arguments: LoadingFeature.self)
-final class LoadingScopeImplementation: Scope<LoadingScopeImplementationDependencies> {
+@ScopeInjectable
+final class LoadingScopeImplementation: BaseScope {
+    @Arguments let loadingFeature: LoadingFeature
+    @Inject let userStorageService: UserStorageService
+    @Inject let userSessionStorageService: UserSessionStorageService
+    @Inject let windowService: WindowService
+    @Inject let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
+    @Inject let loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController>
 
-    // @Arguments
-    let loadingFeature: LoadingFeature
-
-    // @Propagate(type: UserStorageServiceProvider.self)
-    // let userStorageService: UserStorageService
-
-    // @Propagate(type: UserSessionStorageServiceProvider.self)
-    // let userSessionStorageService: UserSessionStorageService
-
-    // @Propagate(type: WindowServiceProvider.self)
-    // let windowService: WindowService
-
-    // @Propagate(type: LoggedOutFeatureBuilderProvider.self)
-    // let loggedOutFeatureViewControllerBuilder: any Builder<LoggedOutFeature, UIViewController>
-
-    // @Propagate(type: LoggedInFeatureBuilderProvider.self)
-    // let loggedInFeatureViewControllerBuilder: any Builder<LoggedInFeature, UIViewController>
-
-    // @Provide(type: UserServiceProvider.self)
     // @Instantiate(type: UserServiceImplementation.self)
     // let userService: UserService
 
     // @Instantiate(type: LoadingFeatureViewControllerBuilder.self)
     // let loadingFeatureViewControllerBuilder: any Builder<LoadingFeature, UIViewController>
-
-    // TODO: Generate with @Injectable macro.
-    init(arguments: LoadingFeature, dependencies: LoadingScopeImplementationDependencies) {
-        self.loadingFeature = arguments
-        super.init(dependencies: dependencies)
-    }
 }
 
-// TODO: Generate from @Arguments macro.
+// TODO: Generate with macro.
 extension LoadingScopeImplementation: LoadingFeatureProvider {}
 
-// TODO: Generate from the @Propagate macro.
-extension LoadingScopeImplementation: WindowServiceProvider {
-    var windowService: any WindowService {
-        return self.dependencies.windowService
-    }
-}
+// TODO: Generate with macro.
+extension LoadingScopeImplementation: LoadingFeatureViewControllerDependencies {}
+extension LoadingScopeImplementation: UserServiceImplementationDependencies {}
 
-// TODO: Generate from the @Propagate macro.
-extension LoadingScopeImplementation: UserStorageServiceProvider {
-    var userStorageService: any UserStorageService {
-        return self.dependencies.userStorageService
-    }
-}
-
-// TODO: Generate from the @Propagate macro.
-extension LoadingScopeImplementation: UserSessionStorageServiceProvider {
-    var userSessionStorageService: any UserSessionStorageService {
-        return self.dependencies.userSessionStorageService
-    }
-}
-
-// TODO: Generate from the @Propagate macro.
-extension LoadingScopeImplementation: LoggedOutFeatureBuilderProvider {
-    var loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController> {
-        return self.dependencies.loggedOutFeatureBuilder
-    }
-}
-
-// TODO: Generate from the @Propagate macro.
-extension LoadingScopeImplementation: LoggedInFeatureBuilderProvider {
-    var loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController> {
-        return self.dependencies.loggedInFeatureBuilder
-    }
-}
-
-// TODO: Generate from @Provide and @Instantiate macros.
-extension LoadingScopeImplementation: UserServiceProvider {
+// TODO: Generate with @Instantiate macros.
+extension LoadingScopeImplementation {
     var userService: any UserService {
         return self.strong { [unowned self] in
             return UserServiceImplementation(dependencies: self)
@@ -104,10 +44,7 @@ extension LoadingScopeImplementation: UserServiceProvider {
     }
 }
 
-// TODO: Generate with macro.
-extension LoadingScopeImplementation: LoadingFeatureViewControllerDependencies {}
-
-// TODO: Generate from the @Instantiate macro.
+// TODO: Generate with @Instantiate macro.
 extension LoadingScopeImplementation {
     var loadingFeatureViewControllerBuilder: any Builder<LoadingFeature, UIViewController> {
         return self.strong { [unowned self] in

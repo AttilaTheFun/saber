@@ -1,27 +1,18 @@
-import DependencyFoundation
+import DependencyMacros
 import UIKit
 import WindowServiceInterface
 
-// TODO: Generate with @Injectable macro.
-public typealias WindowServiceImplementationDependencies
-    = DependencyProvider
-
-// @Injectable
+@Injectable
 public final class WindowServiceImplementation: WindowService {
-    private var rootViewControllerBuilder: () -> UIViewController
-    private var openWindows: [UIWindow] = []
-
-    // TODO: Generate with @Injectable macro.
-    public init(dependencies: WindowServiceImplementationDependencies) {
-        self.rootViewControllerBuilder = {
-            let storyboard = UIStoryboard(name: "LaunchScreen", bundle: nil)
-            if let viewController = storyboard.instantiateInitialViewController() {
-                return viewController
-            } else {
-                return UIViewController()
-            }
+    private var rootViewControllerBuilder: () -> UIViewController = {
+        let storyboard = UIStoryboard(name: "LaunchScreen", bundle: nil)
+        if let viewController = storyboard.instantiateInitialViewController() {
+            return viewController
+        } else {
+            return UIViewController()
         }
     }
+    private var openWindows: [UIWindow] = []
 
     public func register(rootViewControllerBuilder: @escaping () -> UIViewController) {
         self.rootViewControllerBuilder = rootViewControllerBuilder

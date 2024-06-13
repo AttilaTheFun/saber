@@ -1,17 +1,13 @@
-import DependencyFoundation
+import DependencyMacros
 import Foundation
 import UserServiceInterface
 import LoadingFeatureInterface
 
 private let userIDsToUsersKey = "UserIDsToUsers"
 
-// TODO: Generate with @Injectable macro.
-public typealias UserServiceImplementationDependencies
-    = DependencyProvider
-    & LoadingFeatureProvider
-
-// @Injectable
+@Injectable
 public final class UserServiceImplementation: UserService {
+    @Inject private let loadingFeature: LoadingFeature
 
     private var userIDsToUsers: [UUID : User] {
         get {
@@ -29,14 +25,6 @@ public final class UserServiceImplementation: UserService {
                 UserDefaults.standard.setValue(data, forKey: userIDsToUsersKey)
             }
         }
-    }
-
-    // @Inject
-    private let loadingFeature: LoadingFeature
-
-    // TODO: Generate with @Injectable macro.
-    public init(dependencies: UserServiceImplementationDependencies) {
-        self.loadingFeature = dependencies.loadingFeature
     }
 
     private enum UserServiceImplementationError: Error {
