@@ -21,58 +21,23 @@ public final class RootScopeImplementation: Scope, RootScopeImplementationChildD
     @Arguments public let rootFeature: RootFeature
 
     @Store(UserSessionStorageServiceImplementation.self)
-    public let userSessionStorageServiceType: UserSessionStorageService.Type
+    public var userSessionStorageService: any UserSessionStorageService
 
     @Store(UserStorageServiceImplementation.self)
-    public let userStorageServiceType: UserStorageService.Type
+    public var userStorageService: any UserStorageService
 
     @Store(WindowServiceImplementation.self)
-    public let windowServiceType: WindowService.Type
+    public var windowService: any WindowService
 
     @Store(RootViewControllerInitializationServiceImplementation.self)
-    public let rootViewControllerInitializationServiceType: RootViewControllerInitializationService.Type
+    public var rootViewControllerInitializationService: any RootViewControllerInitializationService
 
-    // @Factory(LoggedOutFeatureViewController.self, arguments: LoggedOutFeature.self, scope: LoggedOutScope.self)
-    // let loggedOutFeatureType: UIViewController.Type
+    @Factory(LoggedOutScopeImplementation.self, factory: \.loggedOutFeatureViewControllerFactory)
+    public var loggedOutFeatureFactory: any Factory<LoggedOutFeature, UIViewController>
 
-    // @Factory(LoadingFeatureViewController.self, arguments: LoadingFeature.self, scope: LoadingScope.self)
-    // let loadingFeatureType: UIViewController.Type
+    @Factory(LoadingScopeImplementation.self, factory: \.loadingFeatureViewControllerFactory)
+    public var loadingFeatureFactory: any Factory<LoadingFeature, UIViewController>
 
-    // @Factory(LoggedInFeatureViewController.self, arguments: LoggedInFeature.self, scope: LoggedInScope.self)
-    // let loggedInFeatureType: UIViewController.Type
-}
-
-// TODO: Generate with macro.
-extension RootScopeImplementation: LoadingScopeImplementationDependencies {}
-extension RootScopeImplementation: LoggedInScopeImplementationDependencies {}
-extension RootScopeImplementation: LoggedOutScopeImplementationDependencies {}
-
-// TODO: Generate from @Factory macro.
-extension RootScopeImplementation {
-    public var loggedOutFeatureFactory: any Factory<LoggedOutFeature, UIViewController> {
-        FactoryImplementation { arguments in
-            let scope = LoggedOutScopeImplementation(arguments: arguments, dependencies: self)
-            return scope.loggedOutFeatureViewControllerFactory.build(arguments: arguments)
-        }
-    }
-}
-
-// TODO: Generate from @Factory macro.
-extension RootScopeImplementation {
-    public var loadingFeatureFactory: any Factory<LoadingFeature, UIViewController> {
-        FactoryImplementation { arguments in
-            let scope = LoadingScopeImplementation(arguments: arguments, dependencies: self)
-            return scope.loadingFeatureViewControllerFactory.build(arguments: arguments)
-        }
-    }
-}
-
-// TODO: Generate from @Factory macros.
-extension RootScopeImplementation {
-    public var loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController> {
-        FactoryImplementation { arguments in
-            let scope = LoggedInScopeImplementation(arguments: arguments, dependencies: self)
-            return scope.loggedInFeatureViewControllerFactory.build(arguments: arguments)
-        }
-    }
+    @Factory(LoggedInScopeImplementation.self, factory: \.loggedInFeatureViewControllerFactory)
+    public var loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController>
 }

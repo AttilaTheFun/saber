@@ -10,11 +10,17 @@ final class StoreMacroTests: XCTestCase {
         assertMacroExpansion(
             """
             @Store(FooFeatureViewControllerImplementation.swift)
-            let fooFeature: FooFeature
+            var fooFeature: FooFeature
             """,
             expandedSource:
             """
-            let fooFeature: FooFeature
+            var fooFeature: FooFeature {
+                get {
+                    self.strong { [unowned self] in
+                        FooFeatureViewControllerImplementation.swift(dependencies: self)
+                    }
+                }
+            }
             """,
             macros: self.macros
         )

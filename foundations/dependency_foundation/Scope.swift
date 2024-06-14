@@ -5,7 +5,6 @@ open class Scope {
     
     private var factories = [ObjectIdentifier : Any]()
     private var instances = [ObjectIdentifier : Any]()
-    private var plugins = [ObjectIdentifier : [Any]]()
 
     public func new<T>(_ function: @escaping () -> T) -> T {
         let identifier = ObjectIdentifier(T.self)
@@ -37,15 +36,5 @@ open class Scope {
         let value = self.new(function)
         self.instances[identifier] = WeakWrapper(value: value)
         return value
-    }
-
-    public func registerPlugins<Plugin>(plugins: [Plugin]) {
-        let typeIdentifier = ObjectIdentifier(Plugin.self)
-        self.plugins[typeIdentifier] = plugins
-    }
-
-    public func getPlugins<PluginType>(type: PluginType.Type) -> [PluginType] {
-        let typeIdentifier = ObjectIdentifier(PluginType.self)
-        return self.plugins[typeIdentifier, default: []] as? [PluginType] ?? []
     }
 }

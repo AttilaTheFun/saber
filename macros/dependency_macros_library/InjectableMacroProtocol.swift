@@ -165,56 +165,43 @@ extension InjectableMacroProtocol {
         propertyDeclarations.append(dependenciesPropertyDeclaration)
 
         // Create the factory computed properties:
-        for (property, attributeSyntax) in visitor.factoryProperties {
-            let (propertyName, existentialType, concreteType, argumentsType) = try self.computedPropertyTypes(
-                property: property,
-                attributeSyntax: attributeSyntax
-            )
-
-            // Determine the arguments clause:
-            let argumentsClause = argumentsType == nil ? "" : "arguments: arguments, "
-
-            // Create the property declaration:
-            let accessLevel = concreteDeclaration.modifiers.accessLevel
-            let factoryGenericType = "<\(argumentsType ?? "Void"), \(existentialType)>"
-            let propertyDeclaration: DeclSyntax =
-            """
-            \(raw: accessLevel) var \(raw: propertyName)Factory: any Factory\(raw: factoryGenericType) {
-                FactoryImplementation\(raw: factoryGenericType) { arguments in
-                    \(raw: concreteType)(\(raw: argumentsClause)dependencies: self)
-                }
-            }
-            """
-
-            propertyDeclarations.append(propertyDeclaration)
-        }
-
-        // Create the store computed properties:
-        for (property, attributeSyntax) in visitor.storeProperties {
-            let (propertyName, existentialType, concreteType, argumentsType) = try self.computedPropertyTypes(
-                property: property,
-                attributeSyntax: attributeSyntax
-            )
-
-            // Throw an error if the arguments were non-nil:
-            if argumentsType != nil {
-                throw InjectableMacroProtocolError.invalidComputedPropertyType
-            }
-
-            // Create the property declaration:
-            let accessLevel = concreteDeclaration.modifiers.accessLevel
-            let referenceStrategy = attributeSyntax.referenceStrategyArgument
-            let propertyDeclaration: DeclSyntax =
-            """
-            \(raw: accessLevel) var \(raw: propertyName): any \(raw: existentialType) {
-                self.\(raw: referenceStrategy.rawValue) { [unowned self] in
-                    \(raw: concreteType)(dependencies: self)
-                }
-            }
-            """
-
-            propertyDeclarations.append(propertyDeclaration)
-        }
+//        for (property, attributeSyntax) in visitor.factoryProperties {
+//            let (propertyName, existentialType, concreteType, argumentsType) = try self.computedPropertyTypes(
+//                property: property,
+//                attributeSyntax: attributeSyntax
+//            )
+//
+//            // Determine the arguments clause:
+//            let argumentsClause = argumentsType == nil ? "" : "arguments: arguments"
+//            let argumentsClauseWithComma = argumentsClause.isEmpty ? "" : argumentsClause + ", "
+//
+//            // Create the factory lines:
+//            let factoryLines: [String]
+//            if let factoryKeyPathArgument = attributeSyntax.factoryKeyPathArgument {
+//                factoryLines = [
+//                    "let scope = \(concreteType)(\(argumentsClauseWithComma)dependencies: self)",
+//                    "return scope.\(factoryKeyPathArgument).build(\(argumentsClause))"
+//                ]
+//            } else {
+//                factoryLines = [
+//                    "\(concreteType)(\(argumentsClauseWithComma)dependencies: self)"
+//                ]
+//            }
+//
+//            // Create the property declaration:
+//            let accessLevel = concreteDeclaration.modifiers.accessLevel
+//            let factoryGenericType = "<\(argumentsType ?? "Void"), \(existentialType)>"
+//            let propertyDeclaration: DeclSyntax =
+//            """
+//            \(raw: accessLevel) var \(raw: propertyName)Factory: any Factory\(raw: factoryGenericType) {
+//                FactoryImplementation\(raw: factoryGenericType) { arguments in
+//                    \(raw: factoryLines.joined(separator: "        \n"))
+//                }
+//            }
+//            """
+//
+//            propertyDeclarations.append(propertyDeclaration)
+//        }
 
         return propertyDeclarations
     }
@@ -225,8 +212,7 @@ extension InjectableMacroProtocol {
     ) throws -> (
         propertyName: String,
         existentialType: String,
-        concreteType: String,
-        argumentsType: String?
+        concreteType: String
     ) {
 
         // Determine the property name:
@@ -249,10 +235,7 @@ extension InjectableMacroProtocol {
         }
         let concreteType = concreteTypeDescription.asSource
 
-        // Determine the arguments type:
-        let argumentsType = attributeSyntax.argumentsTypeArgument?.asSource
-
-        return (propertyName, existentialType, concreteType, argumentsType)
+        return (propertyName, existentialType, concreteType)
     }
 
     private static func initializerDeclaration(
@@ -282,17 +265,6 @@ extension InjectableMacroProtocol {
             initializerLines.append("self.\(property.label) = dependencies.\(property.label)")
         }
 
-        // Add an initializer line for each @Store and @Factory property:
-        let propertiesWithChildDependencies = visitor.storeProperties + visitor.factoryProperties
-        for (property, attributeSyntax) in propertiesWithChildDependencies {
-            guard let concreteTypeDescription = attributeSyntax.concreteTypeArgument else {
-                // TODO: Diagnostic
-                fatalError()
-            }
-
-            initializerLines.append("self.\(property.label) = \(concreteTypeDescription.asSource).self")
-        }
-
         // Add the superclass initializer, if necessary:
         if let superclassInitializer = self.superclassInitializerLine() {
             initializerLines.append(superclassInitializer)
@@ -304,12 +276,7 @@ extension InjectableMacroProtocol {
                 continue
             }
 
-            let (propertyName, _, _, _) = try self.computedPropertyTypes(
-                property: property,
-                attributeSyntax: attributeSyntax
-            )
-
-            initializerLines.append("_ = self.\(propertyName)")
+            initializerLines.append("_ = self.\(property.label)")
         }
 
         // Create the initializer:

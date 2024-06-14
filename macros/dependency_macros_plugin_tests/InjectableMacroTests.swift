@@ -137,38 +137,38 @@ final class InjectableMacroTests: XCTestCase {
             """
             @ScopeInjectable
             public final class FooScope: Scope, FooScopeChildDependencies {
-                @Factory(FooServiceImplementation.self)
-                let fooServiceType: FooService.Type
-                @Factory(FooViewController.self, arguments: FooFeature.self)
-                let fooViewControllerType: UIViewController.Type
+                @Factory(FooFeatureViewController.self)
+                var fooFeatureFactory: Factory<FooFeature, UIViewController>
+
+                @Factory(BarScope.self, factory: \\.barViewControllerFactory)
+                var barFeatureFactory: Factory<BarFeature, UIViewController>
             }
             """,
             expandedSource:
             """
             public final class FooScope: Scope, FooScopeChildDependencies {
-                let fooServiceType: FooService.Type
-                let fooViewControllerType: UIViewController.Type
+                var fooFeatureFactory: Factory<FooFeature, UIViewController> {
+                    get {
+                        FactoryImplementation { arguments in
+                            FooFeatureViewController(arguments: arguments, dependencies: self)
+                        }
+                    }
+                }
+                var barFeatureFactory: Factory<BarFeature, UIViewController> {
+                    get {
+                        FactoryImplementation { arguments in
+                            let scope = BarScope(arguments: arguments, dependencies: self)
+                            return scope.barViewControllerFactory.build(arguments: arguments)
+                        }
+                    }
+                }
 
                 private let dependencies: any FooScopeDependencies
-
-                public var fooServiceFactory: any Factory<Void, FooService> {
-                    FactoryImplementation<Void, FooService> { arguments in
-                        FooServiceImplementation(dependencies: self)
-                    }
-                }
-
-                public var fooViewControllerFactory: any Factory<FooFeature, UIViewController> {
-                    FactoryImplementation<FooFeature, UIViewController> { arguments in
-                        FooViewController(arguments: arguments, dependencies: self)
-                    }
-                }
 
                 public init(
                     dependencies: any FooScopeDependencies
                 ) {
                     self.dependencies = dependencies
-                    self.fooServiceType = FooServiceImplementation.self
-                    self.fooViewControllerType = FooViewController.self
                     super.init()
                 }
             }
@@ -178,8 +178,8 @@ final class InjectableMacroTests: XCTestCase {
             }
 
             public protocol FooScopeChildDependencies
-                : FooServiceImplementationDependencies
-                & FooViewControllerDependencies
+                : BarScopeDependencies
+                & FooFeatureViewControllerDependencies
             {
             }
             """,
@@ -193,37 +193,35 @@ final class InjectableMacroTests: XCTestCase {
             @ScopeInjectable
             public final class FooScope: Scope, FooScopeChildDependencies {
                 @Store(FooServiceImplementation.self, init: .lazy, ref: .weak)
-                let fooServiceType: FooService.Type
+                var fooService: FooService
                 @Store(BarServiceImplementation.self, init: .eager, ref: .strong)
-                let barServiceType: BarService.Type
+                var barService: BarService
             }
             """,
             expandedSource:
             """
             public final class FooScope: Scope, FooScopeChildDependencies {
-                let fooServiceType: FooService.Type
-                let barServiceType: BarService.Type
+                var fooService: FooService {
+                    get {
+                        self.weak { [unowned self] in
+                            FooServiceImplementation(dependencies: self)
+                        }
+                    }
+                }
+                var barService: BarService {
+                    get {
+                        self.strong { [unowned self] in
+                            BarServiceImplementation(dependencies: self)
+                        }
+                    }
+                }
 
                 private let dependencies: any FooScopeDependencies
-
-                public var fooService: any FooService {
-                    self.weak { [unowned self] in
-                        FooServiceImplementation(dependencies: self)
-                    }
-                }
-
-                public var barService: any BarService {
-                    self.strong { [unowned self] in
-                        BarServiceImplementation(dependencies: self)
-                    }
-                }
 
                 public init(
                     dependencies: any FooScopeDependencies
                 ) {
                     self.dependencies = dependencies
-                    self.fooServiceType = FooServiceImplementation.self
-                    self.barServiceType = BarServiceImplementation.self
                     super.init()
                     _ = self.barService
                 }

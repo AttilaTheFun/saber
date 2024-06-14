@@ -5,11 +5,11 @@ package(default_visibility = ["//visibility:public"])
 swift_library(
     name = "dependency_macros",
     srcs = [
-        "Arguments.swift",
-        "Factory.swift",
-        "Inject.swift",
-        "Injectable.swift",
-        "Store.swift",
+        "ArgumentsMacroInterface.swift",
+        "FactoryMacroInterface.swift",
+        "InjectMacroInterface.swift",
+        "InjectableMacroInterface.swift",
+        "StoreMacroInterface.swift",
     ],
     module_name = "DependencyMacros",
     plugins = ["//macros/dependency_macros_plugin"],

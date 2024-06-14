@@ -6,9 +6,9 @@ extension AttributeSyntax {
         return self.typeDescriptionIfNameEquals(nil)
     }
 
-    public var argumentsTypeArgument: TypeDescription? {
-        return self.typeDescriptionIfNameEquals("arguments")
-    }
+//    public var argumentsTypeArgument: TypeDescription? {
+//        return self.typeDescriptionIfNameEquals("arguments")
+//    }
 
     private func typeDescriptionIfNameEquals(_ expectedName: String?) -> TypeDescription? {
         guard
@@ -28,17 +28,37 @@ extension AttributeSyntax {
         return typeDescription
     }
 
+    public var factoryKeyPathArgument: String? {
+        return self.keyPathBaseNameIfNameEquals("factory")
+    }
+
+    private func keyPathBaseNameIfNameEquals(_ expectedName: String?) -> String? {
+        guard
+            let arguments = self.arguments,
+            let labeledExpressionList = arguments.as(LabeledExprListSyntax.self),
+            let labeledExpression = labeledExpressionList.first(where: { $0.label?.text == expectedName }),
+            let keyPathExpression = KeyPathExprSyntax(labeledExpression.expression),
+            let firstComponent = keyPathExpression.components.first,
+            let keyPathComponent = KeyPathComponentSyntax(firstComponent),
+            let keyPathPropertyComponent = KeyPathPropertyComponentSyntax(keyPathComponent.component) else
+        {
+            return nil
+        }
+
+        return keyPathPropertyComponent.declName.baseName.text
+    }
+
     public var initializationStrategyArgument: InitializationStrategy {
-        let rawValue = self.identifierIfNameEquals("init")
+        let rawValue = self.memberAccessBaseNameIfNameEquals("init")
         return InitializationStrategy(rawValue: rawValue ?? "") ?? .lazy
     }
 
     public var referenceStrategyArgument: ReferenceStrategy {
-        let rawValue = self.identifierIfNameEquals("ref")
+        let rawValue = self.memberAccessBaseNameIfNameEquals("ref")
         return ReferenceStrategy(rawValue: rawValue ?? "") ?? .strong
     }
 
-    private func identifierIfNameEquals(_ expectedName: String?) -> String? {
+    private func memberAccessBaseNameIfNameEquals(_ expectedName: String?) -> String? {
         guard
             let arguments = self.arguments,
             let labeledExpressionList = arguments.as(LabeledExprListSyntax.self),

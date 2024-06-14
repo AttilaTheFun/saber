@@ -1,3 +1,4 @@
+import SwiftUI
 
 public struct Property: Hashable, Sendable {
 

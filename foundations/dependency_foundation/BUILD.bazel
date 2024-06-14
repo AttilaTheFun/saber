@@ -5,6 +5,7 @@ swift_library(
     srcs = [
         "Factory.swift",
         "Scope.swift",
+        "Type.swift",
     ],
     module_name = "DependencyFoundation",
     visibility = ["//visibility:public"],

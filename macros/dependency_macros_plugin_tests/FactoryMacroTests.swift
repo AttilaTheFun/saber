@@ -9,12 +9,29 @@ final class FactoryMacroTests: XCTestCase {
     func testMacro() throws {
         assertMacroExpansion(
             """
-            @Factory(FooFeatureViewControllerImplementation.swift)
-            let fooFeature: FooFeature
+            @Factory(FooFeatureViewController.self)
+            var fooFeatureFactory: Factory<FooFeature, UIViewController>
+
+            @Factory(BarScope.self, factory: \\.barViewControllerFactory)
+            var barFeatureFactory: Factory<BarFeature, UIViewController>
             """,
             expandedSource:
             """
-            let fooFeature: FooFeature
+            var fooFeatureFactory: Factory<FooFeature, UIViewController> {
+                get {
+                    FactoryImplementation { arguments in
+                        FooFeatureViewController(arguments: arguments, dependencies: self)
+                    }
+                }
+            }
+            var barFeatureFactory: Factory<BarFeature, UIViewController> {
+                get {
+                    FactoryImplementation { arguments in
+                        let scope = BarScope(arguments: arguments, dependencies: self)
+                        return scope.barViewControllerFactory.build(arguments: arguments)
+                    }
+                }
+            }
             """,
             macros: self.macros
         )
