@@ -8,15 +8,14 @@ import UserServiceInterface
 import UIKit
 import WindowServiceInterface
 
-@ViewControllerBuilder(arguments: LoggedInFeature.self)
 @ViewControllerInjectable
-final class LoggedInFeatureViewController: UIViewController {
+public final class LoggedInFeatureViewController: UIViewController {
     @Arguments private let loggedInFeature: LoggedInFeature
     @Inject private let userSessionService: UserSessionService
     @Inject private let userSessionStorageService: UserSessionStorageService
     @Inject private let userStorageService: UserStorageService
     @Inject private let windowService: WindowService
-    @Inject private let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
+    @Inject private let loggedOutFeatureFactory: any Factory<LoggedOutFeature, UIViewController>
 
     private let label = UILabel()
     private let labelContainerView = UIView()
@@ -24,7 +23,7 @@ final class LoggedInFeatureViewController: UIViewController {
 
     // MARK: View Lifecycle
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
 
         // Configure the view:
@@ -83,7 +82,7 @@ final class LoggedInFeatureViewController: UIViewController {
         self.logOutButton.addTarget(self, action: #selector(logOutButtonTapped), for: .touchUpInside)
     }
 
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.label.becomeFirstResponder()
     }
@@ -107,10 +106,10 @@ final class LoggedInFeatureViewController: UIViewController {
     private func buildLoggedOutFeature() {
         self.userStorageService.user = nil
         self.userSessionStorageService.userSession = nil
-        let builder = self.loggedOutFeatureBuilder
+        let factory = self.loggedOutFeatureFactory
         self.windowService.register {
             let arguments = LoggedOutFeature()
-            return builder.build(arguments: arguments)
+            return factory.build(arguments: arguments)
         }
     }
 }

@@ -2,6 +2,7 @@ import DependencyMacrosTypes
 
 @attached(peer)
 public macro Store(
-    _ concreteType: Any.Type,
-    argumentsType: Any.Type = Void.self
+    _ concrete: Any.Type,
+    init: InitializationStrategy = .lazy,
+    ref: ReferenceStrategy = .strong
 ) = #externalMacro(module: "DependencyMacrosPlugin", type: "StoreMacro")

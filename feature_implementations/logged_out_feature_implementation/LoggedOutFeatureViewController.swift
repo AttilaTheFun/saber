@@ -6,14 +6,13 @@ import UserSessionServiceInterface
 import UIKit
 import WindowServiceInterface
 
-@ViewControllerBuilder(arguments: LoggedOutFeature.self)
 @ViewControllerInjectable
 public final class LoggedOutFeatureViewController: UIViewController {
     @Arguments private let arguments: LoggedOutFeature
     @Inject private let userSessionService: UserSessionService
     @Inject private let userSessionStorageService: UserSessionStorageService
     @Inject private let windowService: WindowService
-    @Inject private let loadingFeatureBuilder: any Builder<LoadingFeature, UIViewController>
+    @Inject private let loadingFeatureFactory: any Factory<LoadingFeature, UIViewController>
 
     private let textField = UITextField()
     private let textFieldContainerView = UIView()
@@ -105,10 +104,10 @@ public final class LoggedOutFeatureViewController: UIViewController {
     @MainActor
     private func buildLoadingFeature(userSession: UserSession) {
         self.userSessionStorageService.userSession = userSession
-        let builder = self.loadingFeatureBuilder
+        let factory = self.loadingFeatureFactory
         self.windowService.register {
             let arguments = LoadingFeature(userSession: userSession)
-            return builder.build(arguments: arguments)
+            return factory.build(arguments: arguments)
         }
     }
 }

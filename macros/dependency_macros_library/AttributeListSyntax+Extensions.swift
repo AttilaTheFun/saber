@@ -3,8 +3,8 @@ import SwiftSyntax
 enum InjectableMacroType {
     case arguments(AttributeSyntax)
     case inject(AttributeSyntax)
-    case initialize(AttributeSyntax)
     case factory(AttributeSyntax)
+    case store(AttributeSyntax)
 }
 
 extension AttributeListSyntax {
@@ -28,20 +28,20 @@ extension AttributeListSyntax {
         return nil
     }
 
-    public var initializeMacro: AttributeSyntax? {
+    public var factoryMacro: AttributeSyntax? {
         for element in self {
-            if let initializeMacro = element.initializeMacro {
-                return initializeMacro
+            if let factoryMacro = element.factoryMacro {
+                return factoryMacro
             }
         }
 
         return nil
     }
 
-    public var factoryMacro: AttributeSyntax? {
+    public var storeMacro: AttributeSyntax? {
         for element in self {
-            if let factoryMacro = element.factoryMacro {
-                return factoryMacro
+            if let storeMacro = element.storeMacro {
+                return storeMacro
             }
         }
 
@@ -57,12 +57,12 @@ extension AttributeListSyntax {
             return .inject(injectMacro)
         }
 
-        if let initializeMacro = self.initializeMacro {
-            return .initialize(initializeMacro)
-        }
-
         if let factoryMacro = self.factoryMacro {
             return .factory(factoryMacro)
+        }
+
+        if let storeMacro = self.storeMacro {
+            return .store(storeMacro)
         }
 
         return nil

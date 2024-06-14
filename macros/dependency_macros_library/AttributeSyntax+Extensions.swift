@@ -3,14 +3,14 @@ import SwiftSyntax
 
 extension AttributeSyntax {
     public var concreteTypeArgument: TypeDescription? {
-        return self.argumentIfNameEquals(nil)
+        return self.typeDescriptionIfNameEquals(nil)
     }
 
     public var argumentsTypeArgument: TypeDescription? {
-        return self.argumentIfNameEquals("argumentsType")
+        return self.typeDescriptionIfNameEquals("arguments")
     }
 
-    private func argumentIfNameEquals(_ expectedName: String?) -> TypeDescription? {
+    private func typeDescriptionIfNameEquals(_ expectedName: String?) -> TypeDescription? {
         guard
             let arguments = self.arguments,
             let labeledExpressionList = arguments.as(LabeledExprListSyntax.self),
@@ -26,5 +26,28 @@ extension AttributeSyntax {
         }
 
         return typeDescription
+    }
+
+    public var initializationStrategyArgument: InitializationStrategy {
+        let rawValue = self.identifierIfNameEquals("init")
+        return InitializationStrategy(rawValue: rawValue ?? "") ?? .lazy
+    }
+
+    public var referenceStrategyArgument: ReferenceStrategy {
+        let rawValue = self.identifierIfNameEquals("ref")
+        return ReferenceStrategy(rawValue: rawValue ?? "") ?? .strong
+    }
+
+    private func identifierIfNameEquals(_ expectedName: String?) -> String? {
+        guard
+            let arguments = self.arguments,
+            let labeledExpressionList = arguments.as(LabeledExprListSyntax.self),
+            let labeledExpression = labeledExpressionList.first(where: { $0.label?.text == expectedName }),
+            let memberAccessExpression = MemberAccessExprSyntax(labeledExpression.expression) else
+        {
+            return nil
+        }
+
+        return memberAccessExpression.declName.baseName.text
     }
 }

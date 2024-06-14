@@ -18,7 +18,7 @@ public struct ArgumentsMacro: PeerMacro {
             throw ArgumentsMacroError.notDecoratingBinding
         }
 
-        guard variableDecl.modifiers.staticModifier == nil else {
+        guard !variableDecl.modifiers.isStatic else {
             throw ArgumentsMacroError.decoratingStatic
         }
 

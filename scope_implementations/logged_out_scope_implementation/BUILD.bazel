@@ -12,7 +12,6 @@ swift_library(
         "//foundations/dependency_foundation",
         "//foundations/swift_foundation",
         "//macros/dependency_macros",
-        "//plugin_interfaces/scope_initialization_plugin_interface",
         "//service_implementations/user_session_service_implementation",
         "//service_interfaces/user_session_service_interface",
         "//service_interfaces/window_service_interface",

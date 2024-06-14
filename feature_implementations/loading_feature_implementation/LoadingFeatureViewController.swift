@@ -9,25 +9,19 @@ import UserSessionServiceInterface
 import UIKit
 import WindowServiceInterface
 
-// SceneDelegate -> UIWindow -> UIViewController -> Scope -> Other Dependencies
-// SceneDelegate -> UIWindow -> UIViewController -> Other Dependencies
-
-@ViewControllerBuilder(arguments: LoadingFeature.self)
 @ViewControllerInjectable
-final class LoadingFeatureViewController: UIViewController {
+public final class LoadingFeatureViewController: UIViewController {
     @Arguments private let loadingFeature: LoadingFeature
-//    @Inject private var userSessionStorageService: UserSessionStorageService { self.dependencies.userSessionStorageService }
-//    @Inject(.lazy) private lazy var userSessionStorageService: UserSessionStorageService = { self.dependencies.userSessionStorageService }()
     @Inject private let userSessionStorageService: UserSessionStorageService
     @Inject private let userService: UserService
     @Inject private let userStorageService: UserStorageService
     @Inject private let windowService: WindowService
-    @Inject private let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
-    @Inject private let loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController>
+    @Inject private let loggedOutFeatureFactory: any Factory<LoggedOutFeature, UIViewController>
+    @Inject private let loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController>
 
     // MARK: View Lifecycle
 
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
 
         // Configure the view:
@@ -35,7 +29,7 @@ final class LoadingFeatureViewController: UIViewController {
         self.view.backgroundColor = .systemBackground
     }
 
-    override func viewDidAppear(_ animated: Bool) {
+    public override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
         Task.detached {
@@ -54,20 +48,20 @@ final class LoadingFeatureViewController: UIViewController {
     @MainActor
     private func buildLoggedInFeature(userSession: UserSession, user: User) {
         self.userStorageService.user = user
-        let builder = self.loggedInFeatureBuilder
+        let factory = self.loggedInFeatureFactory
         self.windowService.register {
             let arguments = LoggedInFeature(userSession: userSession, user: user)
-            return builder.build(arguments: arguments)
+            return factory.build(arguments: arguments)
         }
     }
 
     @MainActor
     private func buildLoggedOutFeature() {
         self.userSessionStorageService.userSession = nil
-        let builder = self.loggedOutFeatureBuilder
+        let factory = self.loggedOutFeatureFactory
         self.windowService.register {
             let arguments = LoggedOutFeature()
-            return builder.build(arguments: arguments)
+            return factory.build(arguments: arguments)
         }
     }
 }

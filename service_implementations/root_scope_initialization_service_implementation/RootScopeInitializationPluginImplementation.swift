@@ -3,47 +3,50 @@ import DependencyMacros
 import LoggedOutFeatureInterface
 import LoggedInFeatureInterface
 import LoadingFeatureInterface
-import ScopeInitializationPluginInterface
 import UserServiceInterface
 import UserSessionServiceInterface
 import WindowServiceInterface
 import UIKit
 
+public protocol RootViewControllerInitializationService {
+    func registerRootViewControllerFactory()
+}
+
 @Injectable
-public final class RootScopeInitializationPluginImplementation: ScopeInitializationPlugin {
+public final class RootViewControllerInitializationServiceImplementation: RootViewControllerInitializationService {
     @Inject private let userSessionStorageService: UserSessionStorageService
     @Inject private let userStorageService: UserStorageService
     @Inject private let windowService: WindowService
-    @Inject private let loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController>
-    @Inject private let loadingFeatureBuilder: any Builder<LoadingFeature, UIViewController>
-    @Inject private let loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController>
+    @Inject private let loggedOutFeatureFactory: any Factory<LoggedOutFeature, UIViewController>
+    @Inject private let loadingFeatureFactory: any Factory<LoadingFeature, UIViewController>
+    @Inject private let loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController>
 
-    public func execute() {
+    public func registerRootViewControllerFactory() {
         guard let userSession = self.userSessionStorageService.userSession else {
             self.userSessionStorageService.userSession = nil
             self.userStorageService.user = nil
-            let builder = self.loggedOutFeatureBuilder
+            let factory = self.loggedOutFeatureFactory
             self.windowService.register {
                 let arguments = LoggedOutFeature()
-                return builder.build(arguments: arguments)
+                return factory.build(arguments: arguments)
             }
             return
         }
 
         guard let user = self.userStorageService.user, user.id == userSession.userID else {
             self.userStorageService.user = nil
-            let builder = self.loadingFeatureBuilder
+            let factory = self.loadingFeatureFactory
             self.windowService.register {
                 let arguments = LoadingFeature(userSession: userSession)
-                return builder.build(arguments: arguments)
+                return factory.build(arguments: arguments)
             }
             return
         }
 
-        let builder = self.loggedInFeatureBuilder
+        let factory = self.loggedInFeatureFactory
         self.windowService.register {
             let arguments = LoggedInFeature(userSession: userSession, user: user)
-            return builder.build(arguments: arguments)
+            return factory.build(arguments: arguments)
         }
     }
 }

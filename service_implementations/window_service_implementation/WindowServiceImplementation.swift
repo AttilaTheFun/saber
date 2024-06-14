@@ -4,7 +4,7 @@ import WindowServiceInterface
 
 @Injectable
 public final class WindowServiceImplementation: WindowService {
-    private var rootViewControllerBuilder: () -> UIViewController = {
+    private var rootViewControllerFactory: () -> UIViewController = {
         let storyboard = UIStoryboard(name: "LaunchScreen", bundle: nil)
         if let viewController = storyboard.instantiateInitialViewController() {
             return viewController
@@ -14,8 +14,8 @@ public final class WindowServiceImplementation: WindowService {
     }
     private var openWindows: [UIWindow] = []
 
-    public func register(rootViewControllerBuilder: @escaping () -> UIViewController) {
-        self.rootViewControllerBuilder = rootViewControllerBuilder
+    public func register(rootViewControllerFactory: @escaping () -> UIViewController) {
+        self.rootViewControllerFactory = rootViewControllerFactory
         for window in self.openWindows {
             self.updateRootViewController(window: window)
         }
@@ -31,7 +31,7 @@ public final class WindowServiceImplementation: WindowService {
     }
 
     private func updateRootViewController(window: UIWindow) {
-        let newRootViewController = self.rootViewControllerBuilder()
+        let newRootViewController = self.rootViewControllerFactory()
         let hasExistingRootViewController = window.rootViewController != nil
         window.rootViewController = newRootViewController
         if hasExistingRootViewController {

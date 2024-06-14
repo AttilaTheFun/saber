@@ -12,11 +12,14 @@ public final class InjectableVisitor: SyntaxVisitor {
     // MARK: Properties
 
     private(set) var isTopLevelDeclaration = true
+
     public private(set) var diagnostics = [Diagnostic]()
+    public private(set) var concreteDeclaration: ConcreteDeclSyntaxProtocol?
+
     public private(set) var argumentsProperty: Property?
     public private(set) var injectProperties: [Property] = []
-    public private(set) var initializeProperties: [(Property,AttributeSyntax)] = []
     public private(set) var factoryProperties: [(Property,AttributeSyntax)] = []
+    public private(set) var storeProperties: [(Property,AttributeSyntax)] = []
 
     // MARK: Concrete Declarations
 
@@ -38,13 +41,14 @@ public final class InjectableVisitor: SyntaxVisitor {
         }
 
         self.isTopLevelDeclaration = false
+        self.concreteDeclaration = node
         return .visitChildren
     }
 
     // MARK: Variable Declarations
 
     public override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
-        guard node.modifiers.staticModifier == nil else {
+        if node.modifiers.isStatic {
             return .skipChildren
         }
 
@@ -87,10 +91,10 @@ public final class InjectableVisitor: SyntaxVisitor {
                     self.argumentsProperty = property
                 case .inject:
                     self.injectProperties.append(property)
-                case .initialize(let attributeSyntax):
-                    self.initializeProperties.append((property, attributeSyntax))
                 case .factory(let attributeSyntax):
                     self.factoryProperties.append((property, attributeSyntax))
+                case .store(let attributeSyntax):
+                    self.storeProperties.append((property, attributeSyntax))
                 }
             } else {
                 // TODO: Diagnostic.

@@ -2,6 +2,13 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 
+public enum InjectableMacroProtocolError: Error {
+    case declarationNotConcrete
+    case invalidMacroArguments
+    case invalidComputedPropertyName
+    case invalidComputedPropertyType
+}
+
 public protocol InjectableMacroProtocol: MemberMacro, PeerMacro {
     static func superclassInitializerLine() -> String?
     static func requiredInitializers() -> [DeclSyntax]
@@ -28,8 +35,33 @@ extension InjectableMacroProtocol {
         providingPeersOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
     ) throws -> [DeclSyntax] {
+
+        // Walk the declaration with the visitor:
         let visitor = InjectableVisitor()
         visitor.walk(declaration)
+
+        // Create the protocol declarations:
+        let declarations: [DeclSyntax?] = [
+            try self.dependenciesProtocolDeclaration(
+                visitor: visitor,
+                declaration: declaration
+            ),
+            try self.childDependenciesProtocolDeclaration(
+                visitor: visitor,
+                declaration: declaration
+            )
+        ]
+
+        return declarations.compactMap { $0 }
+    }
+
+    private static func dependenciesProtocolDeclaration(
+        visitor: InjectableVisitor,
+        declaration: some DeclSyntaxProtocol
+    ) throws -> DeclSyntax? {
+        guard let concreteDeclaration = visitor.concreteDeclaration else {
+            throw InjectableMacroProtocolError.declarationNotConcrete
+        }
 
         // Create properties for the protocol:
         var protocolProperties = [String]()
@@ -39,51 +71,57 @@ extension InjectableMacroProtocol {
         }
         let protocolBody = protocolProperties.joined(separator: "\n")
 
-        // TODO: Parse just the access level from the nominal type and apply it to the initializer.
-        // For now we default to public.
-        // nominalType.modifiers.trimmed
-        let nominalTypeAccessLevel = "public"
-
-        // Create the dependencies protocol declaration:
-        let nominalType = try Parsers.parseNominalTypeSyntax(declaration: declaration)
-        let typeName = nominalType.name.text
-        let dependenciesProtocolName = "\(typeName)Dependencies"
+        // Create the child dependencies protocol declaration:
+        let dependenciesProtocolName = "\(concreteDeclaration.name.trimmed)Dependencies"
         let dependenciesProtocolDeclaration: DeclSyntax =
         """
-        \(raw: nominalTypeAccessLevel) protocol \(raw: dependenciesProtocolName) {
+        \(raw: concreteDeclaration.modifiers.accessLevel) protocol \(raw: dependenciesProtocolName) {
         \(raw: protocolBody)
         }
         """
-        var declarations: [DeclSyntax] = [
-            dependenciesProtocolDeclaration
-        ]
 
-        // If there are any @Initialize or @Factory dependencies, create the child dependencies protocol declaration.
-        if visitor.initializeProperties.count > 0 {
-            var instantiatedConcreteTypeDescriptions = [TypeDescription]()
-            for (_, attributeSyntax) in visitor.initializeProperties {
-                guard let concreteTypeDescription = attributeSyntax.concreteTypeArgument else {
-                    // TODO: Diagnostic
-                    fatalError()
-                }
+        return dependenciesProtocolDeclaration
+    }
 
-                instantiatedConcreteTypeDescriptions.append(concreteTypeDescription)
-            }
-
-            let childDependenciesProtocolNames = instantiatedConcreteTypeDescriptions
-                .map { $0.asSource + "Dependencies" }
-                .sorted()
-            let inheritanceClause = childDependenciesProtocolNames.joined(separator: "\n    & ")
-            let childDependenciesProtocolDeclaration: DeclSyntax =
-            """
-            \(raw: nominalTypeAccessLevel) protocol \(raw: typeName)ChildDependencies
-                : \(raw: inheritanceClause)
-            {}
-            """
-            declarations.append(childDependenciesProtocolDeclaration)
+    private static func childDependenciesProtocolDeclaration(
+        visitor: InjectableVisitor,
+        declaration: some DeclSyntaxProtocol
+    ) throws -> DeclSyntax? {
+        guard let concreteDeclaration = visitor.concreteDeclaration else {
+            throw InjectableMacroProtocolError.declarationNotConcrete
         }
 
-        return declarations
+        // Use the visitor to collect the @Store and @Factory properties:
+        let propertiesWithChildDependencies = visitor.storeProperties + visitor.factoryProperties
+        guard propertiesWithChildDependencies.count > 0 else {
+            return nil
+        }
+
+        // Extract the concrete type descriptions from the @Store and @Factory arguments:
+        var concreteTypeDescriptions = [TypeDescription]()
+        for (_, attributeSyntax) in propertiesWithChildDependencies {
+            guard let concreteTypeDescription = attributeSyntax.concreteTypeArgument else {
+                // TODO: Diagnostic
+                fatalError()
+            }
+
+            concreteTypeDescriptions.append(concreteTypeDescription)
+        }
+
+        // Create the child dependencies protocol declaration:
+        let childDependenciesProtocolNames = concreteTypeDescriptions
+            .map { $0.asSource + "Dependencies" }
+            .sorted()
+        let inheritanceClause = childDependenciesProtocolNames.joined(separator: "\n    & ")
+        let childDependenciesProtocolName = "\(concreteDeclaration.name.trimmed)ChildDependencies"
+        let childDependenciesProtocolDeclaration: DeclSyntax =
+        """
+        \(raw: concreteDeclaration.modifiers.accessLevel) protocol \(raw: childDependenciesProtocolName)
+            : \(raw: inheritanceClause)
+        {}
+        """
+
+        return childDependenciesProtocolDeclaration
     }
 
     // MARK: MemberMacro
@@ -95,107 +133,195 @@ extension InjectableMacroProtocol {
         in context: some MacroExpansionContext) throws
         -> [DeclSyntax]
     {
-        // Parse the nominal type:
-        let nominalType = try Parsers.parseNominalTypeSyntax(declaration: declaration) // TODO: Use TypeDescription
-        let typeName = nominalType.name.text
-
-        // Parse the properties:
+        // Walk the declaration with the visitor:
         let visitor = InjectableVisitor()
         visitor.walk(declaration)
 
+        // Create the declarations:
+        let propertyDeclarations = try self.propertyDeclarations(visitor: visitor, declaration: declaration)
+        let initializerDeclaractions = [
+            try self.initializerDeclaration(visitor: visitor, declaration: declaration)
+        ] + self.requiredInitializers()
+
+        return propertyDeclarations + initializerDeclaractions
+    }
+
+    private static func propertyDeclarations(
+        visitor: InjectableVisitor,
+        declaration: some DeclSyntaxProtocol
+    ) throws -> [DeclSyntax] {
+        guard let concreteDeclaration = visitor.concreteDeclaration else {
+            throw InjectableMacroProtocolError.declarationNotConcrete
+        }
+
+        // Create the property declarations:
+        var propertyDeclarations = [DeclSyntax]()
+
+        // Create the dependencies property declaration:
+        let dependenciesPropertyDeclaration: DeclSyntax =
+        """
+        private let dependencies: any \(raw: concreteDeclaration.name.trimmed)Dependencies
+        """
+        propertyDeclarations.append(dependenciesPropertyDeclaration)
+
+        // Create the factory computed properties:
+        for (property, attributeSyntax) in visitor.factoryProperties {
+            let (propertyName, existentialType, concreteType, argumentsType) = try self.computedPropertyTypes(
+                property: property,
+                attributeSyntax: attributeSyntax
+            )
+
+            // Determine the arguments clause:
+            let argumentsClause = argumentsType == nil ? "" : "arguments: arguments, "
+
+            // Create the property declaration:
+            let accessLevel = concreteDeclaration.modifiers.accessLevel
+            let factoryGenericType = "<\(argumentsType ?? "Void"), \(existentialType)>"
+            let propertyDeclaration: DeclSyntax =
+            """
+            \(raw: accessLevel) var \(raw: propertyName)Factory: any Factory\(raw: factoryGenericType) {
+                FactoryImplementation\(raw: factoryGenericType) { arguments in
+                    \(raw: concreteType)(\(raw: argumentsClause)dependencies: self)
+                }
+            }
+            """
+
+            propertyDeclarations.append(propertyDeclaration)
+        }
+
+        // Create the store computed properties:
+        for (property, attributeSyntax) in visitor.storeProperties {
+            let (propertyName, existentialType, concreteType, argumentsType) = try self.computedPropertyTypes(
+                property: property,
+                attributeSyntax: attributeSyntax
+            )
+
+            // Throw an error if the arguments were non-nil:
+            if argumentsType != nil {
+                throw InjectableMacroProtocolError.invalidComputedPropertyType
+            }
+
+            // Create the property declaration:
+            let accessLevel = concreteDeclaration.modifiers.accessLevel
+            let referenceStrategy = attributeSyntax.referenceStrategyArgument
+            let propertyDeclaration: DeclSyntax =
+            """
+            \(raw: accessLevel) var \(raw: propertyName): any \(raw: existentialType) {
+                self.\(raw: referenceStrategy.rawValue) { [unowned self] in
+                    \(raw: concreteType)(dependencies: self)
+                }
+            }
+            """
+
+            propertyDeclarations.append(propertyDeclaration)
+        }
+
+        return propertyDeclarations
+    }
+
+    private static func computedPropertyTypes(
+        property: Property,
+        attributeSyntax: AttributeSyntax
+    ) throws -> (
+        propertyName: String,
+        existentialType: String,
+        concreteType: String,
+        argumentsType: String?
+    ) {
+
+        // Determine the property name:
+        let typeSuffix = "Type"
+        guard property.label.hasSuffix(typeSuffix) else {
+            throw InjectableMacroProtocolError.invalidComputedPropertyName
+        }
+        let propertyName = String(property.label.dropLast(typeSuffix.count))
+
+        // Determine the existential type:
+        guard case let .metatype(description, isType) = property.typeDescription, isType else {
+            throw InjectableMacroProtocolError.invalidComputedPropertyType
+        }
+        let existentialType = description.asSource
+
+        // Determine the concrete type:
+        guard let concreteTypeDescription = attributeSyntax.concreteTypeArgument else {
+            // TODO: Diagnostic
+            fatalError()
+        }
+        let concreteType = concreteTypeDescription.asSource
+
+        // Determine the arguments type:
+        let argumentsType = attributeSyntax.argumentsTypeArgument?.asSource
+
+        return (propertyName, existentialType, concreteType, argumentsType)
+    }
+
+    private static func initializerDeclaration(
+        visitor: InjectableVisitor,
+        declaration: some DeclSyntaxProtocol
+    ) throws -> DeclSyntax {
+        guard let concreteDeclaration = visitor.concreteDeclaration else {
+            throw InjectableMacroProtocolError.declarationNotConcrete
+        }
+
         // Create the initializer arguments:
         var initializerArguments = [String]()
-        var initializerLines = [String]()
         if let argumentsProperty = visitor.argumentsProperty {
             initializerArguments.append("arguments: \(argumentsProperty.typeDescription.asSource)")
+        }
+        initializerArguments.append("dependencies: any \(concreteDeclaration.name.trimmed)Dependencies")
+
+        // Create the initializer lines:
+        var initializerLines = [String]()
+        if let argumentsProperty = visitor.argumentsProperty {
             initializerLines.append("self.\(argumentsProperty.label) = arguments")
         }
-        initializerArguments.append("dependencies: any \(typeName)Dependencies")
         initializerLines.append("self.dependencies = dependencies")
-        for injectProperty in visitor.injectProperties {
-            initializerLines.append("self.\(injectProperty.label) = dependencies.\(injectProperty.label)")
+
+        // Add an initializer line for each @Inject property:
+        for property in visitor.injectProperties {
+            initializerLines.append("self.\(property.label) = dependencies.\(property.label)")
         }
-        for (initializeProperty, attributeSyntax) in visitor.initializeProperties {
+
+        // Add an initializer line for each @Store and @Factory property:
+        let propertiesWithChildDependencies = visitor.storeProperties + visitor.factoryProperties
+        for (property, attributeSyntax) in propertiesWithChildDependencies {
             guard let concreteTypeDescription = attributeSyntax.concreteTypeArgument else {
                 // TODO: Diagnostic
                 fatalError()
             }
 
-            initializerLines.append("self.\(initializeProperty.label) = \(concreteTypeDescription.asSource).self")
+            initializerLines.append("self.\(property.label) = \(concreteTypeDescription.asSource).self")
         }
+
+        // Add the superclass initializer, if necessary:
         if let superclassInitializer = self.superclassInitializerLine() {
             initializerLines.append(superclassInitializer)
         }
 
-        // TODO: Parse just the access level from the nominal type and apply it to the initializer.
-        // For now we default to public.
-        // nominalType.modifiers.trimmed
-        let nominalTypeAccessLevel = "public"
+        // Add lines to the initializer to eagerly initialize store properties with this argument:
+        for (property, attributeSyntax) in visitor.storeProperties {
+            guard attributeSyntax.initializationStrategyArgument == .eager else {
+                continue
+            }
+
+            let (propertyName, _, _, _) = try self.computedPropertyTypes(
+                property: property,
+                attributeSyntax: attributeSyntax
+            )
+
+            initializerLines.append("_ = self.\(propertyName)")
+        }
 
         // Create the initializer:
         let initializerDeclaration: DeclSyntax =
         """
-        \(raw: nominalTypeAccessLevel) init(
+        \(raw: concreteDeclaration.modifiers.accessLevel) init(
         \(raw: initializerArguments.joined(separator: ",\n"))
         ) {
         \(raw: initializerLines.joined(separator: "\n"))
         }
         """
 
-        // Create the declarations:
-        var propertyDeclarations = [DeclSyntax]()
-        let initializerDeclaractions = [initializerDeclaration] + self.requiredInitializers()
-        var functionDeclarations = [DeclSyntax]()
-
-        // Create the dependencies property:
-        let dependenciesPropertyDeclaration: DeclSyntax =
-        """
-        private let dependencies: any \(raw: typeName)Dependencies
-        """
-        propertyDeclarations.append(dependenciesPropertyDeclaration)
-
-        // Create the initializer computed properties:
-        for (initializeProperty, attributeSyntax) in visitor.initializeProperties {
-
-            // Determine the property name:
-            let typeSuffix = "Type"
-            var propertyName = initializeProperty.label
-            if propertyName.hasSuffix(typeSuffix) {
-                propertyName = String(propertyName.dropLast(typeSuffix.count)).uppercasedFirstCharacter()
-            } else {
-                // TODO: Diagnostic
-                fatalError()
-            }
-
-            // Determine the property type:
-            guard case let .metatype(description, isType) = initializeProperty.typeDescription, isType else {
-                // TODO: Diagnostic
-                fatalError()
-            }
-
-            // Determine the concrete type:
-            guard let concreteTypeDescription = attributeSyntax.concreteTypeArgument else {
-                // TODO: Diagnostic
-                fatalError()
-            }
-
-            // Parse the arguments type if provided:
-            var argumentsClause = ""
-            var propagatedArguments = ""
-            if let argumentsTypeDescription = attributeSyntax.argumentsTypeArgument {
-                argumentsClause = "arguments: " + argumentsTypeDescription.asSource
-                propagatedArguments = "arguments: arguments, "
-            }
-
-            let initializerFunctionDeclaration: DeclSyntax =
-            """
-            private func initialize\(raw: propertyName)(\(raw: argumentsClause)) -> any \(raw: description.asSource) {
-            return \(raw: concreteTypeDescription.asSource)(\(raw: propagatedArguments)dependencies: self)
-            }
-            """
-            functionDeclarations.append(initializerFunctionDeclaration)
-        }
-
-        return propertyDeclarations + initializerDeclaractions + functionDeclarations
+        return initializerDeclaration
     }
 }

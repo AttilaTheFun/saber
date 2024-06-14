@@ -18,7 +18,7 @@ public struct InitializeMacro: PeerMacro {
             throw InitializeMacroError.notDecoratingBinding
         }
 
-        guard variableDecl.modifiers.staticModifier == nil else {
+        guard !variableDecl.modifiers.isStatic else {
             throw InitializeMacroError.decoratingStatic
         }
 

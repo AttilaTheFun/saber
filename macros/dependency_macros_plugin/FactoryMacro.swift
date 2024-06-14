@@ -18,7 +18,7 @@ public struct FactoryMacro: PeerMacro {
             throw FactoryMacroError.notDecoratingBinding
         }
 
-        guard variableDecl.modifiers.staticModifier == nil else {
+        guard !variableDecl.modifiers.isStatic else {
             throw FactoryMacroError.decoratingStatic
         }
 

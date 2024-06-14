@@ -8,8 +8,8 @@ final class ApplicationDependencies: RootScopeImplementationDependencies {}
 @main
 final class ApplicationDelegate: UIResponder, UIApplicationDelegate {
     let rootScopeImplementation = RootScopeImplementation(
-        dependencies: ApplicationDependencies(),
-        arguments: RootFeature(endpointURL: URL(string: "https://example.com")!)
+        arguments: RootFeature(endpointURL: URL(string: "https://example.com")!),
+        dependencies: ApplicationDependencies()
     )
 
     func application(
@@ -17,6 +17,7 @@ final class ApplicationDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) 
         -> Bool 
     {
+        self.rootScopeImplementation.rootViewControllerInitializationService.registerRootViewControllerFactory()
         return true
     }
 

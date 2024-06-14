@@ -9,12 +9,12 @@ extension AttributeListSyntax.Element {
         self.attributeIfNameEquals("Inject")
     }
 
-    public var initializeMacro: AttributeSyntax? {
-        self.attributeIfNameEquals("Initialize")
-    }
-
     public var factoryMacro: AttributeSyntax? {
         self.attributeIfNameEquals("Factory")
+    }
+
+    public var storeMacro: AttributeSyntax? {
+        self.attributeIfNameEquals("Store")
     }
 
     private func attributeIfNameEquals(_ expectedName: String) -> AttributeSyntax? {

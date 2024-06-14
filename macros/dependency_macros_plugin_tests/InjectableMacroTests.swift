@@ -6,13 +6,14 @@ import XCTest
 
 final class InjectableMacroTests: XCTestCase {
     private let macros: [String : any Macro.Type] = [
-        "Instantiate": InstantiateMacro.self, // TODO: Delete
+        "Injectable": InjectableMacro.self,
 
         "Arguments": ArgumentsMacro.self,
         "Inject": InjectMacro.self,
-        "Initialize": InitializeMacro.self,
+        "Factory": FactoryMacro.self,
+        "Store": StoreMacro.self,
 
-        "Injectable": InjectableMacro.self,
+        // TODO: Delete and just support through @Injectable + looking at inheritance clause.
         "ViewControllerInjectable": ViewControllerInjectableMacro.self,
         "ScopeInjectable": ScopeInjectableMacro.self,
     ]
@@ -131,50 +132,161 @@ final class InjectableMacroTests: XCTestCase {
         )
     }
 
-    func testWithInitialize() throws {
+    func testWithFactory() throws {
         assertMacroExpansion(
             """
-            @Injectable
-            public final class FooScopeImplementation {
-                @Initialize(FooServiceImplementation.self)
+            @ScopeInjectable
+            public final class FooScope: Scope, FooScopeChildDependencies {
+                @Factory(FooServiceImplementation.self)
                 let fooServiceType: FooService.Type
-                @Initialize(FooViewController.self, arguments: FooFeature.self)
+                @Factory(FooViewController.self, arguments: FooFeature.self)
                 let fooViewControllerType: UIViewController.Type
             }
             """,
             expandedSource:
             """
-            public final class FooScopeImplementation {
+            public final class FooScope: Scope, FooScopeChildDependencies {
                 let fooServiceType: FooService.Type
                 let fooViewControllerType: UIViewController.Type
 
-                private let dependencies: any FooScopeImplementationDependencies
+                private let dependencies: any FooScopeDependencies
+
+                public var fooServiceFactory: any Factory<Void, FooService> {
+                    FactoryImplementation<Void, FooService> { arguments in
+                        FooServiceImplementation(dependencies: self)
+                    }
+                }
+
+                public var fooViewControllerFactory: any Factory<FooFeature, UIViewController> {
+                    FactoryImplementation<FooFeature, UIViewController> { arguments in
+                        FooViewController(arguments: arguments, dependencies: self)
+                    }
+                }
 
                 public init(
-                    dependencies: any FooScopeImplementationDependencies
+                    dependencies: any FooScopeDependencies
                 ) {
                     self.dependencies = dependencies
                     self.fooServiceType = FooServiceImplementation.self
                     self.fooViewControllerType = FooViewController.self
-                }
-
-                private func initializeFooService() -> any FooService {
-                    return FooServiceImplementation(dependencies: self)
-                }
-
-                private func initializeFooViewController() -> any UIViewController {
-                    return FooViewController(dependencies: self)
+                    super.init()
                 }
             }
 
-            public protocol FooScopeImplementationDependencies {
+            public protocol FooScopeDependencies {
 
             }
 
-            public protocol FooScopeImplementationChildDependencies
+            public protocol FooScopeChildDependencies
                 : FooServiceImplementationDependencies
                 & FooViewControllerDependencies
             {
+            }
+            """,
+            macros: self.macros
+        )
+    }
+
+    func testWithStore() throws {
+        assertMacroExpansion(
+            """
+            @ScopeInjectable
+            public final class FooScope: Scope, FooScopeChildDependencies {
+                @Store(FooServiceImplementation.self, init: .lazy, ref: .weak)
+                let fooServiceType: FooService.Type
+                @Store(BarServiceImplementation.self, init: .eager, ref: .strong)
+                let barServiceType: BarService.Type
+            }
+            """,
+            expandedSource:
+            """
+            public final class FooScope: Scope, FooScopeChildDependencies {
+                let fooServiceType: FooService.Type
+                let barServiceType: BarService.Type
+
+                private let dependencies: any FooScopeDependencies
+
+                public var fooService: any FooService {
+                    self.weak { [unowned self] in
+                        FooServiceImplementation(dependencies: self)
+                    }
+                }
+
+                public var barService: any BarService {
+                    self.strong { [unowned self] in
+                        BarServiceImplementation(dependencies: self)
+                    }
+                }
+
+                public init(
+                    dependencies: any FooScopeDependencies
+                ) {
+                    self.dependencies = dependencies
+                    self.fooServiceType = FooServiceImplementation.self
+                    self.barServiceType = BarServiceImplementation.self
+                    super.init()
+                    _ = self.barService
+                }
+            }
+
+            public protocol FooScopeDependencies {
+
+            }
+
+            public protocol FooScopeChildDependencies
+                : BarServiceImplementationDependencies
+                & FooServiceImplementationDependencies
+            {
+            }
+            """,
+            macros: self.macros
+        )
+    }
+
+    func testWithScope() throws {
+        assertMacroExpansion(
+            """
+            @ScopeInjectable
+            public final class FooScope: Scope {
+                @Arguments private let fooArguments: FooArguments
+                @Inject private let fooService: FooService
+                @Inject private let barService: BarService
+                @Inject private let loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController>
+            }
+            """,
+            expandedSource:
+            """
+            public final class FooScope: Scope {
+                private let fooArguments: FooArguments
+                private let fooService: FooService
+                private let barService: BarService
+                private let loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController>
+
+                private let dependencies: any FooScopeDependencies
+
+                public init(
+                    arguments: FooArguments,
+                    dependencies: any FooScopeDependencies
+                ) {
+                    self.fooArguments = arguments
+                    self.dependencies = dependencies
+                    self.fooService = dependencies.fooService
+                    self.barService = dependencies.barService
+                    self.loggedInFeatureFactory = dependencies.loggedInFeatureFactory
+                    super.init()
+                }
+            }
+
+            public protocol FooScopeDependencies {
+                var fooService: FooService {
+                    get
+                }
+                var barService: BarService {
+                    get
+                }
+                var loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController> {
+                    get
+                }
             }
             """,
             macros: self.macros
@@ -189,7 +301,7 @@ final class InjectableMacroTests: XCTestCase {
                 @Arguments private let fooArguments: FooArguments
                 @Inject private let fooService: FooService
                 @Inject private let barService: BarService
-                @Inject private let loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController>
+                @Inject private let loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController>
             }
             """,
             expandedSource:
@@ -198,7 +310,7 @@ final class InjectableMacroTests: XCTestCase {
                 private let fooArguments: FooArguments
                 private let fooService: FooService
                 private let barService: BarService
-                private let loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController>
+                private let loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController>
 
                 private let dependencies: any FooViewControllerDependencies
 
@@ -210,7 +322,7 @@ final class InjectableMacroTests: XCTestCase {
                     self.dependencies = dependencies
                     self.fooService = dependencies.fooService
                     self.barService = dependencies.barService
-                    self.loggedInFeatureBuilder = dependencies.loggedInFeatureBuilder
+                    self.loggedInFeatureFactory = dependencies.loggedInFeatureFactory
                     super.init(nibName: nil, bundle: nil)
                 }
 
@@ -226,7 +338,7 @@ final class InjectableMacroTests: XCTestCase {
                 var barService: BarService {
                     get
                 }
-                var loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController> {
+                var loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController> {
                     get
                 }
             }

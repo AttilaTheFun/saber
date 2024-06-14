@@ -1,9 +1,9 @@
 load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 swift_library(
-    name = "root_scope_initialization_plugin_implementation",
+    name = "root_scope_initialization_service_implementation",
     srcs = ["RootScopeInitializationPluginImplementation.swift"],
-    module_name = "RootScopeInitializationPluginImplementation",
+    module_name = "RootViewControllerInitializationServiceImplementation",
     visibility = ["//visibility:public"],
     deps = [
         "//feature_interfaces/loading_feature_interface",
@@ -11,7 +11,6 @@ swift_library(
         "//feature_interfaces/logged_out_feature_interface",
         "//foundations/dependency_foundation",
         "//macros/dependency_macros",
-        "//plugin_interfaces/scope_initialization_plugin_interface",
         "//service_interfaces/user_service_interface",
         "//service_interfaces/user_session_service_interface",
         "//service_interfaces/window_service_interface",

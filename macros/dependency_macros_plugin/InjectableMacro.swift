@@ -22,8 +22,6 @@ public final class ViewControllerInjectableMacro: InjectableMacroProtocol {
 }
 
 public final class ScopeInjectableMacro: InjectableMacroProtocol {
-
-    // TODO: Get rid of DependencyContainer superclass.
     public static func superclassInitializerLine() -> String? {
         return "super.init()"
     }
