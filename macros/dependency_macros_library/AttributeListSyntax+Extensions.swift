@@ -4,6 +4,7 @@ enum InjectableMacroType {
     case arguments(AttributeSyntax)
     case inject(AttributeSyntax)
     case initialize(AttributeSyntax)
+    case factory(AttributeSyntax)
 }
 
 extension AttributeListSyntax {
@@ -37,6 +38,16 @@ extension AttributeListSyntax {
         return nil
     }
 
+    public var factoryMacro: AttributeSyntax? {
+        for element in self {
+            if let factoryMacro = element.factoryMacro {
+                return factoryMacro
+            }
+        }
+
+        return nil
+    }
+
     var injectableMacroType: InjectableMacroType? {
         if let argumentsMacro = self.argumentsMacro {
             return .arguments(argumentsMacro)
@@ -48,6 +59,10 @@ extension AttributeListSyntax {
 
         if let initializeMacro = self.initializeMacro {
             return .initialize(initializeMacro)
+        }
+
+        if let factoryMacro = self.factoryMacro {
+            return .factory(factoryMacro)
         }
 
         return nil

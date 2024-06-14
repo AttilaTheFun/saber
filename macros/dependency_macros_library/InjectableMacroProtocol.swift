@@ -33,8 +33,8 @@ extension InjectableMacroProtocol {
 
         // Create properties for the protocol:
         var protocolProperties = [String]()
-        for injectedProperty in visitor.injectedProperties {
-            let protocolProperty = "var \(injectedProperty.label): \(injectedProperty.typeDescription.asSource) { get }"
+        for injectProperty in visitor.injectProperties {
+            let protocolProperty = "var \(injectProperty.label): \(injectProperty.typeDescription.asSource) { get }"
             protocolProperties.append(protocolProperty)
         }
         let protocolBody = protocolProperties.joined(separator: "\n")
@@ -58,10 +58,10 @@ extension InjectableMacroProtocol {
             dependenciesProtocolDeclaration
         ]
 
-        // If there are any instantiated dependencies, create the child dependencies protocol declaration.
-        if visitor.initializedProperties.count > 0 {
+        // If there are any @Initialize or @Factory dependencies, create the child dependencies protocol declaration.
+        if visitor.initializeProperties.count > 0 {
             var instantiatedConcreteTypeDescriptions = [TypeDescription]()
-            for (_, attributeSyntax) in visitor.initializedProperties {
+            for (_, attributeSyntax) in visitor.initializeProperties {
                 guard let concreteTypeDescription = attributeSyntax.concreteTypeArgument else {
                     // TODO: Diagnostic
                     fatalError()
@@ -112,16 +112,16 @@ extension InjectableMacroProtocol {
         }
         initializerArguments.append("dependencies: any \(typeName)Dependencies")
         initializerLines.append("self.dependencies = dependencies")
-        for injectedProperty in visitor.injectedProperties {
-            initializerLines.append("self.\(injectedProperty.label) = dependencies.\(injectedProperty.label)")
+        for injectProperty in visitor.injectProperties {
+            initializerLines.append("self.\(injectProperty.label) = dependencies.\(injectProperty.label)")
         }
-        for (initializedProperty, attributeSyntax) in visitor.initializedProperties {
+        for (initializeProperty, attributeSyntax) in visitor.initializeProperties {
             guard let concreteTypeDescription = attributeSyntax.concreteTypeArgument else {
                 // TODO: Diagnostic
                 fatalError()
             }
 
-            initializerLines.append("self.\(initializedProperty.label) = \(concreteTypeDescription.asSource).self")
+            initializerLines.append("self.\(initializeProperty.label) = \(concreteTypeDescription.asSource).self")
         }
         if let superclassInitializer = self.superclassInitializerLine() {
             initializerLines.append(superclassInitializer)
@@ -155,11 +155,11 @@ extension InjectableMacroProtocol {
         propertyDeclarations.append(dependenciesPropertyDeclaration)
 
         // Create the initializer computed properties:
-        for (initializedProperty, attributeSyntax) in visitor.initializedProperties {
+        for (initializeProperty, attributeSyntax) in visitor.initializeProperties {
 
             // Determine the property name:
             let typeSuffix = "Type"
-            var propertyName = initializedProperty.label
+            var propertyName = initializeProperty.label
             if propertyName.hasSuffix(typeSuffix) {
                 propertyName = String(propertyName.dropLast(typeSuffix.count)).uppercasedFirstCharacter()
             } else {
@@ -168,7 +168,7 @@ extension InjectableMacroProtocol {
             }
 
             // Determine the property type:
-            guard case let .metatype(description, isType) = initializedProperty.typeDescription, isType else {
+            guard case let .metatype(description, isType) = initializeProperty.typeDescription, isType else {
                 // TODO: Diagnostic
                 fatalError()
             }

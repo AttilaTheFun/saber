@@ -17,9 +17,9 @@ import UIKit
 import WindowServiceInterface
 import WindowServiceImplementation
 
-// TODO: Generate with @Injectable macro.
-public typealias RootScopeImplementationDependencies
-    = DependencyProvider
+public protocol RootScopeImplementationDependencies {
+
+}
 
 //@ScopeInjectable
 public final class RootScopeImplementation: BaseScope {

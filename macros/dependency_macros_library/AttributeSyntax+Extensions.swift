@@ -1,3 +1,4 @@
+import DependencyMacrosTypes
 import SwiftSyntax
 
 extension AttributeSyntax {

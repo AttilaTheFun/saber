@@ -34,9 +34,14 @@ public struct ScopeViewControllerBuilderMacro: PeerMacro {
         // Create the provider protocol declaration:
         let argumentsTypeName = argumentsTypeDescription.asSource
         let nominalTypeName = nominalType.name.text
+        let dependenciesTypeName = nominalTypeName + "Dependencies"
         let declSyntax: [DeclSyntax] = [
             """
-            public final class \(raw: nominalTypeName)Builder: DependencyContainer<\(raw: nominalTypeName)Dependencies>, Builder {
+            public final class \(raw: nominalTypeName)Builder: Builder {
+            private let dependencies: \(raw: dependenciesTypeName)
+            public init(dependencies: \(raw: dependenciesTypeName)) {
+            self.dependencies = dependencies
+            }
             public func build(arguments: \(raw: argumentsTypeName)) -> UIViewController {
             let scope = \(raw: nominalTypeName)(arguments: arguments, dependencies: self.dependencies)
             return scope.\(raw: argumentsTypeName.lowercasedFirstCharacter())ViewControllerBuilder.build(arguments: arguments)

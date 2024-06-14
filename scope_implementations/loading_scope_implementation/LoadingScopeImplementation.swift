@@ -12,7 +12,7 @@ import UserServiceImplementation
 import WindowServiceInterface
 
 @ScopeViewControllerBuilder(arguments: LoadingFeature.self)
-@ScopeInjectable
+
 final class LoadingScopeImplementation: BaseScope, LoadingScopeImplementationChildDependencies {
     @Arguments let loadingFeature: LoadingFeature
     @Inject let userStorageService: UserStorageService
@@ -37,7 +37,53 @@ final class LoadingScopeImplementation: BaseScope, LoadingScopeImplementationChi
             return LoadingFeatureViewControllerBuilder(dependencies: self)
         }
     }
+    
+    
+    private let dependencies: any LoadingScopeImplementationDependencies
+    
+    public init(
+        arguments: LoadingFeature,
+        dependencies: any LoadingScopeImplementationDependencies
+    ) {
+        self.loadingFeature = arguments
+        self.dependencies = dependencies
+        self.userStorageService = dependencies.userStorageService
+        self.userSessionStorageService = dependencies.userSessionStorageService
+        self.windowService = dependencies.windowService
+        self.loggedOutFeatureBuilder = dependencies.loggedOutFeatureBuilder
+        self.loggedInFeatureBuilder = dependencies.loggedInFeatureBuilder
+        self.userServiceType = UserServiceImplementation.self
+        super.init()
+    }
+    
+    private func initializeUserService() -> any UserService {
+        return UserServiceImplementation(dependencies: self)
+    }
 }
+
+public protocol LoadingScopeImplementationDependencies {
+    var userStorageService: UserStorageService {
+        get
+    }
+    var userSessionStorageService: UserSessionStorageService {
+        get
+    }
+    var windowService: WindowService {
+        get
+    }
+    var loggedOutFeatureBuilder: any Builder<LoggedOutFeature, UIViewController> {
+        get
+    }
+    var loggedInFeatureBuilder: any Builder<LoggedInFeature, UIViewController> {
+        get
+    }
+}
+
+public protocol LoadingScopeImplementationChildDependencies
+: UserServiceImplementationDependencies
+{
+}
+
 
 // TODO: Generate with macro.
 extension LoadingScopeImplementation: LoadingFeatureViewControllerDependencies {}

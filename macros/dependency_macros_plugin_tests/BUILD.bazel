@@ -11,6 +11,7 @@ swift_test(
         "InjectMacroTests.swift",
         "InjectableMacroTests.swift",
         "ScopeViewControllerBuilderMacroTests.swift",
+        "StoreMacroTests.swift",
         "ViewControllerBuilderMacroTests.swift",
     ],
     module_name = "DependencyMacrosPluginTests",

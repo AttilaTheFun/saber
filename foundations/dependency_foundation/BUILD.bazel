@@ -4,8 +4,6 @@ swift_library(
     name = "dependency_foundation",
     srcs = [
         "Builder.swift",
-        "DependencyContainer.swift",
-        "DependencyProvider.swift",
         "Factory.swift",
         "Scope.swift",
     ],

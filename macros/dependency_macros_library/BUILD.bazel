@@ -10,7 +10,6 @@ swift_library(
         "AttributeSyntax+Extensions.swift",
         "ConcreteDeclSyntaxProtocol.swift",
         "DeclModifierListSyntax+Extensions.swift",
-        "DependencyStorageTypes.swift",
         "InjectableMacroProtocol.swift",
         "InjectableVisitor.swift",
         "MacroError.swift",
@@ -21,5 +20,8 @@ swift_library(
     ],
     module_name = "DependencyMacrosLibrary",
     visibility = ["//visibility:public"],
-    deps = ["@swiftpkg_swift_syntax//:SwiftSyntaxMacros"],
+    deps = [
+        "//macros/dependency_macros_types",
+        "@swiftpkg_swift_syntax//:SwiftSyntaxMacros",
+    ],
 )

@@ -3,10 +3,12 @@ import RootFeatureInterface
 import RootScopeImplementation
 import UIKit
 
+final class ApplicationDependencies: RootScopeImplementationDependencies {}
+
 @main
 final class ApplicationDelegate: UIResponder, UIApplicationDelegate {
     let rootScopeImplementation = RootScopeImplementation(
-        dependencies: EmptyDependencyProvider(),
+        dependencies: ApplicationDependencies(),
         arguments: RootFeature(endpointURL: URL(string: "https://example.com")!)
     )
 

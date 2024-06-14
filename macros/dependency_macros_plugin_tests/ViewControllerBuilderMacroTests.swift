@@ -17,7 +17,11 @@ final class ViewControllerBuilderMacroTests: XCTestCase {
             final class FooFeatureViewController: UIViewController {
             }
 
-            public final class FooFeatureViewControllerBuilder: DependencyContainer<FooFeatureViewControllerDependencies>, Builder {
+            public final class FooFeatureViewControllerBuilder: Builder {
+                private let dependencies: FooFeatureViewControllerDependencies
+                public init(dependencies: FooFeatureViewControllerDependencies) {
+                    self.dependencies = dependencies
+                }
                 public func build(arguments: FooFeature) -> UIViewController {
                     return FooFeatureViewController(arguments: arguments, dependencies: self.dependencies)
                 }

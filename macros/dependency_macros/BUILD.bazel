@@ -11,9 +11,11 @@ swift_library(
         "Inject.swift",
         "Injectable.swift",
         "ScopeViewControllerBuilder.swift",
+        "Store.swift",
         "ViewControllerBuilder.swift",
     ],
     module_name = "DependencyMacros",
     plugins = ["//macros/dependency_macros_plugin"],
     visibility = ["//visibility:public"],
+    deps = ["//macros/dependency_macros_types"],
 )

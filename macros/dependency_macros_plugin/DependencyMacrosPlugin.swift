@@ -12,6 +12,7 @@ struct DependencyMacrosPlugin: CompilerPlugin {
         InstantiateMacro.self,
         ScopeViewControllerBuilderMacro.self,
         ScopeInjectableMacro.self,
+        StoreMacro.self,
         ViewControllerBuilderMacro.self,
         ViewControllerInjectableMacro.self,
     ]

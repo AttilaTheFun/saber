@@ -13,6 +13,10 @@ extension AttributeListSyntax.Element {
         self.attributeIfNameEquals("Initialize")
     }
 
+    public var factoryMacro: AttributeSyntax? {
+        self.attributeIfNameEquals("Factory")
+    }
+
     private func attributeIfNameEquals(_ expectedName: String) -> AttributeSyntax? {
         if
             case let .attribute(attribute) = self,
