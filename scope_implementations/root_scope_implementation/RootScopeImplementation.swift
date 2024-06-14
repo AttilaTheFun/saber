@@ -32,14 +32,14 @@ public final class RootScopeImplementation: BaseScope, RootScopeImplementationCh
     @Store(RootViewControllerInitializationServiceImplementation.self)
     public let rootViewControllerInitializationServiceType: RootViewControllerInitializationService.Type
 
-    // @Instantiate(type: LoggedOutFeatureViewControllerBuilder.self)
-    // let loggedOutScopeBuilder: any Builder<LoggedOutFeature, AnyObject>
+    // @Factory(LoggedOutFeatureViewController.self, arguments: LoggedOutFeature.self, scope: LoggedOutScope.self)
+    // let loggedOutFeatureType: UIViewController.Type
 
-    // @Instantiate(type: LoadingFeatureViewControllerBuilder.self)
-    // let loadingScopeBuilder: any Builder<LoadingFeature, AnyObject>
+    // @Factory(LoadingFeatureViewController.self, arguments: LoadingFeature.self, scope: LoadingScope.self)
+    // let loadingFeatureType: UIViewController.Type
 
-    // @Instantiate(type: LoggedInFeatureViewControllerBuilder.self)
-    // let loggedInScopeBuilder: any Builder<LoggedInFeature, AnyObject>
+    // @Factory(LoggedInFeatureViewController.self, arguments: LoggedInFeature.self, scope: LoggedInScope.self)
+    // let loggedInFeatureType: UIViewController.Type
 }
 
 // TODO: Generate with macro.
@@ -67,7 +67,7 @@ extension RootScopeImplementation {
     }
 }
 
-// TODO: Generate from @Instantiate macros.
+// TODO: Generate from @Factory macros.
 extension RootScopeImplementation {
     public var loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController> {
         FactoryImplementation { arguments in

@@ -7,12 +7,9 @@ swift_library(
     srcs = [
         "Arguments.swift",
         "Factory.swift",
-        "Initialize.swift",
         "Inject.swift",
         "Injectable.swift",
-        "ScopeViewControllerBuilder.swift",
         "Store.swift",
-        "ViewControllerBuilder.swift",
     ],
     module_name = "DependencyMacros",
     plugins = ["//macros/dependency_macros_plugin"],

@@ -7,12 +7,9 @@ swift_test(
     srcs = [
         "ArgumentsMacroTests.swift",
         "FactoryMacroTests.swift",
-        "InitializeMacroTests.swift",
         "InjectMacroTests.swift",
         "InjectableMacroTests.swift",
-        "ScopeViewControllerBuilderMacroTests.swift",
         "StoreMacroTests.swift",
-        "ViewControllerBuilderMacroTests.swift",
     ],
     module_name = "DependencyMacrosPluginTests",
     visibility = ["//visibility:public"],
