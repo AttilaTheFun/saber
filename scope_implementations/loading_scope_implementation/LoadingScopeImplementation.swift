@@ -10,8 +10,8 @@ import UserServiceInterface
 import UserServiceImplementation
 import WindowServiceInterface
 
-@ScopeInjectable
-public final class LoadingScopeImplementation: Scope, LoadingScopeImplementationChildDependencies {
+@Injectable
+public final class LoadingScopeImplementation: LoadingScopeImplementationChildDependencies {
     @Arguments public let loadingFeature: LoadingFeature
     @Inject public let userStorageService: any UserStorageService
     @Inject public let userSessionStorageService: any UserSessionStorageService

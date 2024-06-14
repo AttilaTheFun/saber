@@ -10,8 +10,8 @@ import UserSessionServiceInterface
 import UserSessionServiceImplementation
 import WindowServiceInterface
 
-@ScopeInjectable
-public final class LoggedInScopeImplementation: Scope, LoggedInScopeImplementationChildDependencies {
+@Injectable
+public final class LoggedInScopeImplementation: LoggedInScopeImplementationChildDependencies {
     @Arguments public let loggedInFeature: LoggedInFeature
     @Inject public let userStorageService: any UserStorageService
     @Inject public let userSessionStorageService: any UserSessionStorageService

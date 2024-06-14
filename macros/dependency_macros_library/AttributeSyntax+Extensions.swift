@@ -6,10 +6,6 @@ extension AttributeSyntax {
         return self.typeDescriptionIfNameEquals(nil)
     }
 
-//    public var argumentsTypeArgument: TypeDescription? {
-//        return self.typeDescriptionIfNameEquals("arguments")
-//    }
-
     private func typeDescriptionIfNameEquals(_ expectedName: String?) -> TypeDescription? {
         guard
             let arguments = self.arguments,
@@ -53,9 +49,14 @@ extension AttributeSyntax {
         return InitializationStrategy(rawValue: rawValue ?? "") ?? .lazy
     }
 
-    public var referenceStrategyArgument: ReferenceStrategy {
-        let rawValue = self.memberAccessBaseNameIfNameEquals("ref")
-        return ReferenceStrategy(rawValue: rawValue ?? "") ?? .strong
+    public var accessStrategyArgument: AccessStrategy {
+        let rawValue = self.memberAccessBaseNameIfNameEquals("access")
+        return AccessStrategy(rawValue: rawValue ?? "") ?? .strong
+    }
+
+    public var threadSafetyStrategyArgument: ThreadSafetyStrategy {
+        let rawValue = self.memberAccessBaseNameIfNameEquals("thread")
+        return ThreadSafetyStrategy(rawValue: rawValue ?? "") ?? .safe
     }
 
     private func memberAccessBaseNameIfNameEquals(_ expectedName: String?) -> String? {

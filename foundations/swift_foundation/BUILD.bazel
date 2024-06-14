@@ -2,10 +2,7 @@ load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 swift_library(
     name = "swift_foundation",
-    srcs = [
-        "StrongWrapper.swift",
-        "WeakWrapper.swift",
-    ],
+    srcs = ["Lock.swift"],
     module_name = "SwiftFoundation",
     visibility = ["//visibility:public"],
 )

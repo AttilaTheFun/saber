@@ -20,9 +20,3 @@ public final class ViewControllerInjectableMacro: InjectableMacroProtocol {
         ]
     }
 }
-
-public final class ScopeInjectableMacro: InjectableMacroProtocol {
-    public static func superclassInitializerLine() -> String? {
-        return "super.init()"
-    }
-}

@@ -65,8 +65,8 @@ extension InjectableMacroProtocol {
 
         // Create properties for the protocol:
         var protocolProperties = [String]()
-        for injectProperty in visitor.injectProperties {
-            let protocolProperty = "var \(injectProperty.label): \(injectProperty.typeDescription.asSource) { get }"
+        for (property, _) in visitor.injectProperties {
+            let protocolProperty = "var \(property.label): \(property.typeDescription.asSource) { get }"
             protocolProperties.append(protocolProperty)
         }
         let protocolBody = protocolProperties.joined(separator: "\n")
@@ -160,82 +160,29 @@ extension InjectableMacroProtocol {
         // Create the dependencies property declaration:
         let dependenciesPropertyDeclaration: DeclSyntax =
         """
-        private let dependencies: any \(raw: concreteDeclaration.name.trimmed)Dependencies
+        private let _dependencies: any \(raw: concreteDeclaration.name.trimmed)Dependencies
         """
         propertyDeclarations.append(dependenciesPropertyDeclaration)
 
-        // Create the factory computed properties:
-//        for (property, attributeSyntax) in visitor.factoryProperties {
-//            let (propertyName, existentialType, concreteType, argumentsType) = try self.computedPropertyTypes(
-//                property: property,
-//                attributeSyntax: attributeSyntax
-//            )
-//
-//            // Determine the arguments clause:
-//            let argumentsClause = argumentsType == nil ? "" : "arguments: arguments"
-//            let argumentsClauseWithComma = argumentsClause.isEmpty ? "" : argumentsClause + ", "
-//
-//            // Create the factory lines:
-//            let factoryLines: [String]
-//            if let factoryKeyPathArgument = attributeSyntax.factoryKeyPathArgument {
-//                factoryLines = [
-//                    "let scope = \(concreteType)(\(argumentsClauseWithComma)dependencies: self)",
-//                    "return scope.\(factoryKeyPathArgument).build(\(argumentsClause))"
-//                ]
-//            } else {
-//                factoryLines = [
-//                    "\(concreteType)(\(argumentsClauseWithComma)dependencies: self)"
-//                ]
-//            }
-//
-//            // Create the property declaration:
-//            let accessLevel = concreteDeclaration.modifiers.accessLevel
-//            let factoryGenericType = "<\(argumentsType ?? "Void"), \(existentialType)>"
-//            let propertyDeclaration: DeclSyntax =
-//            """
-//            \(raw: accessLevel) var \(raw: propertyName)Factory: any Factory\(raw: factoryGenericType) {
-//                FactoryImplementation\(raw: factoryGenericType) { arguments in
-//                    \(raw: factoryLines.joined(separator: "        \n"))
-//                }
-//            }
-//            """
-//
-//            propertyDeclarations.append(propertyDeclaration)
-//        }
+        // Create the stored property declarations:
+        let storedProperties = visitor.storeProperties + visitor.injectProperties
+        for (property, attributeSyntax) in storedProperties {
+
+            // If this is a purely computed property, we don't need a backing stored property.
+            if case .computed = attributeSyntax.accessStrategyArgument {
+                return []
+            }
+
+            // Create the stored property declaration:
+            let storedPropertyType: TypeDescription = .optional(property.typeDescription)
+            let storedPropertyDeclaration: DeclSyntax =
+            """
+            private var _\(raw: property.label): \(raw: storedPropertyType.asSource)
+            """
+            propertyDeclarations.append(storedPropertyDeclaration)
+        }
 
         return propertyDeclarations
-    }
-
-    private static func computedPropertyTypes(
-        property: Property,
-        attributeSyntax: AttributeSyntax
-    ) throws -> (
-        propertyName: String,
-        existentialType: String,
-        concreteType: String
-    ) {
-
-        // Determine the property name:
-        let typeSuffix = "Type"
-        guard property.label.hasSuffix(typeSuffix) else {
-            throw InjectableMacroProtocolError.invalidComputedPropertyName
-        }
-        let propertyName = String(property.label.dropLast(typeSuffix.count))
-
-        // Determine the existential type:
-        guard case let .metatype(description, isType) = property.typeDescription, isType else {
-            throw InjectableMacroProtocolError.invalidComputedPropertyType
-        }
-        let existentialType = description.asSource
-
-        // Determine the concrete type:
-        guard let concreteTypeDescription = attributeSyntax.concreteTypeArgument else {
-            // TODO: Diagnostic
-            fatalError()
-        }
-        let concreteType = concreteTypeDescription.asSource
-
-        return (propertyName, existentialType, concreteType)
     }
 
     private static func initializerDeclaration(
@@ -258,12 +205,7 @@ extension InjectableMacroProtocol {
         if let argumentsProperty = visitor.argumentsProperty {
             initializerLines.append("self.\(argumentsProperty.label) = arguments")
         }
-        initializerLines.append("self.dependencies = dependencies")
-
-        // Add an initializer line for each @Inject property:
-        for property in visitor.injectProperties {
-            initializerLines.append("self.\(property.label) = dependencies.\(property.label)")
-        }
+        initializerLines.append("self._dependencies = dependencies")
 
         // Add the superclass initializer, if necessary:
         if let superclassInitializer = self.superclassInitializerLine() {
@@ -271,8 +213,9 @@ extension InjectableMacroProtocol {
         }
 
         // Add lines to the initializer to eagerly initialize store properties with this argument:
-        for (property, attributeSyntax) in visitor.storeProperties {
-            guard attributeSyntax.initializationStrategyArgument == .eager else {
+        let storedProperties = visitor.storeProperties + visitor.injectProperties
+        for (property, attributeSyntax) in storedProperties {
+            guard case .eager = attributeSyntax.initializationStrategyArgument else {
                 continue
             }
 

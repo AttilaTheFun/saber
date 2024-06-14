@@ -7,7 +7,7 @@ private let userIDsToUsersKey = "UserIDsToUsers"
 
 @Injectable
 public final class UserServiceImplementation: UserService {
-    @Inject private let loadingFeature: LoadingFeature
+    @Inject private var loadingFeature: LoadingFeature
 
     private var userIDsToUsers: [UUID : User] {
         get {

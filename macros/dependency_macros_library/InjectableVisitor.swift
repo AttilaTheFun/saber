@@ -17,7 +17,7 @@ public final class InjectableVisitor: SyntaxVisitor {
     public private(set) var concreteDeclaration: ConcreteDeclSyntaxProtocol?
 
     public private(set) var argumentsProperty: Property?
-    public private(set) var injectProperties: [Property] = []
+    public private(set) var injectProperties: [(Property,AttributeSyntax)] = []
     public private(set) var factoryProperties: [(Property,AttributeSyntax)] = []
     public private(set) var storeProperties: [(Property,AttributeSyntax)] = []
 
@@ -73,13 +73,13 @@ public final class InjectableVisitor: SyntaxVisitor {
 
             // Parse the property:
             if
-                let identifierPatternSyntax = binding.pattern.as(IdentifierPatternSyntax.self),
-                let typeAnnotationSyntax = binding.typeAnnotation
+                let identifierPattern = IdentifierPatternSyntax(binding.pattern),
+                let typeAnnotation = binding.typeAnnotation
             {
-                let label = identifierPatternSyntax.identifier.text
+                let label = identifierPattern.identifier.text
 
                 // Parse the type description:
-                let typeDescription = typeAnnotationSyntax.type.typeDescription
+                let typeDescription = typeAnnotation.type.typeDescription
                 if case .unknown(let description) = typeDescription {
                     // TODO: Diagnostic.
                     fatalError(description)
@@ -89,8 +89,8 @@ public final class InjectableVisitor: SyntaxVisitor {
                 switch injectableMacroType {
                 case .arguments:
                     self.argumentsProperty = property
-                case .inject:
-                    self.injectProperties.append(property)
+                case .inject(let attributeSyntax):
+                    self.injectProperties.append((property, attributeSyntax))
                 case .factory(let attributeSyntax):
                     self.factoryProperties.append((property, attributeSyntax))
                 case .store(let attributeSyntax):

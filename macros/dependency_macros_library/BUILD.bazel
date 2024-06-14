@@ -11,6 +11,7 @@ swift_library(
         "ConcreteDeclSyntaxProtocol.swift",
         "DeclModifierListSyntax+Extensions.swift",
         "FactoryMacroProtocol.swift",
+        "InjectMacroProtocol.swift",
         "InjectableMacroProtocol.swift",
         "InjectableVisitor.swift",
         "MacroError.swift",

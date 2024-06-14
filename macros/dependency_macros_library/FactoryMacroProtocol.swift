@@ -50,8 +50,6 @@ extension FactoryMacroProtocol {
             }
         }
         """
-        // TODO: See if it's possible to use an implicit get accessor with AccessorDeclSyntax.
-        // That is, a computed property body without an explicit get / set is assumed to be the get accessor.
 
         return [getAccessorDeclaration]
     }

@@ -2,14 +2,13 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 
-public enum StoreMacroProtocolError: Error {
-    case notDecoratingBinding
-    case decoratingStatic
+public enum InjectMacroProtocolError: Error {
+    case unknownType(String)
 }
 
-public protocol StoreMacroProtocol: AccessorMacro {}
+public protocol InjectMacroProtocol: AccessorMacro {}
 
-extension StoreMacroProtocol {
+extension InjectMacroProtocol {
 
     // MARK: AccessorMacro
 
@@ -20,8 +19,8 @@ extension StoreMacroProtocol {
     ) throws -> [AccessorDeclSyntax] {
         guard
             let variableDeclaration = declaration.as(VariableDeclSyntax.self),
-            let storeMacro = variableDeclaration.attributes.storeMacro,
-            let concreteType = storeMacro.concreteTypeArgument,
+            !variableDeclaration.modifiers.isStatic,
+            let injectMacro = variableDeclaration.attributes.injectMacro,
             let binding = variableDeclaration.bindings.first,
             let identifierPatternSyntax = IdentifierPatternSyntax(binding.pattern),
             binding.accessorBlock == nil else
@@ -30,10 +29,7 @@ extension StoreMacroProtocol {
         }
 
         // TODO: Handle access strategy.
-        let accessStrategy = storeMacro.accessStrategyArgument
-
-        // TODO: Handle access strategy.
-        let threadSafetyStrategy = storeMacro.threadSafetyStrategyArgument
+        let accessStrategy = injectMacro.accessStrategyArgument
 
         // Create the accessor declaration:
         let propertyIdentifier = identifierPatternSyntax.identifier
@@ -44,7 +40,7 @@ extension StoreMacroProtocol {
                 return \(propertyIdentifier)
             }
 
-            let \(propertyIdentifier) = \(raw: concreteType.asSource)(dependencies: self)
+            let \(propertyIdentifier) = self._dependencies.\(propertyIdentifier)
             self._\(propertyIdentifier) = \(propertyIdentifier)
             return \(propertyIdentifier)
         }

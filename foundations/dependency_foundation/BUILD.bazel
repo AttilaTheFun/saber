@@ -2,12 +2,7 @@ load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 swift_library(
     name = "dependency_foundation",
-    srcs = [
-        "Factory.swift",
-        "Scope.swift",
-        "Type.swift",
-    ],
+    srcs = ["Factory.swift"],
     module_name = "DependencyFoundation",
     visibility = ["//visibility:public"],
-    deps = ["//foundations/swift_foundation"],
 )

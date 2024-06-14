@@ -9,8 +9,8 @@ import UserSessionServiceImplementation
 import UIKit
 import WindowServiceInterface
 
-@ScopeInjectable
-public final class LoggedOutScopeImplementation: Scope, LoggedOutScopeImplementationChildDependencies {
+@Injectable
+public final class LoggedOutScopeImplementation: LoggedOutScopeImplementationChildDependencies {
     @Arguments public let loggedOutFeature: LoggedOutFeature
     @Inject public let userSessionStorageService: any UserSessionStorageService
     @Inject public let windowService: any WindowService

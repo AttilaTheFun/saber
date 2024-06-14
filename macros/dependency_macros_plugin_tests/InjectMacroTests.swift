@@ -9,12 +9,21 @@ final class InjectMacroTests: XCTestCase {
     func testMacro() throws {
         assertMacroExpansion(
             """
-            @Inject
-            let fooFeature: FooFeature
+            @Inject var fooService: FooService
             """,
             expandedSource:
             """
-            let fooFeature: FooFeature
+            var fooService: FooService {
+                get {
+                    if let fooService = self._fooService {
+                        return fooService
+                    }
+
+                    let fooService = self._dependencies.fooService
+                    self._fooService = fooService
+                    return fooService
+                }
+            }
             """,
             macros: self.macros
         )

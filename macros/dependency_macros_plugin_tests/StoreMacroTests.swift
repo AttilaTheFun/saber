@@ -16,9 +16,13 @@ final class StoreMacroTests: XCTestCase {
             """
             var fooFeature: FooFeature {
                 get {
-                    self.strong { [unowned self] in
-                        FooFeatureViewControllerImplementation.swift(dependencies: self)
+                    if let fooFeature = self._fooFeature {
+                        return fooFeature
                     }
+
+                    let fooFeature = FooFeatureViewControllerImplementation.swift(dependencies: self)
+                    self._fooFeature = fooFeature
+                    return fooFeature
                 }
             }
             """,
