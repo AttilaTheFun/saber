@@ -6,16 +6,11 @@ import XCTest
 
 final class InjectableMacroTests: XCTestCase {
     private let macros: [String : any Macro.Type] = [
-        "Injectable": InjectableMacro.self,
-
         "Arguments": ArgumentsMacro.self,
-        "Inject": InjectMacro.self,
         "Factory": FactoryMacro.self,
+        "Inject": InjectMacro.self,
+        "Injectable": InjectableMacro.self,
         "Store": StoreMacro.self,
-
-        // TODO: Delete and just support through @Injectable + looking at inheritance clause.
-        "ViewControllerInjectable": ViewControllerInjectableMacro.self,
-        "ScopeInjectable": ScopeInjectableMacro.self,
     ]
 
     func testWithArgumentsAndDependencies() throws {
@@ -34,32 +29,16 @@ final class InjectableMacroTests: XCTestCase {
                 let fooArguments: FooArguments
                 var fooService: FooService {
                     get {
-                        if let fooService = self._fooService {
-                            return fooService
-                        }
-
-                        let fooService = self._dependencies.fooService
-                        self._fooService = fooService
-                        return fooService
+                        return self._dependencies.fooService
                     }
                 }
                 var barService: BarService {
                     get {
-                        if let barService = self._barService {
-                            return barService
-                        }
-
-                        let barService = self._dependencies.barService
-                        self._barService = barService
-                        return barService
+                        return self._dependencies.barService
                     }
                 }
 
                 private let _dependencies: any FooScopeDependencies
-
-                private var _fooService: FooService?
-
-                private var _barService: BarService?
 
                 public init(
                     arguments: FooArguments,
@@ -129,32 +108,16 @@ final class InjectableMacroTests: XCTestCase {
             public final class FooScope {
                 var fooService: FooService {
                     get {
-                        if let fooService = self._fooService {
-                            return fooService
-                        }
-
-                        let fooService = self._dependencies.fooService
-                        self._fooService = fooService
-                        return fooService
+                        return self._dependencies.fooService
                     }
                 }
                 var barService: BarService {
                     get {
-                        if let barService = self._barService {
-                            return barService
-                        }
-
-                        let barService = self._dependencies.barService
-                        self._barService = barService
-                        return barService
+                        return self._dependencies.barService
                     }
                 }
 
                 private let _dependencies: any FooScopeDependencies
-
-                private var _fooService: FooService?
-
-                private var _barService: BarService?
 
                 public init(
                     dependencies: any FooScopeDependencies
@@ -179,7 +142,7 @@ final class InjectableMacroTests: XCTestCase {
     func testWithFactory() throws {
         assertMacroExpansion(
             """
-            @ScopeInjectable
+            @Injectable
             public final class FooScope: FooScopeChildDependencies {
                 @Factory(FooFeatureViewController.self)
                 var fooFeatureFactory: Factory<FooFeature, UIViewController>
@@ -213,7 +176,6 @@ final class InjectableMacroTests: XCTestCase {
                     dependencies: any FooScopeDependencies
                 ) {
                     self._dependencies = dependencies
-                    super.init()
                 }
             }
 
@@ -234,7 +196,7 @@ final class InjectableMacroTests: XCTestCase {
     func testWithStore() throws {
         assertMacroExpansion(
             """
-            @ScopeInjectable
+            @Injectable
             public final class FooScope: FooScopeChildDependencies {
                 @Store(FooServiceImplementation.self, init: .lazy)
                 var fooService: FooService
@@ -279,7 +241,6 @@ final class InjectableMacroTests: XCTestCase {
                     dependencies: any FooScopeDependencies
                 ) {
                     self._dependencies = dependencies
-                    super.init()
                     _ = self.barService
                 }
             }
@@ -301,7 +262,7 @@ final class InjectableMacroTests: XCTestCase {
     func testWithViewController() throws {
         assertMacroExpansion(
             """
-            @ViewControllerInjectable
+            @Injectable
             public final class FooViewController: UIViewController {
                 @Arguments private let fooArguments: FooArguments
                 @Inject private var fooService: FooService
@@ -315,45 +276,21 @@ final class InjectableMacroTests: XCTestCase {
                 private let fooArguments: FooArguments
                 private var fooService: FooService {
                     get {
-                        if let fooService = self._fooService {
-                            return fooService
-                        }
-
-                        let fooService = self._dependencies.fooService
-                        self._fooService = fooService
-                        return fooService
+                        return self._dependencies.fooService
                     }
                 }
                 private var barService: BarService {
                     get {
-                        if let barService = self._barService {
-                            return barService
-                        }
-
-                        let barService = self._dependencies.barService
-                        self._barService = barService
-                        return barService
+                        return self._dependencies.barService
                     }
                 }
                 private var loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController> {
                     get {
-                        if let loggedInFeatureFactory = self._loggedInFeatureFactory {
-                            return loggedInFeatureFactory
-                        }
-
-                        let loggedInFeatureFactory = self._dependencies.loggedInFeatureFactory
-                        self._loggedInFeatureFactory = loggedInFeatureFactory
-                        return loggedInFeatureFactory
+                        return self._dependencies.loggedInFeatureFactory
                     }
                 }
 
                 private let _dependencies: any FooViewControllerDependencies
-
-                private var _fooService: FooService?
-
-                private var _barService: BarService?
-
-                private var _loggedInFeatureFactory: (any Factory<LoggedInFeature, UIViewController>)?
 
                 public init(
                     arguments: FooArguments,

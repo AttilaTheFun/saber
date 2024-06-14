@@ -1,4 +1,6 @@
+import DependencyMacrosTypes
 
 @attached(accessor)
-public macro Inject() =
-    #externalMacro(module: "DependencyMacrosPlugin", type: "InjectMacro")
+public macro Inject(
+    access: AccessStrategy = .computed
+) = #externalMacro(module: "DependencyMacrosPlugin", type: "InjectMacro")

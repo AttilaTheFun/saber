@@ -139,11 +139,9 @@ extension InjectableMacroProtocol {
 
         // Create the declarations:
         let propertyDeclarations = try self.propertyDeclarations(visitor: visitor, declaration: declaration)
-        let initializerDeclaractions = [
-            try self.initializerDeclaration(visitor: visitor, declaration: declaration)
-        ] + self.requiredInitializers()
+        let initializerDeclarations = try self.initializerDeclarations(visitor: visitor, declaration: declaration)
 
-        return propertyDeclarations + initializerDeclaractions
+        return propertyDeclarations + initializerDeclarations
     }
 
     private static func propertyDeclarations(
@@ -165,12 +163,28 @@ extension InjectableMacroProtocol {
         propertyDeclarations.append(dependenciesPropertyDeclaration)
 
         // Create the stored property declarations:
-        let storedProperties = visitor.storeProperties + visitor.injectProperties
-        for (property, attributeSyntax) in storedProperties {
+        for (property, attributeSyntax) in visitor.storeProperties {
 
             // If this is a purely computed property, we don't need a backing stored property.
-            if case .computed = attributeSyntax.accessStrategyArgument {
-                return []
+            if case .computed = attributeSyntax.accessStrategyArgument ?? .strong {
+                continue
+            }
+
+            // Create the stored property declaration:
+            let storedPropertyType: TypeDescription = .optional(property.typeDescription)
+            let storedPropertyDeclaration: DeclSyntax =
+            """
+            private var _\(raw: property.label): \(raw: storedPropertyType.asSource)
+            """
+            propertyDeclarations.append(storedPropertyDeclaration)
+        }
+
+        // Create the stored property declarations:
+        for (property, attributeSyntax) in visitor.injectProperties {
+
+            // If this is a purely computed property, we don't need a backing stored property.
+            if case .computed = attributeSyntax.accessStrategyArgument ?? .computed {
+                continue
             }
 
             // Create the stored property declaration:
@@ -185,10 +199,10 @@ extension InjectableMacroProtocol {
         return propertyDeclarations
     }
 
-    private static func initializerDeclaration(
+    private static func initializerDeclarations(
         visitor: InjectableVisitor,
         declaration: some DeclSyntaxProtocol
-    ) throws -> DeclSyntax {
+    ) throws -> [DeclSyntax] {
         guard let concreteDeclaration = visitor.concreteDeclaration else {
             throw InjectableMacroProtocolError.declarationNotConcrete
         }
@@ -208,8 +222,21 @@ extension InjectableMacroProtocol {
         initializerLines.append("self._dependencies = dependencies")
 
         // Add the superclass initializer, if necessary:
-        if let superclassInitializer = self.superclassInitializerLine() {
-            initializerLines.append(superclassInitializer)
+        var requiredInitializers = [DeclSyntax]()
+        if
+            let inheritanceClause = concreteDeclaration.inheritanceClause,
+            let inheritedType = try inheritanceClause.inheritedTypes.first.map(InheritedTypeSyntax.init),
+            case .simple(let name, _) = inheritedType.type.typeDescription,
+            name.hasSuffix("ViewController")
+        {
+            initializerLines.append("super.init(nibName: nil, bundle: nil)")
+            requiredInitializers = [
+                """
+                required init?(coder: NSCoder) {
+                    fatalError("not implemented")
+                }
+                """
+            ]
         }
 
         // Add lines to the initializer to eagerly initialize store properties with this argument:
@@ -232,6 +259,6 @@ extension InjectableMacroProtocol {
         }
         """
 
-        return initializerDeclaration
+        return [initializerDeclaration] + requiredInitializers
     }
 }

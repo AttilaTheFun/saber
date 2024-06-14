@@ -29,26 +29,34 @@ extension StoreMacroProtocol {
             return []
         }
 
-        // TODO: Handle access strategy.
-        let accessStrategy = storeMacro.accessStrategyArgument
-
-        // TODO: Handle access strategy.
+        // TODO: Handle thread safety.
         let threadSafetyStrategy = storeMacro.threadSafetyStrategyArgument
 
         // Create the accessor declaration:
         let propertyIdentifier = identifierPatternSyntax.identifier
-        let getAccessorDeclaration: AccessorDeclSyntax =
-        """
-        get {
-            if let \(propertyIdentifier) = self._\(propertyIdentifier) {
+        let getAccessorDeclaration: AccessorDeclSyntax
+        switch storeMacro.accessStrategyArgument ?? .strong {
+        case .computed:
+            getAccessorDeclaration =
+            """
+            get {
+                return \(raw: concreteType.asSource)(dependencies: self)
+            }
+            """
+        case .weak, .strong:
+            getAccessorDeclaration =
+            """
+            get {
+                if let \(propertyIdentifier) = self._\(propertyIdentifier) {
+                    return \(propertyIdentifier)
+                }
+
+                let \(propertyIdentifier) = \(raw: concreteType.asSource)(dependencies: self)
+                self._\(propertyIdentifier) = \(propertyIdentifier)
                 return \(propertyIdentifier)
             }
-
-            let \(propertyIdentifier) = \(raw: concreteType.asSource)(dependencies: self)
-            self._\(propertyIdentifier) = \(propertyIdentifier)
-            return \(propertyIdentifier)
+            """
         }
-        """
 
         return [getAccessorDeclaration]
     }

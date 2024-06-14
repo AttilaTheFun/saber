@@ -49,9 +49,9 @@ extension AttributeSyntax {
         return InitializationStrategy(rawValue: rawValue ?? "") ?? .lazy
     }
 
-    public var accessStrategyArgument: AccessStrategy {
+    public var accessStrategyArgument: AccessStrategy? {
         let rawValue = self.memberAccessBaseNameIfNameEquals("access")
-        return AccessStrategy(rawValue: rawValue ?? "") ?? .strong
+        return AccessStrategy(rawValue: rawValue ?? "")
     }
 
     public var threadSafetyStrategyArgument: ThreadSafetyStrategy {

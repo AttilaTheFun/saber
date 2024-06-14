@@ -28,23 +28,32 @@ extension InjectMacroProtocol {
             return []
         }
 
-        // TODO: Handle access strategy.
-        let accessStrategy = injectMacro.accessStrategyArgument
-
         // Create the accessor declaration:
         let propertyIdentifier = identifierPatternSyntax.identifier
-        let getAccessorDeclaration: AccessorDeclSyntax =
-        """
-        get {
-            if let \(propertyIdentifier) = self._\(propertyIdentifier) {
+        let getAccessorDeclaration: AccessorDeclSyntax
+        switch injectMacro.accessStrategyArgument ?? .computed {
+        case .computed:
+            getAccessorDeclaration =
+            """
+            get {
+                return self._dependencies.\(propertyIdentifier)
+            }
+            """
+
+        case .weak, .strong:
+            getAccessorDeclaration =
+            """
+            get {
+                if let \(propertyIdentifier) = self._\(propertyIdentifier) {
+                    return \(propertyIdentifier)
+                }
+
+                let \(propertyIdentifier) = self._dependencies.\(propertyIdentifier)
+                self._\(propertyIdentifier) = \(propertyIdentifier)
                 return \(propertyIdentifier)
             }
-
-            let \(propertyIdentifier) = self._dependencies.\(propertyIdentifier)
-            self._\(propertyIdentifier) = \(propertyIdentifier)
-            return \(propertyIdentifier)
+            """
         }
-        """
 
         return [getAccessorDeclaration]
     }

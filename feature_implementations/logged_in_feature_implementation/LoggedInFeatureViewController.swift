@@ -8,7 +8,7 @@ import UserServiceInterface
 import UIKit
 import WindowServiceInterface
 
-@ViewControllerInjectable
+@Injectable
 public final class LoggedInFeatureViewController: UIViewController {
     @Arguments private let loggedInFeature: LoggedInFeature
     @Inject private let userSessionService: any UserSessionService
