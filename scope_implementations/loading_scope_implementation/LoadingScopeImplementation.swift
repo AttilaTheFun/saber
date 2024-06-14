@@ -11,7 +11,7 @@ import UserServiceImplementation
 import WindowServiceInterface
 
 @ScopeInjectable
-public final class LoadingScopeImplementation: BaseScope, LoadingScopeImplementationChildDependencies {
+public final class LoadingScopeImplementation: Scope, LoadingScopeImplementationChildDependencies {
     @Arguments public let loadingFeature: LoadingFeature
     @Inject public let userStorageService: UserStorageService
     @Inject public let userSessionStorageService: UserSessionStorageService

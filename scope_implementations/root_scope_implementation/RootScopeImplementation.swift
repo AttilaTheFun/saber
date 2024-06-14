@@ -17,7 +17,7 @@ import WindowServiceInterface
 import WindowServiceImplementation
 
 @ScopeInjectable
-public final class RootScopeImplementation: BaseScope, RootScopeImplementationChildDependencies {
+public final class RootScopeImplementation: Scope, RootScopeImplementationChildDependencies {
     @Arguments public let rootFeature: RootFeature
 
     @Store(UserSessionStorageServiceImplementation.self)

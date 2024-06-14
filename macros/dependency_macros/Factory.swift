@@ -10,7 +10,7 @@
 /// the @Injectable macro will assume that the concrete type has an associated Dependencies protocol,
 /// and add this to the peer type's ChildDependencies protocol.
 /// 
-/// Application:
+/// Usage:
 /// ```
 /// @Inject
 /// final class FooScope: Scope, FooScopeChildDependencies {
@@ -18,34 +18,6 @@
 ///     let fooViewControllerType: UIViewController.Type
 /// }
 /// ```
-/// 
-/// Expansion:
-/// ```
-/// final class FooScope: Scope, FooScopeChildDependencies {
-///     private let dependencies: FooScopeDependencies
-///     let fooViewControllerType: UIViewController.Type
-/// 
-///     var fooViewControllerFactory: Factory<FooArguments, UIViewController> {
-///         FactoryImplementation<FooArguments, UIViewController> { arguments in
-///             FooViewController(arguments: arguments, dependencies: self)
-///         }
-///     }
-/// 
-///     init(dependencies: FooScopeDependencies) {
-///         self.dependencies = dependencies
-///         self.fooViewControllerType = FooViewController.self
-///     }
-/// }
-/// 
-/// protocol FooScopeDependencies {}
-/// 
-/// protocol FooScopeChildDependencies
-///     : FooViewControllerDependencies
-///     {}
-/// 
-/// ```
 @attached(peer)
-public macro Factory(
-    _ concrete: Any.Type,
-    arguments: Any.Type? = nil
-) = #externalMacro(module: "DependencyMacrosPlugin", type: "FactoryMacro")
+public macro Factory(_ concrete: Any.Type, arguments: Any.Type? = nil, scope: Any.Type? = nil) =
+    #externalMacro(module: "DependencyMacrosPlugin", type: "FactoryMacro")

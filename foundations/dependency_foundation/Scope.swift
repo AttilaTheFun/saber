@@ -1,6 +1,6 @@
 import SwiftFoundation
 
-open class BaseScope {
+open class Scope {
     public init() {}
     
     private var factories = [ObjectIdentifier : Any]()
