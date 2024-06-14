@@ -14,7 +14,6 @@ swift_library(
         "InjectableMacroProtocol.swift",
         "InjectableVisitor.swift",
         "MacroError.swift",
-        "Parsers.swift",
         "Property.swift",
         "StoreMacroProtocol.swift",
         "String+Extensions.swift",
