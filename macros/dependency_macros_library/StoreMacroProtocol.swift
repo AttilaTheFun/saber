@@ -7,7 +7,7 @@ public enum StoreMacroProtocolError: Error {
     case decoratingStatic
 }
 
-public protocol StoreMacroProtocol: AccessorMacro, PeerMacro {}
+public protocol StoreMacroProtocol: AccessorMacro {}
 
 extension StoreMacroProtocol {
 
@@ -42,24 +42,5 @@ extension StoreMacroProtocol {
         // That is, a computed property body without an explicit get / set is assumed to be the get accessor.
 
         return [getAccessorDeclaration]
-    }
-
-    // MARK: PeerMacro
-
-    public static func expansion(
-        of node: AttributeSyntax,
-        providingPeersOf declaration: some DeclSyntaxProtocol,
-        in context: some MacroExpansionContext
-    ) throws -> [DeclSyntax] {
-        guard let variableDecl = VariableDeclSyntax(declaration) else {
-            throw StoreMacroProtocolError.notDecoratingBinding
-        }
-
-        guard !variableDecl.modifiers.isStatic else {
-            throw StoreMacroProtocolError.decoratingStatic
-        }
-
-        // This macro does not expand.
-        return []
     }
 }

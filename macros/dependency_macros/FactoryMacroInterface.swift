@@ -22,7 +22,6 @@
 ///     }
 /// }
 /// ```
-@attached(peer)
 @attached(accessor)
 public macro Factory<T>(
     _ concrete: T.Type,

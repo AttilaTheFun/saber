@@ -11,10 +11,10 @@ import WindowServiceInterface
 @ViewControllerInjectable
 public final class LoggedInFeatureViewController: UIViewController {
     @Arguments private let loggedInFeature: LoggedInFeature
-    @Inject private let userSessionService: UserSessionService
-    @Inject private let userSessionStorageService: UserSessionStorageService
-    @Inject private let userStorageService: UserStorageService
-    @Inject private let windowService: WindowService
+    @Inject private let userSessionService: any UserSessionService
+    @Inject private let userSessionStorageService: any UserSessionStorageService
+    @Inject private let userStorageService: any UserStorageService
+    @Inject private let windowService: any WindowService
     @Inject private let loggedOutFeatureFactory: any Factory<LoggedOutFeature, UIViewController>
 
     private let label = UILabel()

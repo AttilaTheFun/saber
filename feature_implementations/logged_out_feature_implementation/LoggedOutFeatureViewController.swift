@@ -9,9 +9,9 @@ import WindowServiceInterface
 @ViewControllerInjectable
 public final class LoggedOutFeatureViewController: UIViewController {
     @Arguments private let arguments: LoggedOutFeature
-    @Inject private let userSessionService: UserSessionService
-    @Inject private let userSessionStorageService: UserSessionStorageService
-    @Inject private let windowService: WindowService
+    @Inject private let userSessionService: any UserSessionService
+    @Inject private let userSessionStorageService: any UserSessionStorageService
+    @Inject private let windowService: any WindowService
     @Inject private let loadingFeatureFactory: any Factory<LoadingFeature, UIViewController>
 
     private let textField = UITextField()
