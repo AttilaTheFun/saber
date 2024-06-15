@@ -1,4 +1,3 @@
-import DependencyMacros
 import UIKit
 
 public protocol WindowService {

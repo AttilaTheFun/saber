@@ -12,12 +12,12 @@ import WindowServiceInterface
 @Injectable
 public final class LoadingFeatureViewController: UIViewController {
     @Arguments private let loadingFeature: LoadingFeature
-    @Inject private let userSessionStorageService: any UserSessionStorageService
-    @Inject private let userService: any UserService
-    @Inject private let userStorageService: any UserStorageService
-    @Inject private let windowService: any WindowService
-    @Inject private let loggedOutFeatureFactory: any Factory<LoggedOutFeature, UIViewController>
-    @Inject private let loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController>
+    @Inject private var userSessionStorageService: any UserSessionStorageService
+    @Inject private var userService: any UserService
+    @Inject private var userStorageService: any UserStorageService
+    @Inject private var windowService: any WindowService
+    @Inject private var loggedOutFeatureFactory: any Factory<LoggedOutFeature, UIViewController>
+    @Inject private var loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController>
 
     // MARK: View Lifecycle
 

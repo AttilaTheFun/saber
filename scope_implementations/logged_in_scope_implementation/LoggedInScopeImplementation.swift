@@ -14,10 +14,10 @@ import WindowServiceInterface
 @Injectable
 public final class LoggedInScopeImplementation: LoggedInScopeImplementationChildDependencies {
     @Arguments public let loggedInFeature: LoggedInFeature
-    @Inject public let userStorageService: any UserStorageService
-    @Inject public let userSessionStorageService: any UserSessionStorageService
-    @Inject public let windowService: any WindowService
-    @Inject public let loggedOutFeatureFactory: any Factory<LoggedOutFeature, UIViewController>
+    @Inject public var userStorageService: any UserStorageService
+    @Inject public var userSessionStorageService: any UserSessionStorageService
+    @Inject public var windowService: any WindowService
+    @Inject public var loggedOutFeatureFactory: any Factory<LoggedOutFeature, UIViewController>
 
     @Store(UserSessionServiceImplementation.self)
     public var userSessionService: any UserSessionService

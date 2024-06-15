@@ -14,12 +14,12 @@ public protocol RootViewControllerInitializationService {
 
 @Injectable
 public final class RootViewControllerInitializationServiceImplementation: RootViewControllerInitializationService {
-    @Inject private let userSessionStorageService: UserSessionStorageService
-    @Inject private let userStorageService: UserStorageService
-    @Inject private let windowService: WindowService
-    @Inject private let loggedOutFeatureFactory: any Factory<LoggedOutFeature, UIViewController>
-    @Inject private let loadingFeatureFactory: any Factory<LoadingFeature, UIViewController>
-    @Inject private let loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController>
+    @Inject private var userSessionStorageService: UserSessionStorageService
+    @Inject private var userStorageService: UserStorageService
+    @Inject private var windowService: WindowService
+    @Inject private var loggedOutFeatureFactory: any Factory<LoggedOutFeature, UIViewController>
+    @Inject private var loadingFeatureFactory: any Factory<LoadingFeature, UIViewController>
+    @Inject private var loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController>
 
     public func registerRootViewControllerFactory() {
         guard let userSession = self.userSessionStorageService.userSession else {
