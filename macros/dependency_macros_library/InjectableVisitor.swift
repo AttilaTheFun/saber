@@ -76,7 +76,6 @@ public final class InjectableVisitor: SyntaxVisitor {
                 let identifierPattern = IdentifierPatternSyntax(binding.pattern),
                 let typeAnnotation = binding.typeAnnotation
             {
-                let label = identifierPattern.identifier.text
 
                 // Parse the type description:
                 let typeDescription = typeAnnotation.type.typeDescription
@@ -85,7 +84,7 @@ public final class InjectableVisitor: SyntaxVisitor {
                     fatalError(description)
                 }
                 
-                let property = Property(label: label, typeDescription: typeDescription)
+                let property = Property(label: identifierPattern.identifier.text, typeDescription: typeDescription)
                 switch injectableMacroType {
                 case .arguments:
                     self.argumentsProperty = property

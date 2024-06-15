@@ -198,7 +198,7 @@ final class InjectableMacroTests: XCTestCase {
             """
             @Injectable
             public final class FooScope: FooScopeChildDependencies {
-                @Store(FooServiceImplementation.self, init: .lazy)
+                @Store(FooServiceImplementation.self, thread: .unsafe)
                 var fooService: FooService
 
                 @Store(BarServiceImplementation.self, init: .eager)
@@ -210,23 +210,27 @@ final class InjectableMacroTests: XCTestCase {
             public final class FooScope: FooScopeChildDependencies {
                 var fooService: FooService {
                     get {
-                        if let fooService = self._fooService {
-                            return fooService
+                        let fooService: FooService
+                        if let _fooService = self._fooService {
+                            fooService = _fooService
+                        } else {
+                            fooService = FooServiceImplementation(dependencies: self)
                         }
-
-                        let fooService = FooServiceImplementation(dependencies: self)
-                        self._fooService = fooService
                         return fooService
                     }
                 }
                 var barService: BarService {
                     get {
-                        if let barService = self._barService {
-                            return barService
+                        self._barServiceLock.lock()
+                        defer {
+                            self._barServiceLock.unlock()
                         }
-
-                        let barService = BarServiceImplementation(dependencies: self)
-                        self._barService = barService
+                        let barService: BarService
+                        if let _barService = self._barService {
+                            barService = _barService
+                        } else {
+                            barService = BarServiceImplementation(dependencies: self)
+                        }
                         return barService
                     }
                 }
@@ -236,6 +240,8 @@ final class InjectableMacroTests: XCTestCase {
                 private var _fooService: FooService?
 
                 private var _barService: BarService?
+
+                private var _barServiceLock = Lock()
 
                 public init(
                     dependencies: any FooScopeDependencies

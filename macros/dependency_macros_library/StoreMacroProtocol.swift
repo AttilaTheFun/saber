@@ -23,17 +23,30 @@ extension StoreMacroProtocol {
             let storeMacro = variableDeclaration.attributes.storeMacro,
             let concreteType = storeMacro.concreteTypeArgument,
             let binding = variableDeclaration.bindings.first,
-            let identifierPatternSyntax = IdentifierPatternSyntax(binding.pattern),
+            let typeAnnotation = binding.typeAnnotation,
+            let identifierPattern = IdentifierPatternSyntax(binding.pattern),
             binding.accessorBlock == nil else
         {
             return []
         }
 
-        // TODO: Handle thread safety.
-        let threadSafetyStrategy = storeMacro.threadSafetyStrategyArgument
+        // Parse the type description:
+        let typeDescription = typeAnnotation.type.typeDescription
+        if case .unknown(let description) = typeDescription {
+            // TODO: Diagnostic.
+            fatalError(description)
+        }
+
+
+
+        // Parse the type description:
+        let property = Property(label: identifierPattern.identifier.text, typeDescription: typeDescription)
+        if case .unknown(let description) = typeDescription {
+            // TODO: Diagnostic.
+            fatalError(description)
+        }
 
         // Create the accessor declaration:
-        let propertyIdentifier = identifierPatternSyntax.identifier
         let getAccessorDeclaration: AccessorDeclSyntax
         switch storeMacro.accessStrategyArgument ?? .strong {
         case .computed:
@@ -44,16 +57,34 @@ extension StoreMacroProtocol {
             }
             """
         case .weak, .strong:
+
+            // Create the body of the accessor:
+            var accessorLines = [
+                "let \(property.label): \(property.typeDescription.asSource)",
+                "if let _\(property.label) = self._\(property.label) {",
+                "\(property.label) = _\(property.label)",
+                "} else {",
+                "\(property.label) = \(concreteType.asSource)(dependencies: self)",
+                "}",
+            ]
+
+            // If thread safe, wrap in lock:
+            if storeMacro.threadSafetyStrategyArgument == .safe {
+                let lockLine = "self._\(property.label)Lock.lock()"
+                let unlockLine = "defer { self._\(property.label)Lock.unlock() }"
+                accessorLines = [lockLine, unlockLine] + accessorLines
+            }
+
+            // Add the return line:
+            let returnLine = "return \(property.label)"
+            accessorLines.append(returnLine)
+
+            // Create the accessor declaration:
+            let accessorBody = accessorLines.joined(separator: "\n")
             getAccessorDeclaration =
             """
             get {
-                if let \(propertyIdentifier) = self._\(propertyIdentifier) {
-                    return \(propertyIdentifier)
-                }
-
-                let \(propertyIdentifier) = \(raw: concreteType.asSource)(dependencies: self)
-                self._\(propertyIdentifier) = \(propertyIdentifier)
-                return \(propertyIdentifier)
+            \(raw: accessorBody)
             }
             """
         }

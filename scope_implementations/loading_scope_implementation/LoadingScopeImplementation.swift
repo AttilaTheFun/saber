@@ -4,6 +4,7 @@ import LoadingFeatureInterface
 import LoadingFeatureImplementation
 import LoggedOutFeatureInterface
 import LoggedInFeatureInterface
+import SwiftFoundation
 import UIKit
 import UserSessionServiceInterface
 import UserServiceInterface

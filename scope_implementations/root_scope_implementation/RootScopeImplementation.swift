@@ -8,6 +8,7 @@ import LoggedInFeatureInterface
 import LoggedInScopeImplementation
 import RootFeatureInterface
 import RootViewControllerInitializationServiceImplementation
+import SwiftFoundation
 import UserSessionServiceInterface
 import UserSessionServiceImplementation
 import UserServiceInterface

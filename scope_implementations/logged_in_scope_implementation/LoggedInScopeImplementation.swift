@@ -4,6 +4,7 @@ import LoggedInFeatureInterface
 import LoggedInFeatureInterface
 import LoggedInFeatureImplementation
 import LoggedOutFeatureInterface
+import SwiftFoundation
 import UIKit
 import UserServiceInterface
 import UserSessionServiceInterface

@@ -177,6 +177,15 @@ extension InjectableMacroProtocol {
             private var _\(raw: property.label): \(raw: storedPropertyType.asSource)
             """
             propertyDeclarations.append(storedPropertyDeclaration)
+
+            // If thread safe, create the lock stored property declaration:
+            if case .safe = attributeSyntax.threadSafetyStrategyArgument {
+                let lockStoredPropertyDeclaration: DeclSyntax =
+                """
+                private var _\(raw: property.label)Lock = Lock()
+                """
+                propertyDeclarations.append(lockStoredPropertyDeclaration)
+            }
         }
 
         // Create the stored property declarations:

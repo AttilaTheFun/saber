@@ -27,5 +27,6 @@ import DependencyMacrosTypes
 public macro Store(
     _ concrete: Any.Type,
     init: InitializationStrategy = .lazy,
-    access: AccessStrategy = .strong
+    access: AccessStrategy = .strong,
+    thread: ThreadSafetyStrategy = .safe
 ) = #externalMacro(module: "DependencyMacrosPlugin", type: "StoreMacro")
