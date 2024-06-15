@@ -58,26 +58,30 @@ extension StoreMacroProtocol {
             """
         case .weak, .strong:
 
-            // Create the body of the accessor:
+            // If the value has already been initialized, we can return it without a lock:
             var accessorLines = [
-                "let \(property.label): \(property.typeDescription.asSource)",
-                "if let _\(property.label) = self._\(property.label) {",
-                "\(property.label) = _\(property.label)",
-                "} else {",
-                "\(property.label) = \(concreteType.asSource)(dependencies: self)",
+                "if let \(property.label) = self._\(property.label) {",
+                "return \(property.label)",
                 "}",
             ]
 
-            // If thread safe, wrap in lock:
+            // If thread safe, wrap initialization in lock:
             if storeMacro.threadSafetyStrategyArgument == .safe {
-                let lockLine = "self._\(property.label)Lock.lock()"
-                let unlockLine = "defer { self._\(property.label)Lock.unlock() }"
-                accessorLines = [lockLine, unlockLine] + accessorLines
+                // Repeat the same check because value could be initialized while obtaining the lock.
+                // This makes initialization slightly slower in exchange for allowing all subsequent access
+                // to avoid the lock penalty.
+                accessorLines += [
+                    "self._\(property.label)Lock.lock()",
+                    "defer { self._\(property.label)Lock.unlock() }"
+                ] + accessorLines
             }
 
-            // Add the return line:
-            let returnLine = "return \(property.label)"
-            accessorLines.append(returnLine)
+            // Initialize and return the concrete type:
+            accessorLines += [
+                "let \(property.label) = \(concreteType.asSource)(dependencies: self)",
+                "self._\(property.label) = \(property.label)",
+                "return \(property.label)",
+            ]
 
             // Create the accessor declaration:
             let accessorBody = accessorLines.joined(separator: "\n")

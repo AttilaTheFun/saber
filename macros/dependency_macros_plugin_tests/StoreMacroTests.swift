@@ -9,23 +9,25 @@ final class StoreMacroTests: XCTestCase {
     func testMacro() throws {
         assertMacroExpansion(
             """
-            @Store(FooServiceImplementation.swift)
+            @Store(FooServiceImplementation.self)
             var fooService: FooService
             """,
             expandedSource:
             """
             var fooService: FooService {
                 get {
+                    if let fooService = self._fooService {
+                        return fooService
+                    }
                     self._fooServiceLock.lock()
                     defer {
                         self._fooServiceLock.unlock()
                     }
-                    let fooService: FooService
-                    if let _fooService = self._fooService {
-                        fooService = _fooService
-                    } else {
-                        fooService = FooServiceImplementation.swift(dependencies: self)
+                    if let fooService = self._fooService {
+                        return fooService
                     }
+                    let fooService = FooServiceImplementation(dependencies: self)
+                    self._fooService = fooService
                     return fooService
                 }
             }

@@ -210,27 +210,28 @@ final class InjectableMacroTests: XCTestCase {
             public final class FooScope: FooScopeChildDependencies {
                 var fooService: FooService {
                     get {
-                        let fooService: FooService
-                        if let _fooService = self._fooService {
-                            fooService = _fooService
-                        } else {
-                            fooService = FooServiceImplementation(dependencies: self)
+                        if let fooService = self._fooService {
+                            return fooService
                         }
+                        let fooService = FooServiceImplementation(dependencies: self)
+                        self._fooService = fooService
                         return fooService
                     }
                 }
                 var barService: BarService {
                     get {
+                        if let barService = self._barService {
+                            return barService
+                        }
                         self._barServiceLock.lock()
                         defer {
                             self._barServiceLock.unlock()
                         }
-                        let barService: BarService
-                        if let _barService = self._barService {
-                            barService = _barService
-                        } else {
-                            barService = BarServiceImplementation(dependencies: self)
+                        if let barService = self._barService {
+                            return barService
                         }
+                        let barService = BarServiceImplementation(dependencies: self)
+                        self._barService = barService
                         return barService
                     }
                 }
