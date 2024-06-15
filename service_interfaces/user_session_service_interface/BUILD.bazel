@@ -9,5 +9,4 @@ swift_library(
     ],
     module_name = "UserSessionServiceInterface",
     visibility = ["//visibility:public"],
-    deps = ["//macros/dependency_macros"],
 )
