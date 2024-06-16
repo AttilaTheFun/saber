@@ -180,7 +180,7 @@ extension InjectableMacroProtocol {
         // Create the initializer:
         let initializerDeclaration: DeclSyntax =
         """
-        fileprivate init(parent: \(concreteDeclaration.name)) {
+        fileprivate init(parent: \(concreteDeclaration.name.trimmed)) {
             self._parent = parent
         }
         """
@@ -265,11 +265,12 @@ extension InjectableMacroProtocol {
         // Check if we have any child dependencies and create the associated property declarations if so:
         if visitor.childDependencyProperties.count > 0 {
             let childDependenciesClassName = "\(concreteDeclaration.name.trimmed)ChildDependencies"
+            let injectableType = node.injectableTypeArgument ?? .strong
 
             // Create the stored property declaration:
             let propertyDeclaration = self.parentStoredPropertyDeclaration(
                 propertyLabel: "childDependencies",
-                storageStrategy: .weak,
+                storageStrategy: injectableType == .root ? .strong : .weak,
                 accessorLine: "return \(childDependenciesClassName)(parent: self)"
             )
             propertyDeclarations.append(propertyDeclaration)
@@ -345,7 +346,7 @@ extension InjectableMacroProtocol {
         // Call the designated initializer and implement the required initializer, if necessary:
         var requiredInitializers = [DeclSyntax]()
         switch node.injectableTypeArgument ?? .strong {
-        case .strong, .unowned:
+        case .strong, .unowned, .root:
             break
         case .viewController:
             initializerLines.append("super.init(nibName: nil, bundle: nil)")

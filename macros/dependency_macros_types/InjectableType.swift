@@ -28,4 +28,9 @@ public enum InjectableType: String {
     // TODO: To prevent misuse, when applied, rename the Dependencies protocol to UnownedDependencies.
     // TODO: On the parent side, expect this protocol name in the ChildDependencies if an @Store type is strong.
     // TODO: This will result in a compile error if you try to use a strong store to hold a strong injectable.
+
+    /// The root injectable type is used for the root scope.
+    /// The root scope is special in that it exists before the first UIWindow is created and during that time nothing retains its child dependencies object.
+    /// Since the root scope is never deallocated while the application is running, we can just retain the child dependencies object strongly from the root scope.
+    case root
 }

@@ -16,7 +16,7 @@ import UIKit
 import WindowServiceInterface
 import WindowServiceImplementation
 
-@Injectable
+@Injectable(.root)
 public final class RootScopeImplementation {
     @Arguments public var rootFeature: RootFeature
 
