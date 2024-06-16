@@ -1,27 +1,12 @@
 
-/// The @Factory macro can be applied to an uninitialized `var` property of the Factory type to generate
-/// a `get` accessor for the property which initializes and returns a factory that builds the concrete type.
-///
-/// Application:
-/// ```
-/// final class FooParent {
-///     @Factory(FooViewController.self)
-///     var fooViewControllerFactory: Factory<FooArguments, UIViewController>
-/// }
-/// ```
-///
-/// Expansion:
-/// ```
-/// final class FooParent {
-///     var fooViewControllerFactory: Factory<FooArguments, UIViewController> {
-///         get {
-///             FactoryImplementation { arguments in
-///                 FooViewController(arguments: arguments, dependencies: self)
-///             }
-///         }
-///     }
-/// }
-/// ```
+/// The @Factory macro can be applied to an uninitialized `var` property of the Factory type,
+/// on a type annotated with the @Injectable macro.
+/// 
+/// The macro expansion will generate a computed property that produces a Factory instance
+/// capable of building instances of the concrete type when provided with instances of the arguments type.
+/// 
+/// The optional factory keypath argument allows the factory to build the concrete type 
+/// as an intermediate value, and return an instance built from a nested factory.
 @attached(accessor)
 public macro Factory<T>(
     _ concrete: T.Type,

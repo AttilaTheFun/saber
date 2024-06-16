@@ -9,9 +9,9 @@ import UserSessionServiceInterface
 import UIKit
 import WindowServiceInterface
 
-@Injectable
+@Injectable(.viewController)
 public final class LoadingFeatureViewController: UIViewController {
-    @Arguments private let loadingFeature: LoadingFeature
+    @Arguments private var loadingFeature: LoadingFeature
     @Inject private var userSessionStorageService: any UserSessionStorageService
     @Inject private var userService: any UserService
     @Inject private var userStorageService: any UserStorageService

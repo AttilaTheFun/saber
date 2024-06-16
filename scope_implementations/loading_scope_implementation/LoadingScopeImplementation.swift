@@ -4,7 +4,6 @@ import LoadingFeatureInterface
 import LoadingFeatureImplementation
 import LoggedOutFeatureInterface
 import LoggedInFeatureInterface
-import SwiftFoundation
 import UIKit
 import UserSessionServiceInterface
 import UserServiceInterface
@@ -12,8 +11,8 @@ import UserServiceImplementation
 import WindowServiceInterface
 
 @Injectable
-public final class LoadingScopeImplementation: LoadingScopeImplementationChildDependencies {
-    @Arguments public let loadingFeature: LoadingFeature
+public final class LoadingScopeImplementation {
+    @Arguments public var loadingFeature: LoadingFeature
     @Inject public var userStorageService: any UserStorageService
     @Inject public var userSessionStorageService: any UserSessionStorageService
     @Inject public var windowService: any WindowService

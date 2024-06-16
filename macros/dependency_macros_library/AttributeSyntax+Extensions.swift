@@ -44,19 +44,19 @@ extension AttributeSyntax {
         return keyPathPropertyComponent.declName.baseName.text
     }
 
-    public var initializationStrategyArgument: InitializationStrategy {
+    public var injectableTypeArgument: InjectableType? {
+        let rawValue = self.memberAccessBaseNameIfNameEquals(nil)
+        return InjectableType(rawValue: rawValue ?? "")
+    }
+
+    public var initializationStrategyArgument: InitializationStrategy? {
         let rawValue = self.memberAccessBaseNameIfNameEquals("init")
-        return InitializationStrategy(rawValue: rawValue ?? "") ?? .lazy
+        return InitializationStrategy(rawValue: rawValue ?? "")
     }
 
-    public var accessStrategyArgument: AccessStrategy? {
-        let rawValue = self.memberAccessBaseNameIfNameEquals("access")
-        return AccessStrategy(rawValue: rawValue ?? "")
-    }
-
-    public var threadSafetyStrategyArgument: ThreadSafetyStrategy {
-        let rawValue = self.memberAccessBaseNameIfNameEquals("thread")
-        return ThreadSafetyStrategy(rawValue: rawValue ?? "") ?? .safe
+    public var storageStrategyArgument: StorageStrategy? {
+        let rawValue = self.memberAccessBaseNameIfNameEquals("storage")
+        return StorageStrategy(rawValue: rawValue ?? "")
     }
 
     private func memberAccessBaseNameIfNameEquals(_ expectedName: String?) -> String? {

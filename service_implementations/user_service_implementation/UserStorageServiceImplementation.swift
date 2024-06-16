@@ -1,10 +1,11 @@
+import DependencyFoundation
 import DependencyMacros
 import Foundation
 import UserServiceInterface
 
 private let userKey = "User"
 
-@Injectable
+@Injectable(.unowned)
 public final class UserStorageServiceImplementation: UserStorageService {
     public var user: User? {
         get {

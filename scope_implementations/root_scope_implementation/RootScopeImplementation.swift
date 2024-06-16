@@ -8,7 +8,6 @@ import LoggedInFeatureInterface
 import LoggedInScopeImplementation
 import RootFeatureInterface
 import RootViewControllerInitializationServiceImplementation
-import SwiftFoundation
 import UserSessionServiceInterface
 import UserSessionServiceImplementation
 import UserServiceInterface
@@ -18,8 +17,8 @@ import WindowServiceInterface
 import WindowServiceImplementation
 
 @Injectable
-public final class RootScopeImplementation: RootScopeImplementationChildDependencies {
-    @Arguments public let rootFeature: RootFeature
+public final class RootScopeImplementation {
+    @Arguments public var rootFeature: RootFeature
 
     @Store(UserSessionStorageServiceImplementation.self)
     public var userSessionStorageService: any UserSessionStorageService

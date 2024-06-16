@@ -5,6 +5,7 @@ package(default_visibility = ["//visibility:public"])
 swift_library(
     name = "dependency_macros_library",
     srcs = [
+        "ArgumentsMacroProtocol.swift",
         "AttributeListSyntax.Element+Extensions.swift",
         "AttributeListSyntax+Extensions.swift",
         "AttributeSyntax+Extensions.swift",

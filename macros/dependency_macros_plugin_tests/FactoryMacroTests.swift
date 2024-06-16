@@ -19,16 +19,18 @@ final class FactoryMacroTests: XCTestCase {
             """
             var fooFeatureFactory: Factory<FooFeature, UIViewController> {
                 get {
-                    FactoryImplementation { arguments in
-                        FooFeatureViewController(arguments: arguments, dependencies: self)
+                    let childDependencies = self._childDependenciesStore.building
+                    return FactoryImplementation { [childDependencies] arguments in
+                        FooFeatureViewController(arguments: arguments, dependencies: childDependencies)
                     }
                 }
             }
             var barFeatureFactory: Factory<BarFeature, UIViewController> {
                 get {
-                    FactoryImplementation { arguments in
-                        let scope = BarScope(arguments: arguments, dependencies: self)
-                        return scope.barViewControllerFactory.build(arguments: arguments)
+                    let childDependencies = self._childDependenciesStore.building
+                    return FactoryImplementation { [childDependencies] arguments in
+                        let concrete = BarScope(arguments: arguments, dependencies: childDependencies)
+                        return concrete.barViewControllerFactory.build(arguments: arguments)
                     }
                 }
             }

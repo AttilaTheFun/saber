@@ -8,9 +8,9 @@ import UserServiceInterface
 import UIKit
 import WindowServiceInterface
 
-@Injectable
+@Injectable(.viewController)
 public final class LoggedInFeatureViewController: UIViewController {
-    @Arguments private let loggedInFeature: LoggedInFeature
+    @Arguments private var loggedInFeature: LoggedInFeature
     @Inject private var userSessionService: any UserSessionService
     @Inject private var userSessionStorageService: any UserSessionStorageService
     @Inject private var userStorageService: any UserStorageService

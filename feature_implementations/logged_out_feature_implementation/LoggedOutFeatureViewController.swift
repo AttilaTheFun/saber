@@ -6,9 +6,9 @@ import UserSessionServiceInterface
 import UIKit
 import WindowServiceInterface
 
-@Injectable
+@Injectable(.viewController)
 public final class LoggedOutFeatureViewController: UIViewController {
-    @Arguments private let arguments: LoggedOutFeature
+    @Arguments private var arguments: LoggedOutFeature
     @Inject private var userSessionService: any UserSessionService
     @Inject private var userSessionStorageService: any UserSessionStorageService
     @Inject private var windowService: any WindowService

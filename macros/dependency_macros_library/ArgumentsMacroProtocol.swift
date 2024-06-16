@@ -2,14 +2,14 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 
-public enum StoreMacroProtocolError: Error {
+public enum ArgumentsMacroProtocolError: Error {
     case notDecoratingBinding
     case decoratingStatic
 }
 
-public protocol StoreMacroProtocol: AccessorMacro {}
+public protocol ArgumentsMacroProtocol: AccessorMacro {}
 
-extension StoreMacroProtocol {
+extension ArgumentsMacroProtocol {
 
     // MARK: AccessorMacro
 
@@ -20,20 +20,20 @@ extension StoreMacroProtocol {
     ) throws -> [AccessorDeclSyntax] {
         guard
             let variableDeclaration = declaration.as(VariableDeclSyntax.self),
-            variableDeclaration.bindings.count == 1,
             let binding = variableDeclaration.bindings.first,
-            let identifierPattern = IdentifierPatternSyntax(binding.pattern),
             binding.accessorBlock == nil else
         {
             return []
         }
 
-        return [
-            """
-            get {
-                return self._\(identifierPattern.identifier)Store.building
-            }
-            """
-        ]
+        // Create the accessor declaration:
+        let getAccessorDeclaration: AccessorDeclSyntax =
+        """
+        get {
+            return self._arguments
+        }
+        """
+
+        return [getAccessorDeclaration]
     }
 }

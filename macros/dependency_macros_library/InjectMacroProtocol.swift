@@ -19,42 +19,20 @@ extension InjectMacroProtocol {
     ) throws -> [AccessorDeclSyntax] {
         guard
             let variableDeclaration = declaration.as(VariableDeclSyntax.self),
-            !variableDeclaration.modifiers.isStatic,
-            let injectMacro = variableDeclaration.attributes.injectMacro,
+            variableDeclaration.bindings.count == 1,
             let binding = variableDeclaration.bindings.first,
-            let identifierPatternSyntax = IdentifierPatternSyntax(binding.pattern),
+            let identifierPattern = IdentifierPatternSyntax(binding.pattern),
             binding.accessorBlock == nil else
         {
             return []
         }
 
-        // Create the accessor declaration:
-        let propertyIdentifier = identifierPatternSyntax.identifier
-        let getAccessorDeclaration: AccessorDeclSyntax
-        switch injectMacro.accessStrategyArgument ?? .computed {
-        case .computed:
-            getAccessorDeclaration =
+        return [
             """
             get {
-                return self._dependencies.\(propertyIdentifier)
+                return self._\(identifierPattern.identifier)Store.building
             }
             """
-
-        case .weak, .strong:
-            getAccessorDeclaration =
-            """
-            get {
-                if let \(propertyIdentifier) = self._\(propertyIdentifier) {
-                    return \(propertyIdentifier)
-                }
-
-                let \(propertyIdentifier) = self._dependencies.\(propertyIdentifier)
-                self._\(propertyIdentifier) = \(propertyIdentifier)
-                return \(propertyIdentifier)
-            }
-            """
-        }
-
-        return [getAccessorDeclaration]
+        ]
     }
 }

@@ -1,3 +1,4 @@
+import DependencyFoundation
 import DependencyMacros
 import Foundation
 import UserServiceInterface
@@ -5,7 +6,7 @@ import LoadingFeatureInterface
 
 private let userIDsToUsersKey = "UserIDsToUsers"
 
-@Injectable
+@Injectable(.unowned)
 public final class UserServiceImplementation: UserService {
     @Inject private var loadingFeature: LoadingFeature
 

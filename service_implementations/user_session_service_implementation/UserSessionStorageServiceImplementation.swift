@@ -4,7 +4,7 @@ import UserSessionServiceInterface
 
 private let userSessionKey = "UserSession"
 
-@Injectable
+@Injectable(.unowned)
 public final class UserSessionStorageServiceImplementation: UserSessionStorageService {
     public var userSession: UserSession? {
         get {

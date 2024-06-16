@@ -4,7 +4,6 @@ import LoggedInFeatureInterface
 import LoggedInFeatureInterface
 import LoggedInFeatureImplementation
 import LoggedOutFeatureInterface
-import SwiftFoundation
 import UIKit
 import UserServiceInterface
 import UserSessionServiceInterface
@@ -12,8 +11,8 @@ import UserSessionServiceImplementation
 import WindowServiceInterface
 
 @Injectable
-public final class LoggedInScopeImplementation: LoggedInScopeImplementationChildDependencies {
-    @Arguments public let loggedInFeature: LoggedInFeature
+public final class LoggedInScopeImplementation {
+    @Arguments public var loggedInFeature: LoggedInFeature
     @Inject public var userStorageService: any UserStorageService
     @Inject public var userSessionStorageService: any UserSessionStorageService
     @Inject public var windowService: any WindowService

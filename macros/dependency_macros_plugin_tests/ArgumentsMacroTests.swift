@@ -9,12 +9,15 @@ final class ArgumentsMacroTests: XCTestCase {
     func testMacro() throws {
         assertMacroExpansion(
             """
-            @Arguments
-            let fooFeature: FooFeature
+            @Arguments var fooFeature: FooFeature
             """,
             expandedSource:
             """
-            let fooFeature: FooFeature
+            var fooFeature: FooFeature {
+                get {
+                    return self._arguments
+                }
+            }
             """,
             macros: self.macros
         )

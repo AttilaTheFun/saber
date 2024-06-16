@@ -1,16 +1,11 @@
+import DependencyMacrosTypes
 
-/// The @Injectable macro can be applied to any concrete type declaration which supports stored properties (actor, class or struct).
+/// The @Injectable macro can be applied to any concrete type declaration which supports stored properties.
 ///
-/// Usage:
-///
-/// ```
-/// @Injectable
-/// final class FooObjectImplementation {
-///     @Arguments let fooArguments: FooArguments
-///     @Inject let fooService: FooService
-///     @Inject let barService: BarService
-/// }
-/// ```
+/// The macro expansion generates initializers and stored properties to back the 
+/// @Arguments, @Factory, @Inject, and @Store macros.
 @attached(member, names: arbitrary)
 @attached(peer, names: suffixed(Dependencies), suffixed(ChildDependencies))
-public macro Injectable() = #externalMacro(module: "DependencyMacrosPlugin", type: "InjectableMacro")
+public macro Injectable(
+    _ injectableType: InjectableType = .strong
+) = #externalMacro(module: "DependencyMacrosPlugin", type: "InjectableMacro")

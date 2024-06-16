@@ -12,7 +12,7 @@ public protocol RootViewControllerInitializationService {
     func registerRootViewControllerFactory()
 }
 
-@Injectable
+@Injectable(.unowned)
 public final class RootViewControllerInitializationServiceImplementation: RootViewControllerInitializationService {
     @Inject private var userSessionStorageService: UserSessionStorageService
     @Inject private var userStorageService: UserStorageService

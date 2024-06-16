@@ -32,12 +32,12 @@ extension FactoryMacroProtocol {
         let factoryLines: [String]
         if let factoryKeyPathArgument = factoryMacro.factoryKeyPathArgument {
             factoryLines = [
-                "let scope = \(concreteType.asSource)(arguments: arguments, dependencies: self)",
-                "return scope.\(factoryKeyPathArgument).build(arguments: arguments)"
+                "let concrete = \(concreteType.asSource)(arguments: arguments, dependencies: childDependencies)",
+                "return concrete.\(factoryKeyPathArgument).build(arguments: arguments)"
             ]
         } else {
             factoryLines = [
-                "\(concreteType.asSource)(arguments: arguments, dependencies: self)"
+                "\(concreteType.asSource)(arguments: arguments, dependencies: childDependencies)"
             ]
         }
 
@@ -45,7 +45,8 @@ extension FactoryMacroProtocol {
         let getAccessorDeclaration: AccessorDeclSyntax =
         """
         get {
-            FactoryImplementation { arguments in
+            let childDependencies = self._childDependenciesStore.building
+            return FactoryImplementation { [childDependencies] arguments in
                 \(raw: factoryLines.joined(separator: "        \n"))
             }
         }

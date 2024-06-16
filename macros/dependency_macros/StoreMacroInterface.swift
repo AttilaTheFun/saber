@@ -1,32 +1,13 @@
 import DependencyMacrosTypes
 
-/// The @Store macro can be applied to an uninitialized `var` property of any type to generate
-/// a `get` accessor for the property which initializes and stores a factory that builds the concrete type.
-///
-/// Application:
-/// ```
-/// final class FooParent {
-///     @Store(FooServiceImplementation.self)
-///     var fooService: any FooService
-/// }
-/// ```
-///
-/// Expansion:
-/// ```
-/// final class FooParent {
-///     var fooService: any FooService {
-///         get {
-///             self.strong { [unowned self] in
-///                 FooServiceImplementation(dependencies: self)
-///             }
-///         }
-///     }
-/// }
-/// ```
+/// The @Store macro can be applied to an uninitialized `var` property of any type,
+/// on a type annotated with the @Injectable macro.
+/// 
+/// The macro expansion will generate a backing Store that initializes 
+/// and retains instances of the concrete type.
 @attached(accessor)
 public macro Store(
     _ concrete: Any.Type,
-    init: InitializationStrategy = .lazy,
-    access: AccessStrategy = .strong,
-    thread: ThreadSafetyStrategy = .safe
+    storage: StorageStrategy = .strong,
+    init: InitializationStrategy = .lazy
 ) = #externalMacro(module: "DependencyMacrosPlugin", type: "StoreMacro")

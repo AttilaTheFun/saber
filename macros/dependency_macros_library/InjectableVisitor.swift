@@ -16,10 +16,19 @@ public final class InjectableVisitor: SyntaxVisitor {
     public private(set) var diagnostics = [Diagnostic]()
     public private(set) var concreteDeclaration: ConcreteDeclSyntaxProtocol?
 
-    public private(set) var argumentsProperty: Property?
+    public private(set) var argumentsProperty: (Property,AttributeSyntax)?
     public private(set) var injectProperties: [(Property,AttributeSyntax)] = []
     public private(set) var factoryProperties: [(Property,AttributeSyntax)] = []
     public private(set) var storeProperties: [(Property,AttributeSyntax)] = []
+
+    public var childDependencyProperties: [(Property,AttributeSyntax)] {
+        return self.factoryProperties + self.storeProperties
+    }
+
+    public var allProperties: [(Property,AttributeSyntax)] {
+        return [self.argumentsProperty].compactMap { $0 } +
+            self.injectProperties + self.factoryProperties + self.storeProperties
+    }
 
     // MARK: Concrete Declarations
 
@@ -56,16 +65,21 @@ public final class InjectableVisitor: SyntaxVisitor {
             return .skipChildren
         }
 
+        // Ensure that this is a single binding variable declaration:
         if node.bindings.count > 1 {
-            // TODO: Figure out if this can happen?
-            // Maybe multiple variable binding like:
-            // let (foo, bar) = functionThatReturnsTyple()
-            fatalError("Does this happen?")
+            // TODO: Diagnostic.
+            fatalError()
+        }
+
+        // Check that the binding specifier is a var:
+        if node.bindingSpecifier.text != "var" {
+            // TODO: Diagnostic.
+            fatalError()
         }
 
         for binding in node.bindings {
 
-            // Check that each variable has no initializer.
+            // Check that each binding has no initializer.
             if binding.initializer != nil {
                 // TODO: Diagnostic.
                 fatalError()
@@ -84,10 +98,14 @@ public final class InjectableVisitor: SyntaxVisitor {
                     fatalError(description)
                 }
                 
-                let property = Property(label: identifierPattern.identifier.text, typeDescription: typeDescription)
+                let property = Property(
+                    accessLevel: node.modifiers.accessLevel,
+                    label: identifierPattern.identifier.text,
+                    typeDescription: typeDescription
+                )
                 switch injectableMacroType {
-                case .arguments:
-                    self.argumentsProperty = property
+                case .arguments(let attributeSyntax):
+                    self.argumentsProperty = (property, attributeSyntax)
                 case .inject(let attributeSyntax):
                     self.injectProperties.append((property, attributeSyntax))
                 case .factory(let attributeSyntax):
