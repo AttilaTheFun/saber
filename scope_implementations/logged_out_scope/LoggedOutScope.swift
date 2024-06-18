@@ -10,14 +10,14 @@ import WindowServiceInterface
 
 @Injectable
 public final class LoggedOutScope {
-    @Arguments public var loggedOutFeature: LoggedOutFeature
+    @Arguments public var loggedOutArguments: LoggedOutArguments
     @Inject public var userSessionStorageService: any UserSessionStorageService
     @Inject public var windowService: any WindowService
-    @Inject public var loadingFeatureFactory: any Factory<LoadingFeature, UIViewController>
+    @Inject public var loadingViewControllerFactory: any Factory<LoadingArguments, UIViewController>
 
     @Store(UserSessionServiceImplementation.self)
     public var userSessionService: any UserSessionService
 
-    @Factory(LoggedOutFeatureViewController.self)
-    public var loggedOutFeatureViewControllerFactory: any Factory<LoggedOutFeature, UIViewController>
+    @Factory(LoggedOutViewController.self)
+    public var loggedOutViewControllerFactory: any Factory<LoggedOutArguments, UIViewController>
 }

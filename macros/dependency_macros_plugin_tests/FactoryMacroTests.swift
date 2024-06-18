@@ -9,23 +9,23 @@ final class FactoryMacroTests: XCTestCase {
     func testMacro() throws {
         assertMacroExpansion(
             """
-            @Factory(FooFeatureViewController.self)
-            var fooFeatureFactory: Factory<FooFeature, UIViewController>
+            @Factory(FooViewController.self)
+            var fooViewControllerFactory: Factory<FooFeature, UIViewController>
 
             @Factory(BarScope.self, factory: \\.barViewControllerFactory)
-            var barFeatureFactory: Factory<BarFeature, UIViewController>
+            var barViewControllerFactory: Factory<BarFeature, UIViewController>
             """,
             expandedSource:
             """
-            var fooFeatureFactory: Factory<FooFeature, UIViewController> {
+            var fooViewControllerFactory: Factory<FooFeature, UIViewController> {
                 get {
                     let childDependencies = self._childDependenciesStore.building
                     return FactoryImplementation { [childDependencies] arguments in
-                        FooFeatureViewController(arguments: arguments, dependencies: childDependencies)
+                        FooViewController(arguments: arguments, dependencies: childDependencies)
                     }
                 }
             }
-            var barFeatureFactory: Factory<BarFeature, UIViewController> {
+            var barViewControllerFactory: Factory<BarFeature, UIViewController> {
                 get {
                     let childDependencies = self._childDependenciesStore.building
                     return FactoryImplementation { [childDependencies] arguments in

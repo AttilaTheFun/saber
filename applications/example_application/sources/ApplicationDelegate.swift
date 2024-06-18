@@ -8,7 +8,7 @@ final class ApplicationDependencies: RootScopeDependencies {}
 @main
 final class ApplicationDelegate: UIResponder, UIApplicationDelegate {
     let rootScope = RootScope(
-        arguments: RootFeature(endpointURL: URL(string: "https://example.com")!),
+        arguments: RootArguments(endpointURL: URL(string: "https://example.com")!),
         dependencies: ApplicationDependencies()
     )
 

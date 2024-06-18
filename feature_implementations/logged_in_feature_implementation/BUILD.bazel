@@ -2,7 +2,7 @@ load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 swift_library(
     name = "logged_in_feature_implementation",
-    srcs = ["LoggedInFeatureViewController.swift"],
+    srcs = ["LoggedInViewController.swift"],
     module_name = "LoggedInFeatureImplementation",
     visibility = ["//visibility:public"],
     deps = [

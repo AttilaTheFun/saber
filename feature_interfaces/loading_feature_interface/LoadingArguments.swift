@@ -1,6 +1,6 @@
 import UserSessionServiceInterface
 
-public struct LoadingFeature {
+public struct LoadingArguments {
     public let userSession: UserSession
 
     public init(userSession: UserSession) {

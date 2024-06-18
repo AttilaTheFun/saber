@@ -2,7 +2,7 @@ load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 swift_library(
     name = "logged_out_feature_implementation",
-    srcs = ["LoggedOutFeatureViewController.swift"],
+    srcs = ["LoggedOutViewController.swift"],
     module_name = "LoggedOutFeatureImplementation",
     visibility = ["//visibility:public"],
     deps = [

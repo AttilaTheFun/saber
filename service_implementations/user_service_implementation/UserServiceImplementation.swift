@@ -8,7 +8,7 @@ private let userIDsToUsersKey = "UserIDsToUsers"
 
 @Injectable(.unowned)
 public final class UserServiceImplementation: UserService {
-    @Inject private var loadingFeature: LoadingFeature
+    @Inject private var loadingArguments: LoadingArguments
 
     private var userIDsToUsers: [UUID : User] {
         get {
@@ -33,7 +33,7 @@ public final class UserServiceImplementation: UserService {
     }
 
     public func getCurrentUser() async throws -> User {
-        guard let user = self.userIDsToUsers[self.loadingFeature.userSession.userID] else {
+        guard let user = self.userIDsToUsers[self.loadingArguments.userSession.userID] else {
             throw UserServiceImplementationError.missingUser
         }
 

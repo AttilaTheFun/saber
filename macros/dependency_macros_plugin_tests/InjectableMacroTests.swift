@@ -232,25 +232,25 @@ final class InjectableMacroTests: XCTestCase {
             """
             @Injectable
             public final class FooScope: FooScopeChildDependencies {
-                @Factory(FooFeatureViewController.self)
-                public var fooFeatureFactory: Factory<FooFeature, UIViewController>
+                @Factory(FooViewController.self)
+                public var fooViewControllerFactory: Factory<FooFeature, UIViewController>
 
                 @Factory(BarScope.self, factory: \\.barViewControllerFactory)
-                public var barFeatureFactory: Factory<BarFeature, UIViewController>
+                public var barViewControllerFactory: Factory<BarFeature, UIViewController>
             }
             """,
             expandedSource:
             """
             public final class FooScope: FooScopeChildDependencies {
-                public var fooFeatureFactory: Factory<FooFeature, UIViewController> {
+                public var fooViewControllerFactory: Factory<FooFeature, UIViewController> {
                     get {
                         let childDependencies = self._childDependenciesStore.building
                         return FactoryImplementation { [childDependencies] arguments in
-                            FooFeatureViewController(arguments: arguments, dependencies: childDependencies)
+                            FooViewController(arguments: arguments, dependencies: childDependencies)
                         }
                     }
                 }
-                public var barFeatureFactory: Factory<BarFeature, UIViewController> {
+                public var barViewControllerFactory: Factory<BarFeature, UIViewController> {
                     get {
                         let childDependencies = self._childDependenciesStore.building
                         return FactoryImplementation { [childDependencies] arguments in
@@ -280,13 +280,13 @@ final class InjectableMacroTests: XCTestCase {
 
             }
 
-            fileprivate class FooScopeChildDependencies: FooScopeDependencies, BarScopeDependencies, FooFeatureViewControllerDependencies {
+            fileprivate class FooScopeChildDependencies: FooScopeDependencies, BarScopeDependencies, FooViewControllerDependencies {
                 private let _parent: FooScope
-                fileprivate var fooFeatureFactory: Factory<FooFeature, UIViewController> {
-                    return self._parent.fooFeatureFactory
+                fileprivate var fooViewControllerFactory: Factory<FooFeature, UIViewController> {
+                    return self._parent.fooViewControllerFactory
                 }
-                fileprivate var barFeatureFactory: Factory<BarFeature, UIViewController> {
-                    return self._parent.barFeatureFactory
+                fileprivate var barViewControllerFactory: Factory<BarFeature, UIViewController> {
+                    return self._parent.barViewControllerFactory
                 }
                 fileprivate init(parent: FooScope) {
                     self._parent = parent
@@ -382,7 +382,7 @@ final class InjectableMacroTests: XCTestCase {
             @Injectable(.viewController)
             public final class FooViewController: UIViewController {
                 @Arguments private var fooArguments: FooArguments
-                @Inject private var loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController>
+                @Inject private var loggedInViewControllerFactory: any Factory<LoggedInFeature, UIViewController>
             }
             """,
             expandedSource:
@@ -393,18 +393,18 @@ final class InjectableMacroTests: XCTestCase {
                         return self._arguments
                     }
                 }
-                private var loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController> {
+                private var loggedInViewControllerFactory: any Factory<LoggedInFeature, UIViewController> {
                     get {
-                        return self._loggedInFeatureFactoryStore.building
+                        return self._loggedInViewControllerFactoryStore.building
                     }
                 }
 
                 private let _arguments: FooArguments
 
-                private lazy var _loggedInFeatureFactoryStore = StoreImplementation(
+                private lazy var _loggedInViewControllerFactoryStore = StoreImplementation(
                     backingStore: StrongBackingStoreImplementation(),
                     function: { [unowned self] in
-                        return self._dependencies.loggedInFeatureFactory
+                        return self._dependencies.loggedInViewControllerFactory
                     }
                 )
 
@@ -425,7 +425,7 @@ final class InjectableMacroTests: XCTestCase {
             }
 
             public protocol FooViewControllerDependencies: AnyObject {
-                var loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController> {
+                var loggedInViewControllerFactory: any Factory<LoggedInFeature, UIViewController> {
                     get
                 }
             }
@@ -440,7 +440,7 @@ final class InjectableMacroTests: XCTestCase {
             @Injectable(.view)
             public final class FooView: UIView {
                 @Arguments private var fooArguments: FooArguments
-                @Inject private var loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController>
+                @Inject private var loggedInViewControllerFactory: any Factory<LoggedInFeature, UIViewController>
             }
             """,
             expandedSource:
@@ -451,18 +451,18 @@ final class InjectableMacroTests: XCTestCase {
                         return self._arguments
                     }
                 }
-                private var loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController> {
+                private var loggedInViewControllerFactory: any Factory<LoggedInFeature, UIViewController> {
                     get {
-                        return self._loggedInFeatureFactoryStore.building
+                        return self._loggedInViewControllerFactoryStore.building
                     }
                 }
 
                 private let _arguments: FooArguments
 
-                private lazy var _loggedInFeatureFactoryStore = StoreImplementation(
+                private lazy var _loggedInViewControllerFactoryStore = StoreImplementation(
                     backingStore: StrongBackingStoreImplementation(),
                     function: { [unowned self] in
-                        return self._dependencies.loggedInFeatureFactory
+                        return self._dependencies.loggedInViewControllerFactory
                     }
                 )
 
@@ -483,7 +483,7 @@ final class InjectableMacroTests: XCTestCase {
             }
 
             public protocol FooViewDependencies: AnyObject {
-                var loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController> {
+                var loggedInViewControllerFactory: any Factory<LoggedInFeature, UIViewController> {
                     get
                 }
             }

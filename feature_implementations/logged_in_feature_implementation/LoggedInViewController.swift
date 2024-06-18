@@ -9,13 +9,13 @@ import UIKit
 import WindowServiceInterface
 
 @Injectable(.viewController)
-public final class LoggedInFeatureViewController: UIViewController {
-    @Arguments private var loggedInFeature: LoggedInFeature
+public final class LoggedInViewController: UIViewController {
+    @Arguments private var loggedInArguments: LoggedInArguments
     @Inject private var userSessionService: any UserSessionService
     @Inject private var userSessionStorageService: any UserSessionStorageService
     @Inject private var userStorageService: any UserStorageService
     @Inject private var windowService: any WindowService
-    @Inject private var loggedOutFeatureFactory: any Factory<LoggedOutFeature, UIViewController>
+    @Inject private var loggedOutViewControllerFactory: any Factory<LoggedOutArguments, UIViewController>
 
     private let label = UILabel()
     private let labelContainerView = UIView()
@@ -39,7 +39,7 @@ public final class LoggedInFeatureViewController: UIViewController {
         self.label.backgroundColor = .systemGroupedBackground
         self.label.clipsToBounds = true
         self.label.layer.cornerRadius = 16
-        self.label.text = "Logged in as \(self.loggedInFeature.user.username)"
+        self.label.text = "Logged in as \(self.loggedInArguments.user.username)"
 
         // Configure the text field container view:
         self.labelContainerView.translatesAutoresizingMaskIntoConstraints = false
@@ -93,7 +93,7 @@ public final class LoggedInFeatureViewController: UIViewController {
     private func logOutButtonTapped() {
         Task.detached {
             do {
-                try await self.userSessionService.deleteSession(id: self.loggedInFeature.userSession.id)
+                try await self.userSessionService.deleteSession(id: self.loggedInArguments.userSession.id)
             } catch {
                 print(error)
             }
@@ -106,9 +106,9 @@ public final class LoggedInFeatureViewController: UIViewController {
     private func buildLoggedOutFeature() {
         self.userStorageService.user = nil
         self.userSessionStorageService.userSession = nil
-        let factory = self.loggedOutFeatureFactory
+        let factory = self.loggedOutViewControllerFactory
         self.windowService.register {
-            let arguments = LoggedOutFeature()
+            let arguments = LoggedOutArguments()
             return factory.build(arguments: arguments)
         }
     }

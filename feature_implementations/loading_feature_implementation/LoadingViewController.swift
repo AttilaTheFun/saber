@@ -10,14 +10,14 @@ import UIKit
 import WindowServiceInterface
 
 @Injectable(.viewController)
-public final class LoadingFeatureViewController: UIViewController {
-    @Arguments private var loadingFeature: LoadingFeature
+public final class LoadingViewController: UIViewController {
+    @Arguments private var loadingArguments: LoadingArguments
     @Inject private var userSessionStorageService: any UserSessionStorageService
     @Inject private var userService: any UserService
     @Inject private var userStorageService: any UserStorageService
     @Inject private var windowService: any WindowService
-    @Inject private var loggedOutFeatureFactory: any Factory<LoggedOutFeature, UIViewController>
-    @Inject private var loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController>
+    @Inject private var loggedOutViewControllerFactory: any Factory<LoggedOutArguments, UIViewController>
+    @Inject private var loggedInViewControllerFactory: any Factory<LoggedInArguments, UIViewController>
 
     // MARK: View Lifecycle
 
@@ -35,7 +35,7 @@ public final class LoadingFeatureViewController: UIViewController {
         Task.detached {
             do {
                 let user = try await self.userService.getCurrentUser()
-                await self.buildLoggedInFeature(userSession: self.loadingFeature.userSession, user: user)
+                await self.buildLoggedInFeature(userSession: self.loadingArguments.userSession, user: user)
             } catch {
                 print(error)
                 await self.buildLoggedOutFeature()
@@ -48,9 +48,9 @@ public final class LoadingFeatureViewController: UIViewController {
     @MainActor
     private func buildLoggedInFeature(userSession: UserSession, user: User) {
         self.userStorageService.user = user
-        let factory = self.loggedInFeatureFactory
+        let factory = self.loggedInViewControllerFactory
         self.windowService.register {
-            let arguments = LoggedInFeature(userSession: userSession, user: user)
+            let arguments = LoggedInArguments(userSession: userSession, user: user)
             return factory.build(arguments: arguments)
         }
     }
@@ -58,9 +58,9 @@ public final class LoadingFeatureViewController: UIViewController {
     @MainActor
     private func buildLoggedOutFeature() {
         self.userSessionStorageService.userSession = nil
-        let factory = self.loggedOutFeatureFactory
+        let factory = self.loggedOutViewControllerFactory
         self.windowService.register {
-            let arguments = LoggedOutFeature()
+            let arguments = LoggedOutArguments()
             return factory.build(arguments: arguments)
         }
     }

@@ -7,12 +7,12 @@ import UIKit
 import WindowServiceInterface
 
 @Injectable(.viewController)
-public final class LoggedOutFeatureViewController: UIViewController {
-    @Arguments private var arguments: LoggedOutFeature
+public final class LoggedOutViewController: UIViewController {
+    @Arguments private var loggedOutArguments: LoggedOutArguments
     @Inject private var userSessionService: any UserSessionService
     @Inject private var userSessionStorageService: any UserSessionStorageService
     @Inject private var windowService: any WindowService
-    @Inject private var loadingFeatureFactory: any Factory<LoadingFeature, UIViewController>
+    @Inject private var loadingViewControllerFactory: any Factory<LoadingArguments, UIViewController>
 
     private let textField = UITextField()
     private let textFieldContainerView = UIView()
@@ -104,9 +104,9 @@ public final class LoggedOutFeatureViewController: UIViewController {
     @MainActor
     private func buildLoadingFeature(userSession: UserSession) {
         self.userSessionStorageService.userSession = userSession
-        let factory = self.loadingFeatureFactory
+        let factory = self.loadingViewControllerFactory
         self.windowService.register {
-            let arguments = LoadingFeature(userSession: userSession)
+            let arguments = LoadingArguments(userSession: userSession)
             return factory.build(arguments: arguments)
         }
     }

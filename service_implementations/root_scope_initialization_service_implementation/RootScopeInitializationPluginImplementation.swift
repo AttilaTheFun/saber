@@ -17,17 +17,17 @@ public final class RootViewControllerInitializationServiceImplementation: RootVi
     @Inject private var userSessionStorageService: UserSessionStorageService
     @Inject private var userStorageService: UserStorageService
     @Inject private var windowService: WindowService
-    @Inject private var loggedOutFeatureFactory: any Factory<LoggedOutFeature, UIViewController>
-    @Inject private var loadingFeatureFactory: any Factory<LoadingFeature, UIViewController>
-    @Inject private var loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController>
+    @Inject private var loggedOutViewControllerFactory: any Factory<LoggedOutArguments, UIViewController>
+    @Inject private var loadingViewControllerFactory: any Factory<LoadingArguments, UIViewController>
+    @Inject private var loggedInViewControllerFactory: any Factory<LoggedInArguments, UIViewController>
 
     public func registerRootViewControllerFactory() {
         guard let userSession = self.userSessionStorageService.userSession else {
             self.userSessionStorageService.userSession = nil
             self.userStorageService.user = nil
-            let factory = self.loggedOutFeatureFactory
+            let factory = self.loggedOutViewControllerFactory
             self.windowService.register {
-                let arguments = LoggedOutFeature()
+                let arguments = LoggedOutArguments()
                 return factory.build(arguments: arguments)
             }
             return
@@ -35,17 +35,17 @@ public final class RootViewControllerInitializationServiceImplementation: RootVi
 
         guard let user = self.userStorageService.user, user.id == userSession.userID else {
             self.userStorageService.user = nil
-            let factory = self.loadingFeatureFactory
+            let factory = self.loadingViewControllerFactory
             self.windowService.register {
-                let arguments = LoadingFeature(userSession: userSession)
+                let arguments = LoadingArguments(userSession: userSession)
                 return factory.build(arguments: arguments)
             }
             return
         }
 
-        let factory = self.loggedInFeatureFactory
+        let factory = self.loggedInViewControllerFactory
         self.windowService.register {
-            let arguments = LoggedInFeature(userSession: userSession, user: user)
+            let arguments = LoggedInArguments(userSession: userSession, user: user)
             return factory.build(arguments: arguments)
         }
     }

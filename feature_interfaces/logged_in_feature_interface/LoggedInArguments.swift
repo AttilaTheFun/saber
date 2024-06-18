@@ -1,7 +1,7 @@
 import UserSessionServiceInterface
 import UserServiceInterface
 
-public struct LoggedInFeature {
+public struct LoggedInArguments {
     public let userSession: UserSession
     public let user: User
 

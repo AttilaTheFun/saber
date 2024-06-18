@@ -12,16 +12,16 @@ import WindowServiceInterface
 
 @Injectable
 public final class LoadingScope {
-    @Arguments public var loadingFeature: LoadingFeature
+    @Arguments public var loadingArguments: LoadingArguments
     @Inject public var userStorageService: any UserStorageService
     @Inject public var userSessionStorageService: any UserSessionStorageService
     @Inject public var windowService: any WindowService
-    @Inject public var loggedOutFeatureFactory: any Factory<LoggedOutFeature, UIViewController>
-    @Inject public var loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController>
+    @Inject public var loggedOutViewControllerFactory: any Factory<LoggedOutArguments, UIViewController>
+    @Inject public var loggedInViewControllerFactory: any Factory<LoggedInArguments, UIViewController>
 
     @Store(UserServiceImplementation.self)
     public var userService: any UserService
 
-    @Factory(LoadingFeatureViewController.self)
-    public var loadingFeatureViewControllerFactory: any Factory<LoadingFeature, UIViewController>
+    @Factory(LoadingViewController.self)
+    public var loadingViewControllerFactory: any Factory<LoadingArguments, UIViewController>
 }

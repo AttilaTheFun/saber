@@ -9,11 +9,11 @@ final class ArgumentsMacroTests: XCTestCase {
     func testMacro() throws {
         assertMacroExpansion(
             """
-            @Arguments var fooFeature: FooFeature
+            @Arguments var fooArguments: FooArguments
             """,
             expandedSource:
             """
-            var fooFeature: FooFeature {
+            var fooArguments: FooArguments {
                 get {
                     return self._arguments
                 }

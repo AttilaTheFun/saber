@@ -18,7 +18,7 @@ import WindowServiceImplementation
 
 @Injectable(.root)
 public final class RootScope {
-    @Arguments public var rootFeature: RootFeature
+    @Arguments public var rootArguments: RootArguments
 
     @Store(UserSessionStorageServiceImplementation.self)
     public var userSessionStorageService: any UserSessionStorageService
@@ -32,12 +32,12 @@ public final class RootScope {
     @Store(RootViewControllerInitializationServiceImplementation.self)
     public var rootViewControllerInitializationService: any RootViewControllerInitializationService
 
-    @Factory(LoggedOutScope.self, factory: \.loggedOutFeatureViewControllerFactory)
-    public var loggedOutFeatureFactory: any Factory<LoggedOutFeature, UIViewController>
+    @Factory(LoggedOutScope.self, factory: \.loggedOutViewControllerFactory)
+    public var loggedOutViewControllerFactory: any Factory<LoggedOutArguments, UIViewController>
 
-    @Factory(LoadingScope.self, factory: \.loadingFeatureViewControllerFactory)
-    public var loadingFeatureFactory: any Factory<LoadingFeature, UIViewController>
+    @Factory(LoadingScope.self, factory: \.loadingViewControllerFactory)
+    public var loadingViewControllerFactory: any Factory<LoadingArguments, UIViewController>
 
-    @Factory(LoggedInScope.self, factory: \.loggedInFeatureViewControllerFactory)
-    public var loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController>
+    @Factory(LoggedInScope.self, factory: \.loggedInViewControllerFactory)
+    public var loggedInViewControllerFactory: any Factory<LoggedInArguments, UIViewController>
 }
