@@ -13,6 +13,7 @@ import WindowServiceInterface
 @Injectable
 public final class LoadingScope {
     @Arguments public var loadingArguments: LoadingArguments
+    @Argument public var userSession: UserSession
     @Inject public var userStorageService: any UserStorageService
     @Inject public var userSessionStorageService: any UserSessionStorageService
     @Inject public var windowService: any WindowService

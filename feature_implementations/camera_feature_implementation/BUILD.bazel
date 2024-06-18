@@ -1,0 +1,14 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "camera_feature_implementation",
+    srcs = ["CameraViewController.swift"],
+    module_name = "CameraFeatureImplementation",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//feature_interfaces/camera_feature_interface",
+        "//feature_interfaces/profile_feature_interface",
+        "//foundations/dependency_foundation",
+        "//macros/dependency_macros",
+    ],
+)

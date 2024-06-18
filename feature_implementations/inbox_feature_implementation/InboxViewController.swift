@@ -11,7 +11,17 @@ public final class InboxViewController: UIViewController {
 
     public override func viewDidLoad() {
         super.viewDidLoad()
-        self.tabBarItem = UITabBarItem(title: "Inbox", image: UIImage.init(systemName: "tray.fill"), tag: 0)
+
+        // TODO: Move this setup to custom init.
+        // Configure the tab bar item:
+        self.tabBarItem = UITabBarItem(
+            title: nil,
+            image: UIImage.init(systemName: "tray.fill"),
+            tag: 0
+        )
+
+        // Configure the view:
+        self.view.backgroundColor = .white
     }
 }
 

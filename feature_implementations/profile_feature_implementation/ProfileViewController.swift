@@ -1,6 +1,6 @@
 import DependencyFoundation
 import DependencyMacros
-import LoggedInFeatureInterface
+import ProfileFeatureInterface
 import LoggedOutFeatureInterface
 import UserSessionServiceInterface
 import UserServiceInterface
@@ -8,8 +8,10 @@ import UIKit
 import WindowServiceInterface
 
 @Injectable(.viewController)
-public final class LoggedInViewController: UIViewController {
-    @Arguments private var loggedInArguments: LoggedInArguments
+public final class ProfileViewController: UIViewController {
+    @Arguments private var profileArguments: ProfileArguments
+    @Inject private var user: User
+    @Inject private var userSession: UserSession
     @Inject private var userSessionService: any UserSessionService
     @Inject private var userSessionStorageService: any UserSessionStorageService
     @Inject private var userStorageService: any UserStorageService
@@ -38,7 +40,7 @@ public final class LoggedInViewController: UIViewController {
         self.label.backgroundColor = .systemGroupedBackground
         self.label.clipsToBounds = true
         self.label.layer.cornerRadius = 16
-        self.label.text = "Logged in as \(self.loggedInArguments.user.username)"
+        self.label.text = "Logged in as \(self.user.username)"
 
         // Configure the text field container view:
         self.labelContainerView.translatesAutoresizingMaskIntoConstraints = false
@@ -92,7 +94,7 @@ public final class LoggedInViewController: UIViewController {
     private func logOutButtonTapped() {
         Task.detached {
             do {
-                try await self.userSessionService.deleteSession(id: self.loggedInArguments.userSession.id)
+                try await self.userSessionService.deleteSession(id: self.userSession.id)
             } catch {
                 print(error)
             }

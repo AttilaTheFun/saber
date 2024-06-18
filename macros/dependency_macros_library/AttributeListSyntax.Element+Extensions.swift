@@ -5,6 +5,10 @@ extension AttributeListSyntax.Element {
         self.attributeIfNameEquals("Arguments")
     }
 
+    public var argumentMacro: AttributeSyntax? {
+        self.attributeIfNameEquals("Argument")
+    }
+
     public var injectMacro: AttributeSyntax? {
         self.attributeIfNameEquals("Inject")
     }

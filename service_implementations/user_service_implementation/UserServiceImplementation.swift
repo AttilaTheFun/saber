@@ -2,13 +2,13 @@ import DependencyFoundation
 import DependencyMacros
 import Foundation
 import UserServiceInterface
-import LoadingFeatureInterface
+import UserSessionServiceInterface
 
 private let userIDsToUsersKey = "UserIDsToUsers"
 
 @Injectable(.unowned)
 public final class UserServiceImplementation: UserService {
-    @Inject private var loadingArguments: LoadingArguments
+    @Inject private var userSession: UserSession
 
     private var userIDsToUsers: [UUID : User] {
         get {
@@ -33,7 +33,7 @@ public final class UserServiceImplementation: UserService {
     }
 
     public func getCurrentUser() async throws -> User {
-        guard let user = self.userIDsToUsers[self.loadingArguments.userSession.userID] else {
+        guard let user = self.userIDsToUsers[self.userSession.userID] else {
             throw UserServiceImplementationError.missingUser
         }
 

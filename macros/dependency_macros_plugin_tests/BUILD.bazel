@@ -5,6 +5,7 @@ package(default_visibility = ["//visibility:public"])
 swift_test(
     name = "dependency_macros_plugin_tests",
     srcs = [
+        "ArgumentMacroTests.swift",
         "ArgumentsMacroTests.swift",
         "FactoryMacroTests.swift",
         "InjectMacroTests.swift",

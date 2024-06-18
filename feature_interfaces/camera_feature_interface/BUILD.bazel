@@ -1,0 +1,8 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "camera_feature_interface",
+    srcs = ["CameraArguments.swift"],
+    module_name = "CameraFeatureInterface",
+    visibility = ["//visibility:public"],
+)

@@ -2,6 +2,7 @@ import SwiftSyntax
 
 enum InjectableMacroType {
     case arguments(AttributeSyntax)
+    case argument(AttributeSyntax)
     case inject(AttributeSyntax)
     case factory(AttributeSyntax)
     case store(AttributeSyntax)
@@ -12,6 +13,16 @@ extension AttributeListSyntax {
         for element in self {
             if let argumentsMacro = element.argumentsMacro {
                 return argumentsMacro
+            }
+        }
+
+        return nil
+    }
+
+    public var argumentMacro: AttributeSyntax? {
+        for element in self {
+            if let argumentMacro = element.argumentMacro {
+                return argumentMacro
             }
         }
 
@@ -51,6 +62,10 @@ extension AttributeListSyntax {
     var injectableMacroType: InjectableMacroType? {
         if let argumentsMacro = self.argumentsMacro {
             return .arguments(argumentsMacro)
+        }
+
+        if let argumentMacro = self.argumentMacro {
+            return .argument(argumentMacro)
         }
 
         if let injectMacro = self.injectMacro {

@@ -1,0 +1,8 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "profile_feature_interface",
+    srcs = ["ProfileArguments.swift"],
+    module_name = "ProfileFeatureInterface",
+    visibility = ["//visibility:public"],
+)

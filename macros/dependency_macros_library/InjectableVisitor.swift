@@ -17,6 +17,7 @@ public final class InjectableVisitor: SyntaxVisitor {
     public private(set) var concreteDeclaration: ConcreteDeclSyntaxProtocol?
 
     public private(set) var argumentsProperty: (Property,AttributeSyntax)?
+    public private(set) var argumentProperties: [(Property,AttributeSyntax)] = []
     public private(set) var injectProperties: [(Property,AttributeSyntax)] = []
     public private(set) var factoryProperties: [(Property,AttributeSyntax)] = []
     public private(set) var storeProperties: [(Property,AttributeSyntax)] = []
@@ -27,7 +28,10 @@ public final class InjectableVisitor: SyntaxVisitor {
 
     public var allProperties: [(Property,AttributeSyntax)] {
         return [self.argumentsProperty].compactMap { $0 } +
-            self.injectProperties + self.factoryProperties + self.storeProperties
+            self.argumentProperties +
+            self.injectProperties +
+            self.factoryProperties +
+            self.storeProperties
     }
 
     // MARK: Concrete Declarations
@@ -106,6 +110,8 @@ public final class InjectableVisitor: SyntaxVisitor {
                 switch injectableMacroType {
                 case .arguments(let attributeSyntax):
                     self.argumentsProperty = (property, attributeSyntax)
+                case .argument(let attributeSyntax):
+                    self.argumentProperties.append((property, attributeSyntax))
                 case .inject(let attributeSyntax):
                     self.injectProperties.append((property, attributeSyntax))
                 case .factory(let attributeSyntax):

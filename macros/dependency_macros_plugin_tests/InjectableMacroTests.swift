@@ -7,9 +7,10 @@ import XCTest
 final class InjectableMacroTests: XCTestCase {
     private let macros: [String : any Macro.Type] = [
         "Arguments": ArgumentsMacro.self,
+        "Argument": ArgumentMacro.self,
         "Factory": FactoryMacro.self,
-        "Inject": InjectMacro.self,
         "Injectable": InjectableMacro.self,
+        "Inject": InjectMacro.self,
         "Store": StoreMacro.self,
     ]
 
@@ -19,6 +20,7 @@ final class InjectableMacroTests: XCTestCase {
             @Injectable
             public final class FooScope {
                 @Arguments var fooArguments: FooArguments
+                @Argument var foo: Foo
                 @Inject var fooService: FooService
                 @Factory(FooViewController.self) var fooViewControllerFactory: Factory<FooArguments, UIViewController>
                 @Store(BarServiceImplementation.self) var barService: BarService
@@ -30,6 +32,11 @@ final class InjectableMacroTests: XCTestCase {
                 var fooArguments: FooArguments {
                     get {
                         return self._arguments
+                    }
+                }
+                var foo: Foo {
+                    get {
+                        return self._arguments.foo
                     }
                 }
                 var fooService: FooService {
@@ -96,6 +103,9 @@ final class InjectableMacroTests: XCTestCase {
                 fileprivate var fooArguments: FooArguments {
                     return self._parent.fooArguments
                 }
+                fileprivate var foo: Foo {
+                    return self._parent.foo
+                }
                 fileprivate var fooService: FooService {
                     return self._parent.fooService
                 }
@@ -105,7 +115,7 @@ final class InjectableMacroTests: XCTestCase {
                 fileprivate var barService: BarService {
                     return self._parent.barService
                 }
-                fileprivate init(parent: FooScope ) {
+                fileprivate init(parent: FooScope) {
                     self._parent = parent
                 }
             }
@@ -195,6 +205,7 @@ final class InjectableMacroTests: XCTestCase {
             @Injectable
             public final class FooScope {
                 @Arguments var fooArguments: FooArguments
+                @Argument var foo: Foo
             }
             """,
             expandedSource:
@@ -203,6 +214,11 @@ final class InjectableMacroTests: XCTestCase {
                 var fooArguments: FooArguments {
                     get {
                         return self._arguments
+                    }
+                }
+                var foo: Foo {
+                    get {
+                        return self._arguments.foo
                     }
                 }
 

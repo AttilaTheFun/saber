@@ -5,6 +5,7 @@ package(default_visibility = ["//visibility:public"])
 swift_library(
     name = "dependency_macros",
     srcs = [
+        "ArgumentMacroInterface.swift",
         "ArgumentsMacroInterface.swift",
         "FactoryMacroInterface.swift",
         "InjectMacroInterface.swift",
