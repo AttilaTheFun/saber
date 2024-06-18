@@ -19,7 +19,7 @@ public final class RootViewControllerInitializationServiceImplementation: RootVi
     @Inject private var windowService: WindowService
     @Inject private var loggedOutViewControllerFactory: any Factory<LoggedOutArguments, UIViewController>
     @Inject private var loadingViewControllerFactory: any Factory<LoadingArguments, UIViewController>
-    @Inject private var loggedInViewControllerFactory: any Factory<LoggedInArguments, UIViewController>
+    @Inject private var loggedInTabBarControllerFactory: any Factory<LoggedInArguments, UIViewController>
 
     public func registerRootViewControllerFactory() {
         guard let userSession = self.userSessionStorageService.userSession else {
@@ -43,7 +43,7 @@ public final class RootViewControllerInitializationServiceImplementation: RootVi
             return
         }
 
-        let factory = self.loggedInViewControllerFactory
+        let factory = self.loggedInTabBarControllerFactory
         self.windowService.register {
             let arguments = LoggedInArguments(userSession: userSession, user: user)
             return factory.build(arguments: arguments)

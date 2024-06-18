@@ -17,7 +17,7 @@ public final class LoadingViewController: UIViewController {
     @Inject private var userStorageService: any UserStorageService
     @Inject private var windowService: any WindowService
     @Inject private var loggedOutViewControllerFactory: any Factory<LoggedOutArguments, UIViewController>
-    @Inject private var loggedInViewControllerFactory: any Factory<LoggedInArguments, UIViewController>
+    @Inject private var loggedInTabBarControllerFactory: any Factory<LoggedInArguments, UIViewController>
 
     // MARK: View Lifecycle
 
@@ -48,7 +48,7 @@ public final class LoadingViewController: UIViewController {
     @MainActor
     private func buildLoggedInFeature(userSession: UserSession, user: User) {
         self.userStorageService.user = user
-        let factory = self.loggedInViewControllerFactory
+        let factory = self.loggedInTabBarControllerFactory
         self.windowService.register {
             let arguments = LoggedInArguments(userSession: userSession, user: user)
             return factory.build(arguments: arguments)

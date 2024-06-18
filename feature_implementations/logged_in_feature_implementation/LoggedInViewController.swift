@@ -1,7 +1,6 @@
 import DependencyFoundation
 import DependencyMacros
 import LoggedInFeatureInterface
-import LoggedInFeatureInterface
 import LoggedOutFeatureInterface
 import UserSessionServiceInterface
 import UserServiceInterface

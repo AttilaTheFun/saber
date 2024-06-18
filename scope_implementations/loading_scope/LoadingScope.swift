@@ -17,7 +17,7 @@ public final class LoadingScope {
     @Inject public var userSessionStorageService: any UserSessionStorageService
     @Inject public var windowService: any WindowService
     @Inject public var loggedOutViewControllerFactory: any Factory<LoggedOutArguments, UIViewController>
-    @Inject public var loggedInViewControllerFactory: any Factory<LoggedInArguments, UIViewController>
+    @Inject public var loggedInTabBarControllerFactory: any Factory<LoggedInArguments, UIViewController>
 
     @Store(UserServiceImplementation.self)
     public var userService: any UserService

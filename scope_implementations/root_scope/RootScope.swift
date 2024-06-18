@@ -38,6 +38,6 @@ public final class RootScope {
     @Factory(LoadingScope.self, factory: \.loadingViewControllerFactory)
     public var loadingViewControllerFactory: any Factory<LoadingArguments, UIViewController>
 
-    @Factory(LoggedInScope.self, factory: \.loggedInViewControllerFactory)
-    public var loggedInViewControllerFactory: any Factory<LoggedInArguments, UIViewController>
+    @Factory(LoggedInScope.self, factory: \.loggedInTabBarControllerFactory)
+    public var loggedInTabBarControllerFactory: any Factory<LoggedInArguments, UIViewController>
 }
