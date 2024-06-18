@@ -11,7 +11,7 @@ import UserSessionServiceImplementation
 import WindowServiceInterface
 
 @Injectable
-public final class LoggedInScopeImplementation {
+public final class LoggedInScope {
     @Arguments public var loggedInFeature: LoggedInFeature
     @Inject public var userStorageService: any UserStorageService
     @Inject public var userSessionStorageService: any UserSessionStorageService

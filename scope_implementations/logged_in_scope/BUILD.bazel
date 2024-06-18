@@ -1,0 +1,19 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "logged_in_scope_implementation",
+    srcs = ["LoggedInScope.swift"],
+    module_name = "LoggedInScope",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//feature_implementations/logged_in_feature_implementation",
+        "//feature_interfaces/logged_in_feature_interface",
+        "//feature_interfaces/logged_out_feature_interface",
+        "//foundations/dependency_foundation",
+        "//macros/dependency_macros",
+        "//service_implementations/user_session_service_implementation",
+        "//service_interfaces/user_service_interface",
+        "//service_interfaces/user_session_service_interface",
+        "//service_interfaces/window_service_interface",
+    ],
+)

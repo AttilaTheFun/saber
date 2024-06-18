@@ -1,13 +1,13 @@
 import DependencyFoundation
 import RootFeatureInterface
-import RootScopeImplementation
+import RootScope
 import UIKit
 
-final class ApplicationDependencies: RootScopeImplementationDependencies {}
+final class ApplicationDependencies: RootScopeDependencies {}
 
 @main
 final class ApplicationDelegate: UIResponder, UIApplicationDelegate {
-    let rootScopeImplementation = RootScopeImplementation(
+    let rootScope = RootScope(
         arguments: RootFeature(endpointURL: URL(string: "https://example.com")!),
         dependencies: ApplicationDependencies()
     )
@@ -17,7 +17,7 @@ final class ApplicationDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) 
         -> Bool 
     {
-        self.rootScopeImplementation.rootViewControllerInitializationService.registerRootViewControllerFactory()
+        self.rootScope.rootViewControllerInitializationService.registerRootViewControllerFactory()
         return true
     }
 

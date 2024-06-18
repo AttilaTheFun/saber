@@ -7,8 +7,6 @@ public final class FactoryImplementation<Arguments, Building>: Factory {
     }
 
     public func build(arguments: Arguments) -> Building {
-        let building = self.function(arguments)
-        print("Initialized \(building)")
-        return building
+        return self.function(arguments)
     }
 }

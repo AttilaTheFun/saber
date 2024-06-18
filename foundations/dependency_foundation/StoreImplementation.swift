@@ -50,7 +50,6 @@ public final class StoreImplementation<Building>: Store {
             return building
         }
         let building = self.function()
-        print("Initialized \(building)")
         self.backingStore.building = building
         return building
     }

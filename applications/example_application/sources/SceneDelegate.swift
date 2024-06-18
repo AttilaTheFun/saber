@@ -1,4 +1,4 @@
-import RootScopeImplementation
+import RootScope
 import UIKit
 
 final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
@@ -10,7 +10,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
         // Setup the window:
         let window = UIWindow(windowScene: windowScene)
-        applicationDelegate.rootScopeImplementation.windowService.opened(window: window)
+        applicationDelegate.rootScope.windowService.opened(window: window)
         window.windowScene = windowScene
         self.window = window
     }
@@ -20,7 +20,7 @@ final class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         guard let applicationDelegate = UIApplication.shared.delegate as? ApplicationDelegate else { return }
 
         // Tear down the window:
-        applicationDelegate.rootScopeImplementation.windowService.closed(window: window)
+        applicationDelegate.rootScope.windowService.closed(window: window)
         self.window = nil
     }
 

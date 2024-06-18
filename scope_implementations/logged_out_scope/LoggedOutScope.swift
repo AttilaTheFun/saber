@@ -9,7 +9,7 @@ import UIKit
 import WindowServiceInterface
 
 @Injectable
-public final class LoggedOutScopeImplementation {
+public final class LoggedOutScope {
     @Arguments public var loggedOutFeature: LoggedOutFeature
     @Inject public var userSessionStorageService: any UserSessionStorageService
     @Inject public var windowService: any WindowService

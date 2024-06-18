@@ -1,11 +1,11 @@
 import DependencyFoundation
 import DependencyMacros
 import LoggedOutFeatureInterface
-import LoggedOutScopeImplementation
+import LoggedOutScope
 import LoadingFeatureInterface
-import LoadingScopeImplementation
+import LoadingScope
 import LoggedInFeatureInterface
-import LoggedInScopeImplementation
+import LoggedInScope
 import RootFeatureInterface
 import RootViewControllerInitializationServiceImplementation
 import UserSessionServiceInterface
@@ -17,7 +17,7 @@ import WindowServiceInterface
 import WindowServiceImplementation
 
 @Injectable(.root)
-public final class RootScopeImplementation {
+public final class RootScope {
     @Arguments public var rootFeature: RootFeature
 
     @Store(UserSessionStorageServiceImplementation.self)
@@ -32,12 +32,12 @@ public final class RootScopeImplementation {
     @Store(RootViewControllerInitializationServiceImplementation.self)
     public var rootViewControllerInitializationService: any RootViewControllerInitializationService
 
-    @Factory(LoggedOutScopeImplementation.self, factory: \.loggedOutFeatureViewControllerFactory)
+    @Factory(LoggedOutScope.self, factory: \.loggedOutFeatureViewControllerFactory)
     public var loggedOutFeatureFactory: any Factory<LoggedOutFeature, UIViewController>
 
-    @Factory(LoadingScopeImplementation.self, factory: \.loadingFeatureViewControllerFactory)
+    @Factory(LoadingScope.self, factory: \.loadingFeatureViewControllerFactory)
     public var loadingFeatureFactory: any Factory<LoadingFeature, UIViewController>
 
-    @Factory(LoggedInScopeImplementation.self, factory: \.loggedInFeatureViewControllerFactory)
+    @Factory(LoggedInScope.self, factory: \.loggedInFeatureViewControllerFactory)
     public var loggedInFeatureFactory: any Factory<LoggedInFeature, UIViewController>
 }
