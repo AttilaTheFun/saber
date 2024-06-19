@@ -1,16 +1,15 @@
 
-/// A Factory can produce a Building given an associated Arguments instance.
+/// A Factory can produce a Value given an associated Arguments instance.
 /// Calling the build function is thread-safe.
-/// Every call to this function will receive a new instance of the Building type.
-public protocol Factory<Arguments, Building> {
+/// Every call to this function will receive a new instance of the Value type.
+public protocol Factory<Arguments, Value> {
     associatedtype Arguments
-    associatedtype Building
-
-    func build(arguments: Arguments) -> Building
+    associatedtype Value
+    func build(arguments: Arguments) -> Value
 }
 
 extension Factory where Arguments == Void {
-    public func build() -> Building {
+    public func build() -> Value {
         return self.build(arguments: ())
     }
 }

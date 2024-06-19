@@ -11,14 +11,14 @@ final class FactoryMacroTests: XCTestCase {
             @Factory(FooViewController.self)
             var fooViewControllerFactory: Factory<FooFeature, UIViewController>
 
-            @Factory(BarScope.self, factory: \\.barViewControllerFactory)
+            @Factory(BarScope.self, factory: \\.rootFactory)
             var barViewControllerFactory: Factory<BarFeature, UIViewController>
             """,
             expandedSource:
             """
             var fooViewControllerFactory: Factory<FooFeature, UIViewController> {
                 get {
-                    let childDependencies = self._childDependenciesStore.building
+                    let childDependencies = self._childDependenciesStore.value
                     return FactoryImplementation { [childDependencies] arguments in
                         FooViewController(arguments: arguments, dependencies: childDependencies)
                     }
@@ -26,10 +26,10 @@ final class FactoryMacroTests: XCTestCase {
             }
             var barViewControllerFactory: Factory<BarFeature, UIViewController> {
                 get {
-                    let childDependencies = self._childDependenciesStore.building
+                    let childDependencies = self._childDependenciesStore.value
                     return FactoryImplementation { [childDependencies] arguments in
                         let concrete = BarScope(arguments: arguments, dependencies: childDependencies)
-                        return concrete.barViewControllerFactory.build(arguments: arguments)
+                        return concrete.rootFactory.build(arguments: arguments)
                     }
                 }
             }

@@ -7,7 +7,7 @@ extension AttributeSyntax {
     }
 
     public var superTypeArgument: TypeDescription? {
-        return self.typeDescriptionIfNameEquals("super")
+        return self.typeDescriptionIfNameEquals(nil)
     }
 
     private func typeDescriptionIfNameEquals(_ expectedName: String?) -> TypeDescription? {

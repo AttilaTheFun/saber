@@ -38,9 +38,6 @@ extension InjectableMacroProtocol {
         type: some TypeSyntaxProtocol
     ) throws -> ExtensionDeclSyntax {
 
-        // TODO: Omit initializer if the user wrote their own.
-        // TODO: Add typealias Arguments = MyTypeArguments if unset.
-
         // Create the member block:
         let memberBlockItemList = MemberBlockItemListSyntax([])
         let memberBlock = MemberBlockSyntax(members: memberBlockItemList)
@@ -108,15 +105,23 @@ extension InjectableMacroProtocol {
 
         // If there is not a handwritten arguments type alias declaration, we need to create one:
         if visitor.argumentsTypeAliasDeclaration == nil {
-            // TODO: Handle deriving arguments type from Scope inheritance clause.
 
             // Determine the arguments type:
             let argumentsType: String
-            if visitor.argumentProperties.count > 0 {
-                // If we have argument properties but no handwritten Arguments typealias,
-                // we assume the arguments type name is the same as that of the concrete type with the Arguments suffix.
+            if
+                let scopeTypeDescription = concreteDeclaration.inheritanceClause?.scopeTypeDescription,
+                case .simple(_, let generics) = scopeTypeDescription
+            {
+                // If the concrete type inherits from the Scope type,
+                // we infer the Arguments type from the first generic argument.
+                argumentsType = generics[0].asSource
+            } else if visitor.argumentProperties.count > 0 {
+                // If we have argument properties,
+                // we infer the Arguments type name is the concrete type name with the Arguments suffix.
                 argumentsType = "\(concreteDeclaration.name.trimmed)Arguments"
             } else {
+                // If there are no argument properties,
+                // we infer the Arguments type to be Void.
                 argumentsType = "Void"
             }
 
@@ -264,7 +269,7 @@ extension InjectableMacroProtocol {
                 requiredInitializers = [
                     """
                     required init?(coder: NSCoder) {
-                        fatalError("not implemented")
+                        fatalError("init(coder:) has not been implemented")
                     }
                     """
                 ]
@@ -482,4 +487,3 @@ extension InjectableMacroProtocol {
         return initializerDeclaration
     }
 }
-

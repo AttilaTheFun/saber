@@ -45,7 +45,7 @@ extension FactoryMacroProtocol {
         let getAccessorDeclaration: AccessorDeclSyntax =
         """
         get {
-            let childDependencies = self._childDependenciesStore.building
+            let childDependencies = self._childDependenciesStore.value
             return FactoryImplementation { [childDependencies] arguments in
                 \(raw: factoryLines.joined(separator: "        \n"))
             }
