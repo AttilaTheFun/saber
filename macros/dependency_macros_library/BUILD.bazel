@@ -6,7 +6,6 @@ swift_library(
     name = "dependency_macros_library",
     srcs = [
         "ArgumentMacroProtocol.swift",
-        "ArgumentsMacroProtocol.swift",
         "AttributeListSyntax.Element+Extensions.swift",
         "AttributeListSyntax+Extensions.swift",
         "AttributeSyntax+Extensions.swift",

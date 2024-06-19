@@ -5,8 +5,9 @@ package(default_visibility = ["//visibility:public"])
 swift_library(
     name = "dependency_macros_types",
     srcs = [
+        "ChildDependenciesReferenceType.swift",
+        "DependenciesReferenceType.swift",
         "InitializationStrategy.swift",
-        "InjectableType.swift",
         "StorageStrategy.swift",
     ],
     module_name = "DependencyMacrosTypes",

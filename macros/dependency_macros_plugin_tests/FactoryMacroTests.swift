@@ -1,4 +1,3 @@
-import DependencyFoundation
 import DependencyMacrosPlugin
 import SwiftSyntaxMacrosTestSupport
 import XCTest

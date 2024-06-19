@@ -6,7 +6,6 @@ swift_test(
     name = "dependency_macros_plugin_tests",
     srcs = [
         "ArgumentMacroTests.swift",
-        "ArgumentsMacroTests.swift",
         "FactoryMacroTests.swift",
         "InjectMacroTests.swift",
         "InjectableMacroTests.swift",
@@ -15,7 +14,6 @@ swift_test(
     module_name = "DependencyMacrosPluginTests",
     visibility = ["//visibility:public"],
     deps = [
-        "//foundations/dependency_foundation",
         "//macros/dependency_macros_plugin",
         "@swiftpkg_swift_syntax//:SwiftSyntaxMacrosTestSupport",
     ],

@@ -6,7 +6,6 @@ swift_library(
     module_name = "InboxServiceImplementation",
     visibility = ["//visibility:public"],
     deps = [
-        "//foundations/dependency_foundation",
         "//macros/dependency_macros",
         "//service_interfaces/inbox_service_interface",
     ],

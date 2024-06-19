@@ -14,9 +14,12 @@ public final class InjectableVisitor: SyntaxVisitor {
     private(set) var isTopLevelDeclaration = true
 
     public private(set) var diagnostics = [Diagnostic]()
-    public private(set) var concreteDeclaration: ConcreteDeclSyntaxProtocol?
 
-    public private(set) var argumentsProperty: (Property,AttributeSyntax)?
+    public private(set) var concreteDeclaration: ConcreteDeclSyntaxProtocol?
+    public private(set) var argumentsTypeAliasDeclaration: TypeAliasDeclSyntax?
+    public private(set) var dependenciesTypeAliasDeclaration: TypeAliasDeclSyntax?
+    public private(set) var initializerDeclaration: InitializerDeclSyntax?
+
     public private(set) var argumentProperties: [(Property,AttributeSyntax)] = []
     public private(set) var injectProperties: [(Property,AttributeSyntax)] = []
     public private(set) var factoryProperties: [(Property,AttributeSyntax)] = []
@@ -27,11 +30,7 @@ public final class InjectableVisitor: SyntaxVisitor {
     }
 
     public var allProperties: [(Property,AttributeSyntax)] {
-        return [self.argumentsProperty].compactMap { $0 } +
-            self.argumentProperties +
-            self.injectProperties +
-            self.factoryProperties +
-            self.storeProperties
+        return self.argumentProperties + self.injectProperties + self.factoryProperties + self.storeProperties
     }
 
     // MARK: Concrete Declarations
@@ -55,6 +54,52 @@ public final class InjectableVisitor: SyntaxVisitor {
 
         self.isTopLevelDeclaration = false
         self.concreteDeclaration = node
+        return .visitChildren
+    }
+
+    // MARK: Type Alias Declarations
+
+    public override func visit(_ node: TypeAliasDeclSyntax) -> SyntaxVisitorContinueKind {
+        if node.name.trimmed.text == "Arguments" {
+            self.argumentsTypeAliasDeclaration = node
+        }
+        if node.name.trimmed.text == "Dependencies" {
+            self.dependenciesTypeAliasDeclaration = node
+        }
+
+        return .visitChildren
+    }
+
+    // MARK: Initializer Declarations
+
+    public override func visit(_ node: InitializerDeclSyntax) -> SyntaxVisitorContinueKind {
+        let parameters = node.signature.parameterClause.parameters
+        guard parameters.count == 2 else {
+            return .skipChildren
+        }
+
+        guard
+            let firstParameter = parameters.first,
+            firstParameter.firstName.text == "arguments",
+            case .simple(let name, let generics) = firstParameter.type.typeDescription,
+            name == "Arguments",
+            generics.count == 0 else
+        {
+            return .skipChildren
+        }
+
+        guard
+            let secondParameter = parameters.dropFirst().first,
+            secondParameter.firstName.text == "dependencies",
+            case .any(let typeDescription) = secondParameter.type.typeDescription,
+            case .simple(let name, let generics) = typeDescription,
+            name == "Dependencies",
+            generics.count == 0 else
+        {
+            return .skipChildren
+        }
+
+        self.initializerDeclaration = node
         return .visitChildren
     }
 
@@ -108,8 +153,6 @@ public final class InjectableVisitor: SyntaxVisitor {
                     typeDescription: typeDescription
                 )
                 switch injectableMacroType {
-                case .arguments(let attributeSyntax):
-                    self.argumentsProperty = (property, attributeSyntax)
                 case .argument(let attributeSyntax):
                     self.argumentProperties.append((property, attributeSyntax))
                 case .inject(let attributeSyntax):

@@ -10,7 +10,6 @@ swift_library(
     visibility = ["//visibility:public"],
     deps = [
         "//feature_interfaces/root_feature_interface",
-        "//foundations/dependency_foundation",
         "//scopes/root_scope:root_scope_implementation",
     ],
 )

@@ -6,7 +6,6 @@ swift_compiler_plugin(
     name = "dependency_macros_plugin",
     srcs = [
         "ArgumentMacro.swift",
-        "ArgumentsMacro.swift",
         "DependencyMacrosPlugin.swift",
         "FactoryMacro.swift",
         "InjectMacro.swift",

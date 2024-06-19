@@ -10,9 +10,299 @@ public enum InjectableMacroProtocolError: Error {
     case invalidComputedPropertyType
 }
 
-public protocol InjectableMacroProtocol: MemberMacro, PeerMacro {}
+public protocol InjectableMacroProtocol: ExtensionMacro, MemberMacro, PeerMacro {}
 
 extension InjectableMacroProtocol {
+
+    // MARK: ExtensionMacro
+
+    public static func expansion(
+      of node: AttributeSyntax,
+      attachedTo declaration: some DeclGroupSyntax,
+      providingExtensionsOf type: some TypeSyntaxProtocol,
+      conformingTo protocols: [TypeSyntax],
+      in context: some MacroExpansionContext
+    ) throws -> [ExtensionDeclSyntax] {
+
+        // Create the extension declaration:
+        let extensionDeclaration = try self.extensionDeclaration(
+            declaration: declaration,
+            type: type
+        )
+
+        return [extensionDeclaration]
+    }
+
+    private static func extensionDeclaration(
+        declaration: some DeclGroupSyntax,
+        type: some TypeSyntaxProtocol
+    ) throws -> ExtensionDeclSyntax {
+
+        // TODO: Omit initializer if the user wrote their own.
+        // TODO: Add typealias Arguments = MyTypeArguments if unset.
+
+        // Create the member block:
+        let memberBlockItemList = MemberBlockItemListSyntax([])
+        let memberBlock = MemberBlockSyntax(members: memberBlockItemList)
+
+        // Create the extension declaration:
+        let injectableProtocolType = TypeSyntax(stringLiteral: "Injectable")
+        let inheritedType = InheritedTypeSyntax(type: injectableProtocolType)
+        let inheritedTypeList = InheritedTypeListSyntax([inheritedType])
+        let inheritanceClause = InheritanceClauseSyntax(inheritedTypes: inheritedTypeList)
+        let extensionDeclaration = ExtensionDeclSyntax(
+            extendedType: type,
+            inheritanceClause: inheritanceClause,
+            memberBlock: memberBlock
+        )
+
+        return extensionDeclaration
+    }
+
+    // MARK: MemberMacro
+
+    public static func expansion(
+        of node: AttributeSyntax,
+        providingMembersOf declaration: some DeclGroupSyntax,
+        conformingTo protocols: [TypeSyntax],
+        in context: some MacroExpansionContext) throws
+        -> [DeclSyntax]
+    {
+        // Walk the declaration with the visitor:
+        let visitor = InjectableVisitor()
+        visitor.walk(declaration)
+
+        // Create the member declarations:
+        var memberDeclarations = [DeclSyntax]()
+        memberDeclarations += try self.parentTypeAliasDeclarations(
+            node: node,
+            visitor: visitor,
+            declaration: declaration
+        )
+        memberDeclarations += try self.parentPropertyDeclarations(
+            node: node,
+            visitor: visitor,
+            declaration: declaration
+        )
+        if visitor.initializerDeclaration == nil {
+            memberDeclarations += try self.parentInitializerDeclarations(
+                node: node,
+                visitor: visitor,
+                declaration: declaration
+            )
+        }
+
+        return memberDeclarations
+    }
+
+    private static func parentTypeAliasDeclarations(
+        node: AttributeSyntax,
+        visitor: InjectableVisitor,
+        declaration: some DeclSyntaxProtocol
+    ) throws -> [DeclSyntax] {
+        guard let concreteDeclaration = visitor.concreteDeclaration else {
+            throw InjectableMacroProtocolError.declarationNotConcrete
+        }
+
+        var typeAliasDeclarations = [DeclSyntax]()
+
+        // If there is not a handwritten arguments type alias declaration, we need to create one:
+        if visitor.argumentsTypeAliasDeclaration == nil {
+            // TODO: Handle deriving arguments type from Scope inheritance clause.
+
+            // Determine the arguments type:
+            let argumentsType: String
+            if visitor.argumentProperties.count > 0 {
+                // If we have argument properties but no handwritten Arguments typealias,
+                // we assume the arguments type name is the same as that of the concrete type with the Arguments suffix.
+                argumentsType = "\(concreteDeclaration.name.trimmed)Arguments"
+            } else {
+                argumentsType = "Void"
+            }
+
+            // Create the arguments type alias declaration:
+            let argumentsTypeAliasDeclaration: DeclSyntax =
+            """
+            \(raw: concreteDeclaration.modifiers.accessLevel.rawValue) typealias Arguments = \(raw: argumentsType)
+            """
+            typeAliasDeclarations.append(argumentsTypeAliasDeclaration)
+        }
+
+        // If there is not a handwritten dependencies type alias declaration, we need to create one:
+        if visitor.dependenciesTypeAliasDeclaration == nil {
+            let dependenciesType = "\(concreteDeclaration.name.trimmed)Dependencies"
+            let dependenciesTypeAliasDeclaration: DeclSyntax =
+            """
+            \(raw: concreteDeclaration.modifiers.accessLevel.rawValue) typealias Dependencies = \(raw: dependenciesType)
+            """
+            typeAliasDeclarations.append(dependenciesTypeAliasDeclaration)
+        }
+
+        return typeAliasDeclarations
+    }
+
+    private static func parentPropertyDeclarations(
+        node: AttributeSyntax,
+        visitor: InjectableVisitor,
+        declaration: some DeclSyntaxProtocol
+    ) throws -> [DeclSyntax] {
+        guard let concreteDeclaration = visitor.concreteDeclaration else {
+            throw InjectableMacroProtocolError.declarationNotConcrete
+        }
+
+        // Create the property declarations:
+        var propertyDeclarations = [DeclSyntax]()
+
+        // Create the inject property declarations if necessary:
+        for (property, attributeSyntax) in visitor.injectProperties {
+            let propertyDeclaration = self.parentStoredPropertyDeclaration(
+                propertyLabel: property.label,
+                storageStrategy: attributeSyntax.storageStrategyArgument ?? .strong,
+                accessorLine: "return self._dependencies.\(property.label)"
+            )
+            propertyDeclarations.append(propertyDeclaration)
+        }
+
+        // Create the store property declarations if necessary:
+        for (property, attributeSyntax) in visitor.storeProperties {
+            guard let concreteType = attributeSyntax.concreteTypeArgument else {
+                throw InjectableMacroProtocolError.invalidMacroArguments
+            }
+
+            let propertyDeclaration = self.parentStoredPropertyDeclaration(
+                propertyLabel: property.label,
+                storageStrategy: attributeSyntax.storageStrategyArgument ?? .strong,
+                accessorLine: "return \(concreteType.asSource)(dependencies: self._childDependenciesStore.value)"
+            )
+            propertyDeclarations.append(propertyDeclaration)
+        }
+
+        // Check if we have any child dependencies and create the associated property declarations if so:
+        if visitor.childDependencyProperties.count > 0 {
+            let childDependenciesClassName = "\(concreteDeclaration.name.trimmed)ChildDependencies"
+
+            // Create the stored property declaration:
+            let propertyDeclaration = self.parentStoredPropertyDeclaration(
+                propertyLabel: "childDependencies",
+                storageStrategy: .weak,
+                accessorLine: "return \(childDependenciesClassName)(parent: self)"
+            )
+            propertyDeclarations.append(propertyDeclaration)
+        }
+
+        // Create the arguments stored property declaration:
+        let argumentsPropertyDeclaration: DeclSyntax =
+        """
+        private let _arguments: Arguments
+        """
+        propertyDeclarations.append(argumentsPropertyDeclaration)
+
+        // Create the dependencies stored property declaration:
+        let dependenciesReferenceType = node.dependenciesReferenceTypeArgument ?? .strong
+        let bindingModifier = dependenciesReferenceType == .unowned ? "unowned " : ""
+        let dependenciesPropertyDeclaration: DeclSyntax =
+        """
+        private \(raw: bindingModifier)let _dependencies: any Dependencies
+        """
+        propertyDeclarations.append(dependenciesPropertyDeclaration)
+
+        return propertyDeclarations
+    }
+
+    private static func parentStoredPropertyDeclaration(
+        propertyLabel: String,
+        storageStrategy: StorageStrategy,
+        accessorLine: String
+    ) -> DeclSyntax {
+
+        // If this is a purely computed property, we don't need a backing stored property.
+        let backingStore: String
+        switch storageStrategy {
+        case .strong:
+            backingStore = "StrongBackingStoreImplementation()"
+        case .weak:
+            backingStore = "WeakBackingStoreImplementation()"
+        case .computed:
+            backingStore = "ComputedBackingStoreImplementation()"
+        }
+
+        // Create the stored property declaration:
+        let propertyDeclaration: DeclSyntax =
+        """
+        private lazy var _\(raw: propertyLabel)Store = StoreImplementation(
+            backingStore: \(raw: backingStore),
+            function: { [unowned self] in
+                \(raw: accessorLine)
+            }
+        )
+        """
+
+        return propertyDeclaration
+    }
+
+    private static func parentInitializerDeclarations(
+        node: AttributeSyntax,
+        visitor: InjectableVisitor,
+        declaration: some DeclSyntaxProtocol
+    ) throws -> [DeclSyntax] {
+        guard let concreteDeclaration = visitor.concreteDeclaration else {
+            throw InjectableMacroProtocolError.declarationNotConcrete
+        }
+
+        // Create the initializer lines:
+        var initializerLines = [
+            "self._arguments = arguments",
+            "self._dependencies = dependencies",
+        ]
+
+        // Call the designated initializer and implement the required initializers, if necessary:
+        var requiredInitializers = [DeclSyntax]()
+        if let superTypeArgument = node.superTypeArgument {
+            switch superTypeArgument.asSource {
+            case "UIViewController":
+                initializerLines.append("super.init(nibName: nil, bundle: nil)")
+                requiredInitializers = [
+                    """
+                    required init?(coder: NSCoder) {
+                        fatalError("not implemented")
+                    }
+                    """
+                ]
+            case "UIView":
+                initializerLines.append("super.init(frame: .zero)")
+                requiredInitializers = [
+                    """
+                    required init?(coder: NSCoder) {
+                        fatalError("init(coder:) has not been implemented")
+                    }
+                    """
+                ]
+            default:
+                // TODO: Diagnostic
+                fatalError()
+            }
+        }
+
+        // Invoke eager store properties:
+        for (property, attributeSyntax) in visitor.storeProperties {
+            guard case .eager = attributeSyntax.initializationStrategyArgument ?? .lazy else {
+                continue
+            }
+
+            initializerLines.append("_ = self.\(property.label)")
+        }
+
+        // Create the initializer:
+        let accessLevel = concreteDeclaration.modifiers.accessLevel.rawValue
+        let initializerDeclaration: DeclSyntax =
+        """
+        \(raw: accessLevel) init(arguments: Arguments, dependencies: Dependencies) {
+        \(raw: initializerLines.joined(separator: "\n"))
+        }
+        """
+
+        return [initializerDeclaration] + requiredInitializers
+    }
 
     // MARK: PeerMacro
 
@@ -49,6 +339,11 @@ extension InjectableMacroProtocol {
             throw InjectableMacroProtocolError.declarationNotConcrete
         }
 
+        // If the visitor has a handwritten dependencies type alias, return early:
+        if visitor.dependenciesTypeAliasDeclaration != nil {
+            return nil
+        }
+
         // Create properties for the protocol:
         var protocolProperties = [String]()
         for (property, _) in visitor.injectProperties {
@@ -58,12 +353,11 @@ extension InjectableMacroProtocol {
         let protocolBody = protocolProperties.joined(separator: "\n")
 
         // Create the child dependencies protocol declaration:
+        let accessLevel = concreteDeclaration.modifiers.accessLevel.rawValue
         let dependenciesProtocolName = "\(concreteDeclaration.name.trimmed)Dependencies"
         let dependenciesProtocolDeclaration: DeclSyntax =
         """
-        \(raw: concreteDeclaration.modifiers.accessLevel.rawValue) protocol \(raw: dependenciesProtocolName): AnyObject {
-        \(raw: protocolBody)
-        }
+        \(raw: accessLevel) protocol \(raw: dependenciesProtocolName): AnyObject {\(raw: protocolBody)}
         """
 
         return dependenciesProtocolDeclaration
@@ -187,206 +481,5 @@ extension InjectableMacroProtocol {
 
         return initializerDeclaration
     }
-
-
-    // MARK: MemberMacro
-
-    public static func expansion(
-        of node: AttributeSyntax,
-        providingMembersOf declaration: some DeclGroupSyntax,
-        conformingTo protocols: [TypeSyntax],
-        in context: some MacroExpansionContext) throws
-        -> [DeclSyntax]
-    {
-        // Walk the declaration with the visitor:
-        let visitor = InjectableVisitor()
-        visitor.walk(declaration)
-
-        // Create the declarations:
-        let propertyDeclarations = try self.parentPropertyDeclarations(
-            node: node,
-            visitor: visitor,
-            declaration: declaration
-        )
-        let initializerDeclarations = try self.parentInitializerDeclarations(
-            node: node,
-            visitor: visitor,
-            declaration: declaration
-        )
-
-        return propertyDeclarations + initializerDeclarations
-    }
-
-    private static func parentPropertyDeclarations(
-        node: AttributeSyntax,
-        visitor: InjectableVisitor,
-        declaration: some DeclSyntaxProtocol
-    ) throws -> [DeclSyntax] {
-        guard let concreteDeclaration = visitor.concreteDeclaration else {
-            throw InjectableMacroProtocolError.declarationNotConcrete
-        }
-
-        // Create the property declarations:
-        var propertyDeclarations = [DeclSyntax]()
-
-        // Create the arguments stored property declaration if necessary:
-        if let (property, _) = visitor.argumentsProperty {
-            let propertyDeclaration: DeclSyntax =
-            """
-            private let _arguments: \(raw: property.typeDescription.asSource)
-            """
-            propertyDeclarations.append(propertyDeclaration)
-        }
-
-        // Create the inject property declarations if necessary:
-        for (property, attributeSyntax) in visitor.injectProperties {
-            let propertyDeclaration = self.parentStoredPropertyDeclaration(
-                propertyLabel: property.label,
-                storageStrategy: attributeSyntax.storageStrategyArgument ?? .strong,
-                accessorLine: "return self._dependencies.\(property.label)"
-            )
-            propertyDeclarations.append(propertyDeclaration)
-        }
-
-        // Create the store property declarations if necessary:
-        for (property, attributeSyntax) in visitor.storeProperties {
-            guard let concreteType = attributeSyntax.concreteTypeArgument else {
-                throw InjectableMacroProtocolError.invalidMacroArguments
-            }
-
-            let propertyDeclaration = self.parentStoredPropertyDeclaration(
-                propertyLabel: property.label,
-                storageStrategy: attributeSyntax.storageStrategyArgument ?? .strong,
-                accessorLine: "return \(concreteType.asSource)(dependencies: self._childDependenciesStore.building)"
-            )
-            propertyDeclarations.append(propertyDeclaration)
-        }
-
-        // Check if we have any child dependencies and create the associated property declarations if so:
-        if visitor.childDependencyProperties.count > 0 {
-            let childDependenciesClassName = "\(concreteDeclaration.name.trimmed)ChildDependencies"
-            let injectableType = node.injectableTypeArgument ?? .strong
-
-            // Create the stored property declaration:
-            let propertyDeclaration = self.parentStoredPropertyDeclaration(
-                propertyLabel: "childDependencies",
-                storageStrategy: injectableType == .root ? .strong : .weak,
-                accessorLine: "return \(childDependenciesClassName)(parent: self)"
-            )
-            propertyDeclarations.append(propertyDeclaration)
-        }
-
-        // Create the dependencies stored property declaration:
-        let injectableType = node.injectableTypeArgument ?? .strong
-        let bindingModifier = injectableType == .unowned ? "unowned " : ""
-        let dependenciesProtocolName = "\(concreteDeclaration.name.trimmed)Dependencies"
-        let dependenciesPropertyDeclaration: DeclSyntax =
-        """
-        private \(raw: bindingModifier)let _dependencies: any \(raw: dependenciesProtocolName)
-        """
-        propertyDeclarations.append(dependenciesPropertyDeclaration)
-
-        return propertyDeclarations
-    }
-
-    private static func parentStoredPropertyDeclaration(
-        propertyLabel: String,
-        storageStrategy: StorageStrategy,
-        accessorLine: String
-    ) -> DeclSyntax {
-
-        // If this is a purely computed property, we don't need a backing stored property.
-        let backingStore: String
-        switch storageStrategy {
-        case .strong:
-            backingStore = "StrongBackingStoreImplementation()"
-        case .weak:
-            backingStore = "WeakBackingStoreImplementation()"
-        case .computed:
-            backingStore = "ComputedBackingStoreImplementation()"
-        }
-
-        // Create the stored property declaration:
-        let propertyDeclaration: DeclSyntax =
-        """
-        private lazy var _\(raw: propertyLabel)Store = StoreImplementation(
-            backingStore: \(raw: backingStore),
-            function: { [unowned self] in
-                \(raw: accessorLine)
-            }
-        )
-        """
-
-        return propertyDeclaration
-    }
-
-    private static func parentInitializerDeclarations(
-        node: AttributeSyntax,
-        visitor: InjectableVisitor,
-        declaration: some DeclSyntaxProtocol
-    ) throws -> [DeclSyntax] {
-        guard let concreteDeclaration = visitor.concreteDeclaration else {
-            throw InjectableMacroProtocolError.declarationNotConcrete
-        }
-
-        // Create the initializer arguments:
-        var initializerArguments = [String]()
-        if let (property, _) = visitor.argumentsProperty {
-            initializerArguments.append("arguments: \(property.typeDescription.asSource)")
-        }
-        initializerArguments.append("dependencies: any \(concreteDeclaration.name.trimmed)Dependencies")
-
-        // Create the initializer lines:
-        var initializerLines = [String]()
-        if visitor.argumentsProperty != nil {
-            initializerLines.append("self._arguments = arguments")
-        }
-        initializerLines.append("self._dependencies = dependencies")
-
-        // Call the designated initializer and implement the required initializer, if necessary:
-        var requiredInitializers = [DeclSyntax]()
-        switch node.injectableTypeArgument ?? .strong {
-        case .strong, .unowned, .root:
-            break
-        case .viewController:
-            initializerLines.append("super.init(nibName: nil, bundle: nil)")
-            requiredInitializers = [
-                """
-                required init?(coder: NSCoder) {
-                    fatalError("not implemented")
-                }
-                """
-            ]
-        case .view:
-            initializerLines.append("super.init(frame: .zero)")
-            requiredInitializers = [
-                """
-                required init?(coder: NSCoder) {
-                    fatalError("init(coder:) has not been implemented")
-                }
-                """
-            ]
-        }
-
-        // Invoke eager store properties:
-        for (property, attributeSyntax) in visitor.storeProperties {
-            guard case .eager = attributeSyntax.initializationStrategyArgument ?? .lazy else {
-                continue
-            }
-
-            initializerLines.append("_ = self.\(property.label)")
-        }
-
-        // Create the initializer:
-        let initializerDeclaration: DeclSyntax =
-        """
-        \(raw: concreteDeclaration.modifiers.accessLevel.rawValue) init(
-        \(raw: initializerArguments.joined(separator: ",\n"))
-        ) {
-        \(raw: initializerLines.joined(separator: "\n"))
-        }
-        """
-
-        return [initializerDeclaration] + requiredInitializers
-    }
 }
+

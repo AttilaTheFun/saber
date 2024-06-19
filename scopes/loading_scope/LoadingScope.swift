@@ -1,4 +1,3 @@
-import DependencyFoundation
 import DependencyMacros
 import LoadingFeatureInterface
 import LoadingFeatureImplementation

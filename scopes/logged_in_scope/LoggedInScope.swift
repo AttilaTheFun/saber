@@ -1,6 +1,5 @@
 import CameraFeatureInterface
 import CameraScope
-import DependencyFoundation
 import DependencyMacros
 import InboxFeatureInterface
 import InboxScope

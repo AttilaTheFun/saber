@@ -13,7 +13,6 @@ swift_library(
         "//feature_interfaces/logged_out_feature_interface",
         "//feature_interfaces/map_feature_interface",
         "//feature_interfaces/profile_feature_interface",
-        "//foundations/dependency_foundation",
         "//macros/dependency_macros",
         "//scopes/camera_scope",
         "//scopes/inbox_scope",

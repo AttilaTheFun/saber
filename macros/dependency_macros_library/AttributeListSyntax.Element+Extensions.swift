@@ -1,10 +1,6 @@
 import SwiftSyntax
 
 extension AttributeListSyntax.Element {
-    public var argumentsMacro: AttributeSyntax? {
-        self.attributeIfNameEquals("Arguments")
-    }
-
     public var argumentMacro: AttributeSyntax? {
         self.attributeIfNameEquals("Argument")
     }

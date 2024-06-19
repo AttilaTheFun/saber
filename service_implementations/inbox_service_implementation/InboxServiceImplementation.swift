@@ -1,4 +1,3 @@
-import DependencyFoundation
 import DependencyMacros
 import InboxServiceInterface
 import UIKit

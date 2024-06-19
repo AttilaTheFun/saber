@@ -1,4 +1,3 @@
-import DependencyFoundation
 import DependencyMacros
 import MapFeatureInterface
 import MapKit

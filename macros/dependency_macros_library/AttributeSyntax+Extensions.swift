@@ -6,6 +6,10 @@ extension AttributeSyntax {
         return self.typeDescriptionIfNameEquals(nil)
     }
 
+    public var superTypeArgument: TypeDescription? {
+        return self.typeDescriptionIfNameEquals("super")
+    }
+
     private func typeDescriptionIfNameEquals(_ expectedName: String?) -> TypeDescription? {
         guard
             let arguments = self.arguments,
@@ -44,9 +48,9 @@ extension AttributeSyntax {
         return keyPathPropertyComponent.declName.baseName.text
     }
 
-    public var injectableTypeArgument: InjectableType? {
-        let rawValue = self.memberAccessBaseNameIfNameEquals(nil)
-        return InjectableType(rawValue: rawValue ?? "")
+    public var dependenciesReferenceTypeArgument: DependenciesReferenceType? {
+        let rawValue = self.memberAccessBaseNameIfNameEquals("dependencies")
+        return DependenciesReferenceType(rawValue: rawValue ?? "")
     }
 
     public var initializationStrategyArgument: InitializationStrategy? {

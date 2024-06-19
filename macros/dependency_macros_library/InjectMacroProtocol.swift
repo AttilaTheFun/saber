@@ -30,7 +30,7 @@ extension InjectMacroProtocol {
         return [
             """
             get {
-                return self._\(identifierPattern.identifier)Store.building
+                return self._\(identifierPattern.identifier)Store.value
             }
             """
         ]

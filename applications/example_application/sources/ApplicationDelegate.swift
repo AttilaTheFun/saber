@@ -1,4 +1,3 @@
-import DependencyFoundation
 import RootFeatureInterface
 import RootScope
 import UIKit

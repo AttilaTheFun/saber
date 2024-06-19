@@ -1,4 +1,3 @@
-import DependencyFoundation
 import DependencyMacrosPlugin
 import SwiftSyntaxMacros
 import SwiftSyntaxMacrosTestSupport
@@ -6,7 +5,6 @@ import XCTest
 
 final class InjectableMacroTests: XCTestCase {
     private let macros: [String : any Macro.Type] = [
-        "Arguments": ArgumentsMacro.self,
         "Argument": ArgumentMacro.self,
         "Factory": FactoryMacro.self,
         "Injectable": InjectableMacro.self,
@@ -545,6 +543,153 @@ final class InjectableMacroTests: XCTestCase {
                 var barService: BarService {
                     get
                 }
+            }
+            """,
+            macros: self.macros
+        )
+    }
+
+    func testHandWrittenInitializer() throws {
+        assertMacroExpansion(
+            """
+            @Injectable
+            public final class Foo {
+                public init(arguments: Arguments, dependencies: any Dependencies) {
+                    self._arguments = arguments
+                    self._dependencies = dependencies
+                    print("hand written initializer")
+                }
+            }
+            """,
+            expandedSource:
+            """
+            public final class Foo {
+                public init(arguments: Arguments, dependencies: any Dependencies) {
+                    self._arguments = arguments
+                    self._dependencies = dependencies
+                    print("hand written initializer")
+                }
+
+                public typealias Arguments = Void
+
+                public typealias Dependencies = FooDependencies
+
+                private let _arguments: Arguments
+
+                private let _dependencies: any Dependencies
+            }
+
+            public protocol FooDependencies: AnyObject {
+            }
+
+            extension Foo: Injectable {
+            }
+            """,
+            macros: self.macros
+        )
+    }
+
+    func testHandWrittenDependenciesTypeAlias() throws {
+        assertMacroExpansion(
+            """
+            public protocol FooSpecialDependencies {
+            }
+
+            @Injectable
+            public final class Foo {
+                public typealias Dependencies = FooSpecialDependencies
+            }
+            """,
+            expandedSource:
+            """
+            public protocol FooSpecialDependencies {
+            }
+            public final class Foo {
+                public typealias Dependencies = FooSpecialDependencies
+
+                public typealias Arguments = Void
+
+                private let _arguments: Arguments
+
+                private let _dependencies: any Dependencies
+
+                public init(arguments: Arguments, dependencies: Dependencies) {
+                    self._arguments = arguments
+                    self._dependencies = dependencies
+                }
+            }
+
+            extension Foo: Injectable {
+            }
+            """,
+            macros: self.macros
+        )
+    }
+
+    func testHandWrittenArgumentsTypeAlias() throws {
+        assertMacroExpansion(
+            """
+            @Injectable
+            public final class Foo {
+                public typealias Arguments = FooSpecialArguments
+            }
+            """,
+            expandedSource:
+            """
+            public final class Foo {
+                public typealias Arguments = FooSpecialArguments
+
+                public typealias Dependencies = FooDependencies
+
+                private let _arguments: Arguments
+
+                private let _dependencies: any Dependencies
+
+                public init(arguments: Arguments, dependencies: Dependencies) {
+                    self._arguments = arguments
+                    self._dependencies = dependencies
+                }
+            }
+
+            public protocol FooDependencies: AnyObject {
+            }
+
+            extension Foo: Injectable {
+            }
+            """,
+            macros: self.macros
+        )
+    }
+
+    func testEmpty() throws {
+        assertMacroExpansion(
+            """
+            @Injectable
+            public final class Foo {
+            }
+            """,
+            expandedSource:
+            """
+            public final class Foo {
+
+                public typealias Arguments = Void
+
+                public typealias Dependencies = FooDependencies
+
+                private let _arguments: Arguments
+
+                private let _dependencies: any Dependencies
+
+                public init(arguments: Arguments, dependencies: Dependencies) {
+                    self._arguments = arguments
+                    self._dependencies = dependencies
+                }
+            }
+
+            public protocol FooDependencies: AnyObject {
+            }
+
+            extension Foo: Injectable {
             }
             """,
             macros: self.macros

@@ -1,4 +1,3 @@
-import DependencyFoundation
 import DependencyMacrosPlugin
 import SwiftSyntaxMacrosTestSupport
 import XCTest
@@ -15,7 +14,7 @@ final class InjectMacroTests: XCTestCase {
             """
             var fooService: FooService {
                 get {
-                    return self._fooServiceStore.building
+                    return self._fooServiceStore.value
                 }
             }
             """,
