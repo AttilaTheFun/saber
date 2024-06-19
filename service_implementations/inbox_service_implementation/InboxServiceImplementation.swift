@@ -2,7 +2,7 @@ import DependencyMacros
 import InboxServiceInterface
 import UIKit
 
-@Injectable(.unowned)
+@Injectable(dependencies: .unowned)
 public final class InboxServiceImplementation: InboxService {
     public func getInboxItems() async -> [InboxItem] {
         return [

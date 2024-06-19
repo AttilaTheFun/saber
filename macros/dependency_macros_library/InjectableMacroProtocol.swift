@@ -109,8 +109,11 @@ extension InjectableMacroProtocol {
             // Determine the arguments type:
             let argumentsType: String
             if
-                let scopeTypeDescription = concreteDeclaration.inheritanceClause?.scopeTypeDescription,
-                case .simple(_, let generics) = scopeTypeDescription
+                concreteDeclaration.inheritanceClause?.scopeTypeDescription != nil,
+                let (rootFactoryProperty, _) = visitor.factoryProperties.first(where: { $0.0.label == "rootFactory" }),
+                case .any(let typeDescription) = rootFactoryProperty.typeDescription,
+                case .simple(_, let generics) = typeDescription,
+                generics.count == 2
             {
                 // If the concrete type inherits from the Scope type,
                 // we infer the Arguments type from the first generic argument.
@@ -121,8 +124,8 @@ extension InjectableMacroProtocol {
                 argumentsType = "\(concreteDeclaration.name.trimmed)Arguments"
             } else {
                 // If there are no argument properties,
-                // we infer the Arguments type to be Void.
-                argumentsType = "Void"
+                // we infer the Arguments type to be Any.
+                argumentsType = "Any"
             }
 
             // Create the arguments type alias declaration:
@@ -191,9 +194,10 @@ extension InjectableMacroProtocol {
             let childDependenciesClassName = "\(concreteDeclaration.name.trimmed)ChildDependencies"
 
             // Create the stored property declaration:
+            let childDependenciesReferenceType = node.childDependenciesReferenceTypeArgument ?? .weak
             let propertyDeclaration = self.parentStoredPropertyDeclaration(
                 propertyLabel: "childDependencies",
-                storageStrategy: .weak,
+                storageStrategy: childDependenciesReferenceType == .weak ? .weak : .strong,
                 accessorLine: "return \(childDependenciesClassName)(parent: self)"
             )
             propertyDeclarations.append(propertyDeclaration)

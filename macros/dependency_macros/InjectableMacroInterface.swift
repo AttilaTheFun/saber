@@ -16,5 +16,6 @@ import DependencyMacrosTypes
 @attached(extension, conformances: Injectable)
 public macro Injectable(
     _ super: Any.Type? = nil,
-    dependencies: DependenciesReferenceType = .strong
+    dependencies: DependenciesReferenceType = .strong,
+    childDependencies: ChildDependenciesReferenceType = .weak
 ) = #externalMacro(module: "DependencyMacrosPlugin", type: "InjectableMacro")

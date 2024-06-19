@@ -3,9 +3,8 @@ import CameraFeatureInterface
 import UIKit
 import PhotosUI
 
-@Injectable(.viewController)
+@Injectable(UIViewController.self)
 public final class CameraViewController: UIViewController {
-    @Arguments var cameraArguments: CameraArguments
     private let imagePickerViewController = UIImagePickerController()
 
     public override func viewDidLoad() {

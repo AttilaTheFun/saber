@@ -6,16 +6,15 @@ import UserServiceInterface
 import UIKit
 import WindowServiceInterface
 
-@Injectable(.viewController)
+@Injectable(UIViewController.self)
 public final class ProfileViewController: UIViewController {
-    @Arguments private var profileArguments: ProfileArguments
     @Inject private var user: User
     @Inject private var userSession: UserSession
     @Inject private var userSessionService: any UserSessionService
     @Inject private var userSessionStorageService: any UserSessionStorageService
     @Inject private var userStorageService: any UserStorageService
     @Inject private var windowService: any WindowService
-    @Inject private var loggedOutViewControllerFactory: any Factory<LoggedOutArguments, UIViewController>
+    @Inject private var loggedOutViewControllerFactory: any Factory<LoggedOutViewControllerArguments, UIViewController>
 
     private let label = UILabel()
     private let labelContainerView = UIView()
@@ -108,7 +107,7 @@ public final class ProfileViewController: UIViewController {
         self.userSessionStorageService.userSession = nil
         let factory = self.loggedOutViewControllerFactory
         self.windowService.register {
-            let arguments = LoggedOutArguments()
+            let arguments = LoggedOutViewControllerArguments()
             return factory.build(arguments: arguments)
         }
     }

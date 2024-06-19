@@ -8,7 +8,7 @@ public protocol Factory<Arguments, Value> {
     func build(arguments: Arguments) -> Value
 }
 
-extension Factory where Arguments == Void {
+extension Factory where Arguments == Any {
     public func build() -> Value {
         return self.build(arguments: ())
     }

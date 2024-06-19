@@ -1,6 +1,6 @@
 import UserSessionServiceInterface
 
-public struct LoadingArguments {
+public struct LoadingViewControllerArguments {
     public let userSession: UserSession
 
     public init(userSession: UserSession) {

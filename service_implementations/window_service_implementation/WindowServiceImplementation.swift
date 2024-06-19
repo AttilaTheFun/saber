@@ -2,7 +2,7 @@ import DependencyMacros
 import UIKit
 import WindowServiceInterface
 
-@Injectable(.unowned)
+@Injectable(dependencies: .unowned)
 public final class WindowServiceImplementation: WindowService {
     private var rootViewControllerFactory: () -> UIViewController = {
         let storyboard = UIStoryboard(name: "LaunchScreen", bundle: nil)

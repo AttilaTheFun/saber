@@ -57,7 +57,7 @@ final class InjectableMacroTests: XCTestCase {
         assertMacroExpansion(
             """
             @Injectable
-            public final class FooScope: Scope<FooViewControllerArguments, UIViewController> {
+            public final class FooScope {
                 @Factory(FooViewController.self)
                 public var rootFactory: Factory<FooViewControllerArguments, UIViewController>
 
@@ -67,7 +67,7 @@ final class InjectableMacroTests: XCTestCase {
             """,
             expandedSource:
             """
-            public final class FooScope: Scope<FooViewControllerArguments, UIViewController> {
+            public final class FooScope {
                 public var rootFactory: Factory<FooViewControllerArguments, UIViewController> {
                     get {
                         let childDependencies = self._childDependenciesStore.value
@@ -86,7 +86,7 @@ final class InjectableMacroTests: XCTestCase {
                     }
                 }
 
-                public typealias Arguments = FooViewControllerArguments
+                public typealias Arguments = Any
 
                 public typealias Dependencies = FooScopeDependencies
 
@@ -160,7 +160,7 @@ final class InjectableMacroTests: XCTestCase {
                     }
                 }
 
-                public typealias Arguments = Void
+                public typealias Arguments = Any
 
                 public typealias Dependencies = FooObjectDependencies
 
@@ -240,7 +240,7 @@ final class InjectableMacroTests: XCTestCase {
                     }
                 }
 
-                public typealias Arguments = Void
+                public typealias Arguments = Any
 
                 public typealias Dependencies = FooObjectDependencies
 
@@ -310,7 +310,7 @@ final class InjectableMacroTests: XCTestCase {
             """
             public final class FooViewController: ParentViewController {
 
-                public typealias Arguments = Void
+                public typealias Arguments = Any
 
                 public typealias Dependencies = FooViewControllerDependencies
 
@@ -350,7 +350,7 @@ final class InjectableMacroTests: XCTestCase {
             """
             public final class FooView: ParentView {
 
-                public typealias Arguments = Void
+                public typealias Arguments = Any
 
                 public typealias Dependencies = FooViewDependencies
 
@@ -379,6 +379,72 @@ final class InjectableMacroTests: XCTestCase {
         )
     }
 
+    func testStrongChildDependencies() throws {
+        assertMacroExpansion(
+            """
+            @Injectable(childDependencies: .strong)
+            public final class RootScope {
+                @Store(FooServiceImplementation.self)
+                var fooService: FooService
+            }
+            """,
+            expandedSource:
+            """
+            public final class RootScope {
+                var fooService: FooService {
+                    get {
+                        return self._fooServiceStore.value
+                    }
+                }
+
+                public typealias Arguments = Any
+
+                public typealias Dependencies = RootScopeDependencies
+
+                private lazy var _fooServiceStore = StoreImplementation(
+                    backingStore: StrongBackingStoreImplementation(),
+                    function: { [unowned self] in
+                        return FooServiceImplementation(dependencies: self._childDependenciesStore.value)
+                    }
+                )
+
+                private lazy var _childDependenciesStore = StoreImplementation(
+                    backingStore: StrongBackingStoreImplementation(),
+                    function: { [unowned self] in
+                        return RootScopeChildDependencies(parent: self)
+                    }
+                )
+
+                private let _arguments: Arguments
+
+                private let _dependencies: any Dependencies
+
+                public init(arguments: Arguments, dependencies: Dependencies) {
+                    self._arguments = arguments
+                    self._dependencies = dependencies
+                }
+            }
+
+            public protocol RootScopeDependencies: AnyObject {
+            }
+
+            fileprivate class RootScopeChildDependencies: RootScope.Dependencies, FooServiceImplementation.UnownedDependencies {
+                private let _parent: RootScope
+                fileprivate var fooService: FooService {
+                    return self._parent.fooService
+                }
+                fileprivate init(parent: RootScope) {
+                    self._parent = parent
+                }
+            }
+
+            extension RootScope: Injectable {
+            }
+            """,
+            macros: self.macros
+        )
+    }
+
     func testUnownedDependencies() throws {
         assertMacroExpansion(
             """
@@ -390,7 +456,7 @@ final class InjectableMacroTests: XCTestCase {
             """
             public final class FooServiceImplementation {
 
-                public typealias Arguments = Void
+                public typealias Arguments = Any
 
                 public typealias UnownedDependencies = FooServiceImplementationUnownedDependencies
 
@@ -414,11 +480,11 @@ final class InjectableMacroTests: XCTestCase {
         )
     }
 
-    func testArgumentsTypeInferredFromScopeArguments() throws {
+    func testArgumentsTypeInferredFromScope() throws {
         assertMacroExpansion(
             """
             @Injectable
-            public final class FooScope: Scope<FooViewControllerArguments, UIViewController> {
+            public final class FooScope: Scope {
                 @Factory(FooViewController.self)
                 var rootFactory: any Factory<FooViewControllerArguments, UIViewController>
 
@@ -428,7 +494,7 @@ final class InjectableMacroTests: XCTestCase {
             """,
             expandedSource:
             """
-            public final class FooScope: Scope<FooViewControllerArguments, UIViewController> {
+            public final class FooScope: Scope {
                 var rootFactory: any Factory<FooViewControllerArguments, UIViewController> {
                     get {
                         let childDependencies = self._childDependenciesStore.value
@@ -490,7 +556,7 @@ final class InjectableMacroTests: XCTestCase {
         )
     }
 
-    func testArgumentsTypeInferredVoid() throws {
+    func testArgumentsTypeInferredAny() throws {
         assertMacroExpansion(
             """
             @Injectable
@@ -501,7 +567,7 @@ final class InjectableMacroTests: XCTestCase {
             """
             public final class Foo {
 
-                public typealias Arguments = Void
+                public typealias Arguments = Any
 
                 public typealias Dependencies = FooDependencies
 
@@ -546,7 +612,7 @@ final class InjectableMacroTests: XCTestCase {
                     print("hand written initializer")
                 }
 
-                public typealias Arguments = Void
+                public typealias Arguments = Any
 
                 public typealias Dependencies = FooDependencies
 
@@ -583,7 +649,7 @@ final class InjectableMacroTests: XCTestCase {
             public final class Foo {
                 public typealias Dependencies = FooSpecialDependencies
 
-                public typealias Arguments = Void
+                public typealias Arguments = Any
 
                 private let _arguments: Arguments
 

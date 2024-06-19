@@ -4,8 +4,7 @@ import MapFeatureImplementation
 import UIKit
 
 @Injectable
-public class MapScope {
-    @Arguments public var mapArguments: MapArguments
+public final class MapScope: Scope {
     @Factory(MapViewController.self)
-    public var mapViewControllerFactory: any Factory<MapArguments, UIViewController>
+    public var rootFactory: any Factory<MapViewController.Arguments, UIViewController>
 }

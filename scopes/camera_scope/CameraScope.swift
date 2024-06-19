@@ -4,8 +4,7 @@ import CameraFeatureImplementation
 import UIKit
 
 @Injectable
-public class CameraScope {
-    @Arguments public var cameraArguments: CameraArguments
+public final class CameraScope: Scope {
     @Factory(CameraViewController.self)
-    public var cameraViewControllerFactory: any Factory<CameraArguments, UIViewController>
+    public var rootFactory: any Factory<CameraViewController.Arguments, UIViewController>
 }

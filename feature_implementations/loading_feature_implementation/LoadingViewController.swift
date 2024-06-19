@@ -8,15 +8,15 @@ import UserSessionServiceInterface
 import UIKit
 import WindowServiceInterface
 
-@Injectable(.viewController)
+@Injectable(UIViewController.self)
 public final class LoadingViewController: UIViewController {
-    @Arguments private var loadingArguments: LoadingArguments
+    @Argument private var userSession: UserSession
     @Inject private var userSessionStorageService: any UserSessionStorageService
     @Inject private var userService: any UserService
     @Inject private var userStorageService: any UserStorageService
     @Inject private var windowService: any WindowService
-    @Inject private var loggedOutViewControllerFactory: any Factory<LoggedOutArguments, UIViewController>
-    @Inject private var loggedInTabBarControllerFactory: any Factory<LoggedInArguments, UIViewController>
+    @Inject private var loggedOutViewControllerFactory: any Factory<LoggedOutViewControllerArguments, UIViewController>
+    @Inject private var loggedInTabBarControllerFactory: any Factory<LoggedInTabBarControllerArguments, UIViewController>
 
     // MARK: View Lifecycle
 
@@ -34,7 +34,7 @@ public final class LoadingViewController: UIViewController {
         Task.detached {
             do {
                 let user = try await self.userService.getCurrentUser()
-                await self.buildLoggedInFeature(userSession: self.loadingArguments.userSession, user: user)
+                await self.buildLoggedInFeature(userSession: self.userSession, user: user)
             } catch {
                 print(error)
                 await self.buildLoggedOutFeature()
@@ -49,7 +49,7 @@ public final class LoadingViewController: UIViewController {
         self.userStorageService.user = user
         let factory = self.loggedInTabBarControllerFactory
         self.windowService.register {
-            let arguments = LoggedInArguments(userSession: userSession, user: user)
+            let arguments = LoggedInTabBarControllerArguments(userSession: userSession, user: user)
             return factory.build(arguments: arguments)
         }
     }
@@ -59,7 +59,7 @@ public final class LoadingViewController: UIViewController {
         self.userSessionStorageService.userSession = nil
         let factory = self.loggedOutViewControllerFactory
         self.windowService.register {
-            let arguments = LoggedOutArguments()
+            let arguments = LoggedOutViewControllerArguments()
             return factory.build(arguments: arguments)
         }
     }

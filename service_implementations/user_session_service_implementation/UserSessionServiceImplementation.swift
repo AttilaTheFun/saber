@@ -7,7 +7,7 @@ private let userSessionIDsToUserSessionsKey = "UserSessionIDsToUserSessions"
 private let userIDsToUsersKey = "UserIDsToUsers"
 private let usernamesToUsersKey = "UsernamesToUsers"
 
-@Injectable(.unowned)
+@Injectable(dependencies: .unowned)
 public final class UserSessionServiceImplementation: UserSessionService {
     private var userSessionIDsToUserSessions: [UUID : UserSession] {
         get {

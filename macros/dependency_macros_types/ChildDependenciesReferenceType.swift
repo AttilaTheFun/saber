@@ -5,6 +5,6 @@ public enum ChildDependenciesReferenceType: String {
     case weak
 
     /// The child will create an strong reference its child dependencies.
-    /// This is useful for the root scope which exists before the first UIKit object which would retain it.
+    /// This is useful for the root scope which does not have an object to retain the child dependencies.
     case strong
 }

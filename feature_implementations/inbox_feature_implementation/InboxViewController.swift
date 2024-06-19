@@ -3,9 +3,8 @@ import InboxFeatureInterface
 import InboxServiceInterface
 import UIKit
 
-@Injectable(.viewController)
+@Injectable(UIViewController.self)
 public final class InboxViewController: UIViewController {
-    @Arguments var inboxArguments: InboxArguments
     @Inject var inboxService: any InboxService
 
     public override func viewDidLoad() {

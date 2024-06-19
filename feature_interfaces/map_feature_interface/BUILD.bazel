@@ -2,7 +2,7 @@ load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 swift_library(
     name = "map_feature_interface",
-    srcs = ["MapArguments.swift"],
+    srcs = ["MapViewControllerArguments.swift"],
     module_name = "MapFeatureInterface",
     visibility = ["//visibility:public"],
 )

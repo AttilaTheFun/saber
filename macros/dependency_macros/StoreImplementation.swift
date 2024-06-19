@@ -2,24 +2,24 @@ import Foundation
 
 fileprivate typealias Lock = NSLock
 
-public protocol BackingStore<Building>: AnyObject {
-    associatedtype Building
+public protocol BackingStore<Value>: AnyObject {
+    associatedtype Value
 
-    var building: Building? { get set }
+    var value: Value? { get set }
 }
 
-public final class StrongBackingStoreImplementation<Building>: BackingStore {
-    public var building: Building?
+public final class StrongBackingStoreImplementation<Value>: BackingStore {
+    public var value: Value?
     public init() {}
 }
 
-public final class WeakBackingStoreImplementation<Building: AnyObject>: BackingStore {
-    public weak var building: Building?
+public final class WeakBackingStoreImplementation<Value: AnyObject>: BackingStore {
+    public weak var value: Value?
     public init() {}
 }
 
-public final class ComputedBackingStoreImplementation<Building: AnyObject>: BackingStore {
-    public var building: Building? {
+public final class ComputedBackingStoreImplementation<Value: AnyObject>: BackingStore {
+    public var value: Value? {
         get { return nil }
         set {}
     }
@@ -27,30 +27,30 @@ public final class ComputedBackingStoreImplementation<Building: AnyObject>: Back
     public init() {}
 }
 
-public final class StoreImplementation<Building>: Store {
-    private let backingStore: any BackingStore<Building>
+public final class StoreImplementation<Value>: Store {
+    private let backingStore: any BackingStore<Value>
     private let lock = Lock()
-    private let function: () -> Building
+    private let function: () -> Value
 
     public init(
-        backingStore: any BackingStore<Building>,
-        function: @escaping () -> Building
+        backingStore: any BackingStore<Value>,
+        function: @escaping () -> Value
     ) {
         self.backingStore = backingStore
         self.function = function
     }
 
-    public var building: Building {
-        if let building = self.backingStore.building {
-            return building
+    public var value: Value {
+        if let value = self.backingStore.value {
+            return value
         }
         self.lock.lock()
         defer { self.lock.unlock() }
-        if let building = self.backingStore.building {
-            return building
+        if let value = self.backingStore.value {
+            return value
         }
-        let building = self.function()
-        self.backingStore.building = building
-        return building
+        let value = self.function()
+        self.backingStore.value = value
+        return value
     }
 }

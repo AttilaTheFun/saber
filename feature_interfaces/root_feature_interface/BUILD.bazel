@@ -2,7 +2,7 @@ load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 swift_library(
     name = "root_feature_interface",
-    srcs = ["RootFeature.swift"],
+    srcs = ["RootArguments.swift"],
     module_name = "RootFeatureInterface",
     visibility = ["//visibility:public"],
 )

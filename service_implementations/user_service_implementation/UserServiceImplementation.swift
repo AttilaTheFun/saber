@@ -5,7 +5,7 @@ import UserSessionServiceInterface
 
 private let userIDsToUsersKey = "UserIDsToUsers"
 
-@Injectable(.unowned)
+@Injectable(dependencies: .unowned)
 public final class UserServiceImplementation: UserService {
     @Inject private var userSession: UserSession
 

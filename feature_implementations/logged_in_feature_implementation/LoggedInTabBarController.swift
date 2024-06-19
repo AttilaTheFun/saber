@@ -8,30 +8,36 @@ import UserServiceInterface
 import UIKit
 import WindowServiceInterface
 
-@Injectable(.viewController)
+@Injectable(UIViewController.self)
 public final class LoggedInTabBarController: UITabBarController {
-    @Arguments private var loggedInArguments: LoggedInArguments
-    @Inject public var inboxViewControllerFactory: any Factory<InboxArguments, UIViewController>
-    @Inject public var cameraViewControllerFactory: any Factory<CameraArguments, UIViewController>
-    @Inject public var mapViewControllerFactory: any Factory<MapArguments, UIViewController>
+    @Inject public var inboxViewControllerFactory: any Factory<InboxViewControllerArguments, UIViewController>
+    @Inject public var cameraViewControllerFactory: any Factory<CameraViewControllerArguments, UIViewController>
+    @Inject public var mapViewControllerFactory: any Factory<MapViewControllerArguments, UIViewController>
 
-    public override func viewDidLoad() {
-        super.viewDidLoad()
+    public init(arguments: Arguments, dependencies: any Dependencies) {
+        self._arguments = arguments
+        self._dependencies = dependencies
+        super.init(nibName: nil, bundle: nil)
 
         // Configure the tab bar appearance:
         self.configureTabBarAppearance()
 
-        // TODO: Move this setup to custom init.
+        // Create the initial view controllers:
         let viewControllers = [
-            self.inboxViewControllerFactory.build(arguments: InboxArguments()),
-            self.cameraViewControllerFactory.build(arguments: CameraArguments()),
-            self.mapViewControllerFactory.build(arguments: MapArguments()),
+            self.inboxViewControllerFactory.build(arguments: InboxViewControllerArguments()),
+            self.cameraViewControllerFactory.build(arguments: CameraViewControllerArguments()),
+            self.mapViewControllerFactory.build(arguments: MapViewControllerArguments()),
         ]
 
+        // Set the initial view controllers:
         self.viewControllers = viewControllers.map { UINavigationController(rootViewController: $0) }
         self.selectedIndex = 1
     }
-
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     private func configureTabBarAppearance() {
         let appearance = UITabBarAppearance()
         appearance.configureWithDefaultBackground()

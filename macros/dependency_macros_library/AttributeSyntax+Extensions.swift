@@ -53,6 +53,11 @@ extension AttributeSyntax {
         return DependenciesReferenceType(rawValue: rawValue ?? "")
     }
 
+    public var childDependenciesReferenceTypeArgument: ChildDependenciesReferenceType? {
+        let rawValue = self.memberAccessBaseNameIfNameEquals("childDependencies")
+        return ChildDependenciesReferenceType(rawValue: rawValue ?? "")
+    }
+
     public var initializationStrategyArgument: InitializationStrategy? {
         let rawValue = self.memberAccessBaseNameIfNameEquals("init")
         return InitializationStrategy(rawValue: rawValue ?? "")

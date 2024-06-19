@@ -6,8 +6,8 @@ public protocol Injectable<Arguments, Dependencies> {
     init(arguments: Arguments, dependencies: Dependencies)
 }
 
-extension Injectable where Arguments == Void {
-    init(dependencies: Dependencies) {
+extension Injectable where Arguments == Any {
+    public init(dependencies: Dependencies) {
         self.init(arguments: (), dependencies: dependencies)
     }
 }

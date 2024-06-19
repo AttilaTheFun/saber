@@ -3,5 +3,5 @@
 public protocol Scope<Arguments, Value> {
     associatedtype Arguments
     associatedtype Value
-    var rootFactory: Factory<Arguments, Value> { get }
+    var rootFactory: any Factory<Arguments, Value> { get }
 }

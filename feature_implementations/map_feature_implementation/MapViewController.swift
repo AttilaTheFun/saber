@@ -3,9 +3,8 @@ import MapFeatureInterface
 import MapKit
 import UIKit
 
-@Injectable(.viewController)
+@Injectable(UIViewController.self)
 public final class MapViewController: UIViewController {
-    @Arguments var mapArguments: MapArguments
     private let mapView = MKMapView()
 
     public override func viewDidLoad() {

@@ -15,9 +15,9 @@ import UIKit
 import WindowServiceInterface
 import WindowServiceImplementation
 
-@Injectable(.root)
+@Injectable(childDependencies: .strong)
 public final class RootScope {
-    @Arguments public var rootArguments: RootArguments
+    public typealias Arguments = RootArguments
 
     @Store(UserSessionStorageServiceImplementation.self)
     public var userSessionStorageService: any UserSessionStorageService
@@ -31,12 +31,14 @@ public final class RootScope {
     @Store(RootViewControllerInitializationServiceImplementation.self)
     public var rootViewControllerInitializationService: any RootViewControllerInitializationService
 
-    @Factory(LoggedOutScope.self, factory: \.loggedOutViewControllerFactory)
-    public var loggedOutViewControllerFactory: any Factory<LoggedOutArguments, UIViewController>
+    @Factory(LoggedOutScope.self, factory: \.rootFactory)
+    public var loggedOutViewControllerFactory: any Factory<LoggedOutViewControllerArguments, UIViewController>
 
-    @Factory(LoadingScope.self, factory: \.loadingViewControllerFactory)
-    public var loadingViewControllerFactory: any Factory<LoadingArguments, UIViewController>
+    @Factory(LoadingScope.self, factory: \.rootFactory)
+    public var loadingViewControllerFactory: any Factory<LoadingViewControllerArguments, UIViewController>
 
-    @Factory(LoggedInScope.self, factory: \.loggedInTabBarControllerFactory)
-    public var loggedInTabBarControllerFactory: any Factory<LoggedInArguments, UIViewController>
+    @Factory(LoggedInScope.self, factory: \.rootFactory)
+    public var loggedInTabBarControllerFactory: any Factory<LoggedInTabBarControllerArguments, UIViewController>
+
+    @Argument public var endpointURL: URL
 }

@@ -4,7 +4,7 @@ import UserServiceInterface
 
 private let userKey = "User"
 
-@Injectable(.unowned)
+@Injectable(dependencies: .unowned)
 public final class UserStorageServiceImplementation: UserStorageService {
     public var user: User? {
         get {
