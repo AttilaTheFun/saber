@@ -126,19 +126,23 @@ extension InjectableMacroProtocol {
             }
 
             // Create the arguments type alias declaration:
+            let accessLevel = concreteDeclaration.modifiers.accessLevel.rawValue
             let argumentsTypeAliasDeclaration: DeclSyntax =
             """
-            \(raw: concreteDeclaration.modifiers.accessLevel.rawValue) typealias Arguments = \(raw: argumentsType)
+            \(raw: accessLevel) typealias Arguments = \(raw: argumentsType)
             """
             typeAliasDeclarations.append(argumentsTypeAliasDeclaration)
         }
 
         // If there is not a handwritten dependencies type alias declaration, we need to create one:
         if visitor.dependenciesTypeAliasDeclaration == nil {
-            let dependenciesType = "\(concreteDeclaration.name.trimmed)Dependencies"
+            let dependenciesSuffix = (node.dependenciesReferenceTypeArgument ?? .strong) == .unowned ?
+                "UnownedDependencies" : "Dependencies"
+            let dependenciesProtocolName = concreteDeclaration.name.trimmed.text + dependenciesSuffix
+            let accessLevel = concreteDeclaration.modifiers.accessLevel.rawValue
             let dependenciesTypeAliasDeclaration: DeclSyntax =
             """
-            \(raw: concreteDeclaration.modifiers.accessLevel.rawValue) typealias Dependencies = \(raw: dependenciesType)
+            \(raw: accessLevel) typealias \(raw: dependenciesSuffix) = \(raw: dependenciesProtocolName)
             """
             typeAliasDeclarations.append(dependenciesTypeAliasDeclaration)
         }
@@ -204,10 +208,11 @@ extension InjectableMacroProtocol {
 
         // Create the dependencies stored property declaration:
         let dependenciesReferenceType = node.dependenciesReferenceTypeArgument ?? .strong
+        let dependenciesSuffix = dependenciesReferenceType == .unowned ? "UnownedDependencies" : "Dependencies"
         let bindingModifier = dependenciesReferenceType == .unowned ? "unowned " : ""
         let dependenciesPropertyDeclaration: DeclSyntax =
         """
-        private \(raw: bindingModifier)let _dependencies: any Dependencies
+        private \(raw: bindingModifier)let _dependencies: any \(raw: dependenciesSuffix)
         """
         propertyDeclarations.append(dependenciesPropertyDeclaration)
 
@@ -298,10 +303,12 @@ extension InjectableMacroProtocol {
         }
 
         // Create the initializer:
+        let dependenciesSuffix = (node.dependenciesReferenceTypeArgument ?? .strong) == .unowned ?
+            "UnownedDependencies" : "Dependencies"
         let accessLevel = concreteDeclaration.modifiers.accessLevel.rawValue
         let initializerDeclaration: DeclSyntax =
         """
-        \(raw: accessLevel) init(arguments: Arguments, dependencies: Dependencies) {
+        \(raw: accessLevel) init(arguments: Arguments, dependencies: \(raw: dependenciesSuffix)) {
         \(raw: initializerLines.joined(separator: "\n"))
         }
         """
@@ -324,10 +331,12 @@ extension InjectableMacroProtocol {
         // Create the protocol declarations:
         let declarations: [DeclSyntax?] = [
             try self.dependenciesProtocolDeclaration(
+                node: node,
                 visitor: visitor,
                 declaration: declaration
             ),
             try self.childDependenciesClassDeclaration(
+                node: node,
                 visitor: visitor,
                 declaration: declaration
             )
@@ -337,6 +346,7 @@ extension InjectableMacroProtocol {
     }
 
     private static func dependenciesProtocolDeclaration(
+        node: AttributeSyntax,
         visitor: InjectableVisitor,
         declaration: some DeclSyntaxProtocol
     ) throws -> DeclSyntax? {
@@ -359,7 +369,9 @@ extension InjectableMacroProtocol {
 
         // Create the child dependencies protocol declaration:
         let accessLevel = concreteDeclaration.modifiers.accessLevel.rawValue
-        let dependenciesProtocolName = "\(concreteDeclaration.name.trimmed)Dependencies"
+        let dependenciesSuffix = (node.dependenciesReferenceTypeArgument ?? .strong) == .unowned ?
+            "UnownedDependencies" : "Dependencies"
+        let dependenciesProtocolName = concreteDeclaration.name.trimmed.text + dependenciesSuffix
         let dependenciesProtocolDeclaration: DeclSyntax =
         """
         \(raw: accessLevel) protocol \(raw: dependenciesProtocolName): AnyObject {\(raw: protocolBody)}
@@ -369,6 +381,7 @@ extension InjectableMacroProtocol {
     }
 
     private static func childDependenciesClassDeclaration(
+        node: AttributeSyntax,
         visitor: InjectableVisitor,
         declaration: some DeclSyntaxProtocol
     ) throws -> DeclSyntax? {
@@ -382,20 +395,32 @@ extension InjectableMacroProtocol {
         }
 
         // Extract the concrete type descriptions from the @Store and @Factory arguments:
-        var concreteTypeDescriptions = [TypeDescription]()
-        for (_, attributeSyntax) in visitor.childDependencyProperties {
+        var childDependenciesProtocolNames = [String]()
+        for (_, attributeSyntax) in visitor.factoryProperties {
             guard let concreteTypeDescription = attributeSyntax.concreteTypeArgument else {
                 throw InjectableMacroProtocolError.invalidMacroArguments
             }
 
-            concreteTypeDescriptions.append(concreteTypeDescription)
+            let childDependenciesSuffix = "Dependencies"
+            let childDependenciesProtocolName = concreteTypeDescription.asSource + "." + childDependenciesSuffix
+            childDependenciesProtocolNames.append(childDependenciesProtocolName)
+        }
+        for (_, attributeSyntax) in visitor.storeProperties {
+            guard let concreteTypeDescription = attributeSyntax.concreteTypeArgument else {
+                throw InjectableMacroProtocolError.invalidMacroArguments
+            }
+
+            let storageStrategyArgument = attributeSyntax.storageStrategyArgument ?? .strong
+            let childDependenciesSuffix = storageStrategyArgument == .strong ?
+                "UnownedDependencies" : "Dependencies"
+            let childDependenciesProtocolName = concreteTypeDescription.asSource + "." + childDependenciesSuffix
+            childDependenciesProtocolNames.append(childDependenciesProtocolName)
         }
 
         // Create the inheritance clause:
-        let dependenciesProtocolName = "\(concreteDeclaration.name.trimmed)Dependencies"
-        let childDependenciesProtocolNames = concreteTypeDescriptions
-            .map { $0.asSource + "Dependencies" }
-            .sorted()
+        let dependenciesSuffix = (node.dependenciesReferenceTypeArgument ?? .strong) == .unowned ?
+            "UnownedDependencies" : "Dependencies"
+        let dependenciesProtocolName = concreteDeclaration.name.trimmed.text + "." + dependenciesSuffix
         let allProtocolNames = [dependenciesProtocolName] + childDependenciesProtocolNames
         let inheritedTypes = allProtocolNames.enumerated().map { index, protocolName in
             let trailingComma: TokenSyntax? = index < (allProtocolNames.endIndex - 1) ?

@@ -12,6 +12,125 @@ final class InjectableMacroTests: XCTestCase {
         "Store": StoreMacro.self,
     ]
 
+    func testArgument() throws {
+        assertMacroExpansion(
+            """
+            @Injectable
+            public final class Foo {
+                @Argument var user: User
+            }
+            """,
+            expandedSource:
+            """
+            public final class Foo {
+                var user: User {
+                    get {
+                        return self._arguments.user
+                    }
+                }
+
+                public typealias Arguments = FooArguments
+
+                public typealias Dependencies = FooDependencies
+
+                private let _arguments: Arguments
+
+                private let _dependencies: any Dependencies
+
+                public init(arguments: Arguments, dependencies: Dependencies) {
+                    self._arguments = arguments
+                    self._dependencies = dependencies
+                }
+            }
+
+            public protocol FooDependencies: AnyObject {
+            }
+
+            extension Foo: Injectable {
+            }
+            """,
+            macros: self.macros
+        )
+    }
+
+    func testFactory() throws {
+        assertMacroExpansion(
+            """
+            @Injectable
+            public final class FooScope: Scope<FooViewControllerArguments, UIViewController> {
+                @Factory(FooViewController.self)
+                public var rootFactory: Factory<FooViewControllerArguments, UIViewController>
+
+                @Factory(BarScope.self, factory: \\.rootFactory)
+                public var barViewControllerFactory: Factory<BarViewControllerArguments, UIViewController>
+            }
+            """,
+            expandedSource:
+            """
+            public final class FooScope: Scope<FooViewControllerArguments, UIViewController> {
+                public var rootFactory: Factory<FooViewControllerArguments, UIViewController> {
+                    get {
+                        let childDependencies = self._childDependenciesStore.value
+                        return FactoryImplementation { [childDependencies] arguments in
+                            FooViewController(arguments: arguments, dependencies: childDependencies)
+                        }
+                    }
+                }
+                public var barViewControllerFactory: Factory<BarViewControllerArguments, UIViewController> {
+                    get {
+                        let childDependencies = self._childDependenciesStore.value
+                        return FactoryImplementation { [childDependencies] arguments in
+                            let concrete = BarScope(arguments: arguments, dependencies: childDependencies)
+                            return concrete.rootFactory.build(arguments: arguments)
+                        }
+                    }
+                }
+
+                public typealias Arguments = FooViewControllerArguments
+
+                public typealias Dependencies = FooScopeDependencies
+
+                private lazy var _childDependenciesStore = StoreImplementation(
+                    backingStore: WeakBackingStoreImplementation(),
+                    function: { [unowned self] in
+                        return FooScopeChildDependencies(parent: self)
+                    }
+                )
+
+                private let _arguments: Arguments
+
+                private let _dependencies: any Dependencies
+
+                public init(arguments: Arguments, dependencies: Dependencies) {
+                    self._arguments = arguments
+                    self._dependencies = dependencies
+                }
+            }
+
+            public protocol FooScopeDependencies: AnyObject {
+            }
+
+            fileprivate class FooScopeChildDependencies: FooScope.Dependencies, FooViewController.Dependencies, BarScope.Dependencies {
+                private let _parent: FooScope
+                fileprivate var rootFactory: Factory<FooViewControllerArguments, UIViewController> {
+                    return self._parent.rootFactory
+                }
+                fileprivate var barViewControllerFactory: Factory<BarViewControllerArguments, UIViewController> {
+                    return self._parent.barViewControllerFactory
+                }
+                fileprivate init(parent: FooScope) {
+                    self._parent = parent
+                }
+            }
+
+            extension FooScope: Injectable {
+            }
+            """,
+            macros: self.macros
+        )
+    }
+
+
     func testInject() throws {
         assertMacroExpansion(
             """
@@ -95,83 +214,6 @@ final class InjectableMacroTests: XCTestCase {
         )
     }
 
-    func testFactory() throws {
-        assertMacroExpansion(
-            """
-            @Injectable
-            public final class FooScope: Scope<FooViewControllerArguments, UIViewController> {
-                @Factory(FooViewController.self)
-                public var rootFactory: Factory<FooViewControllerArguments, UIViewController>
-
-                @Factory(BarScope.self, factory: \\.rootFactory)
-                public var barViewControllerFactory: Factory<BarViewControllerArguments, UIViewController>
-            }
-            """,
-            expandedSource:
-            """
-            public final class FooScope: Scope<FooViewControllerArguments, UIViewController> {
-                public var rootFactory: Factory<FooViewControllerArguments, UIViewController> {
-                    get {
-                        let childDependencies = self._childDependenciesStore.value
-                        return FactoryImplementation { [childDependencies] arguments in
-                            FooViewController(arguments: arguments, dependencies: childDependencies)
-                        }
-                    }
-                }
-                public var barViewControllerFactory: Factory<BarViewControllerArguments, UIViewController> {
-                    get {
-                        let childDependencies = self._childDependenciesStore.value
-                        return FactoryImplementation { [childDependencies] arguments in
-                            let concrete = BarScope(arguments: arguments, dependencies: childDependencies)
-                            return concrete.rootFactory.build(arguments: arguments)
-                        }
-                    }
-                }
-
-                public typealias Arguments = FooViewControllerArguments
-
-                public typealias Dependencies = FooScopeDependencies
-
-                private lazy var _childDependenciesStore = StoreImplementation(
-                    backingStore: WeakBackingStoreImplementation(),
-                    function: { [unowned self] in
-                        return FooScopeChildDependencies(parent: self)
-                    }
-                )
-
-                private let _arguments: Arguments
-
-                private let _dependencies: any Dependencies
-
-                public init(arguments: Arguments, dependencies: Dependencies) {
-                    self._arguments = arguments
-                    self._dependencies = dependencies
-                }
-            }
-
-            public protocol FooScopeDependencies: AnyObject {
-            }
-
-            fileprivate class FooScopeChildDependencies: FooScopeDependencies, BarScopeDependencies, FooViewControllerDependencies {
-                private let _parent: FooScope
-                fileprivate var rootFactory: Factory<FooViewControllerArguments, UIViewController> {
-                    return self._parent.rootFactory
-                }
-                fileprivate var barViewControllerFactory: Factory<BarViewControllerArguments, UIViewController> {
-                    return self._parent.barViewControllerFactory
-                }
-                fileprivate init(parent: FooScope) {
-                    self._parent = parent
-                }
-            }
-
-            extension FooScope: Injectable {
-            }
-            """,
-            macros: self.macros
-        )
-    }
-
     func testStore() throws {
         assertMacroExpansion(
             """
@@ -237,7 +279,7 @@ final class InjectableMacroTests: XCTestCase {
             public protocol FooObjectDependencies: AnyObject {
             }
 
-            fileprivate class FooObjectChildDependencies: FooObjectDependencies, BarServiceImplementationDependencies, FooServiceImplementationDependencies {
+            fileprivate class FooObjectChildDependencies: FooObject.Dependencies, FooServiceImplementation.UnownedDependencies, BarServiceImplementation.Dependencies {
                 private let _parent: FooObject
                 fileprivate var fooService: FooService {
                     return self._parent.fooService
@@ -350,19 +392,19 @@ final class InjectableMacroTests: XCTestCase {
 
                 public typealias Arguments = Void
 
-                public typealias Dependencies = FooServiceImplementationDependencies
+                public typealias UnownedDependencies = FooServiceImplementationUnownedDependencies
 
                 private let _arguments: Arguments
 
-                private unowned let _dependencies: any Dependencies
+                private unowned let _dependencies: any UnownedDependencies
 
-                public init(arguments: Arguments, dependencies: Dependencies) {
+                public init(arguments: Arguments, dependencies: UnownedDependencies) {
                     self._arguments = arguments
                     self._dependencies = dependencies
                 }
             }
 
-            public protocol FooServiceImplementationDependencies: AnyObject {
+            public protocol FooServiceImplementationUnownedDependencies: AnyObject {
             }
 
             extension FooServiceImplementation: Injectable {
@@ -428,7 +470,7 @@ final class InjectableMacroTests: XCTestCase {
             public protocol FooScopeDependencies: AnyObject {
             }
 
-            fileprivate class FooScopeChildDependencies: FooScopeDependencies, FooDetailsViewControllerDependencies, FooViewControllerDependencies {
+            fileprivate class FooScopeChildDependencies: FooScope.Dependencies, FooViewController.Dependencies, FooDetailsViewController.Dependencies {
                 private let _parent: FooScope
                 fileprivate var rootFactory: any Factory<FooViewControllerArguments, UIViewController> {
                     return self._parent.rootFactory
@@ -442,47 +484,6 @@ final class InjectableMacroTests: XCTestCase {
             }
 
             extension FooScope: Injectable {
-            }
-            """,
-            macros: self.macros
-        )
-    }
-
-    func testArgumentsTypeInferredFromConcreteTypeName() throws {
-        assertMacroExpansion(
-            """
-            @Injectable
-            public final class Foo {
-                @Argument var user: User
-            }
-            """,
-            expandedSource:
-            """
-            public final class Foo {
-                var user: User {
-                    get {
-                        return self._arguments.user
-                    }
-                }
-
-                public typealias Arguments = FooArguments
-
-                public typealias Dependencies = FooDependencies
-
-                private let _arguments: Arguments
-
-                private let _dependencies: any Dependencies
-
-                public init(arguments: Arguments, dependencies: Dependencies) {
-                    self._arguments = arguments
-                    self._dependencies = dependencies
-                }
-            }
-
-            public protocol FooDependencies: AnyObject {
-            }
-
-            extension Foo: Injectable {
             }
             """,
             macros: self.macros

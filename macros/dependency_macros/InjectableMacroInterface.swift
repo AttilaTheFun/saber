@@ -12,7 +12,7 @@ import DependencyMacrosTypes
 /// - @Inject
 /// - @Store
 @attached(member, names: arbitrary)
-@attached(peer, names: suffixed(Dependencies), suffixed(ChildDependencies))
+@attached(peer, names: suffixed(Dependencies), suffixed(UnownedDependencies), suffixed(ChildDependencies))
 @attached(extension, conformances: Injectable)
 public macro Injectable(
     _ super: Any.Type? = nil,
