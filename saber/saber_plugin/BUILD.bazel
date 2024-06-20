@@ -1,4 +1,8 @@
-load("@build_bazel_rules_swift//swift:swift_compiler_plugin.bzl", "swift_compiler_plugin")
+load(
+    "@build_bazel_rules_swift//swift:swift_compiler_plugin.bzl",
+    "swift_compiler_plugin",
+    "universal_swift_compiler_plugin",
+)
 
 package(default_visibility = ["//visibility:public"])
 
@@ -21,4 +25,9 @@ swift_compiler_plugin(
         "@swiftpkg_swift_syntax//:SwiftSyntaxBuilder",
         "@swiftpkg_swift_syntax//:SwiftSyntaxMacros",
     ],
+)
+
+universal_swift_compiler_plugin(
+    name = "universal_saber_plugin",
+    plugin = ":saber_plugin",
 )

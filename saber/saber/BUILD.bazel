@@ -1,6 +1,19 @@
+load("@bazel_skylib//rules:common_settings.bzl", "bool_flag")
 load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 package(default_visibility = ["//visibility:public"])
+
+bool_flag(
+    name = "universal_saber_plugin",
+    build_setting_default = False,
+)
+
+config_setting(
+    name = "universal_saber_plugin_enabled",
+    flag_values = {
+        ":universal_saber_plugin": "true",
+    },
+)
 
 swift_library(
     name = "saber",
@@ -18,7 +31,10 @@ swift_library(
         "StoreMacroInterface.swift",
     ],
     module_name = "Saber",
-    plugins = ["//saber/saber_plugin"],
+    plugins = select({
+        ":universal_saber_plugin_enabled": ["//saber/saber_plugin:universal_saber_plugin"],
+        "//conditions:default": ["//saber/saber_plugin"],
+    }),
     visibility = ["//visibility:public"],
     deps = ["//saber/saber_types"],
 )
