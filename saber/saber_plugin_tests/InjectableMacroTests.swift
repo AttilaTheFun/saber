@@ -512,6 +512,8 @@ final class InjectableMacroTests: XCTestCase {
                     }
                 }
 
+                public typealias Value = UIViewController
+
                 public typealias Arguments = FooViewControllerArguments
 
                 public typealias Dependencies = FooScopeDependencies

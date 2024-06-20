@@ -103,6 +103,24 @@ extension InjectableMacroProtocol {
 
         var typeAliasDeclarations = [DeclSyntax]()
 
+        // TODO: Once the minimum Swift version is >= 5.10, we can delete this.
+        // Earlier versions of Swift were unable to infer the Scope's Value type from the Factory's Value type.
+        if
+            concreteDeclaration.inheritanceClause?.scopeTypeDescription != nil,
+            let (rootFactoryProperty, _) = visitor.factoryProperties.first(where: { $0.0.label == "rootFactory" }),
+            case .any(let typeDescription) = rootFactoryProperty.typeDescription,
+            case .simple(_, let generics) = typeDescription
+        {
+            // Create the value type alias declaration:
+            let valueType = generics[1].asSource
+            let accessLevel = concreteDeclaration.modifiers.accessLevel.rawValue
+            let valueTypeAliasDeclaration: DeclSyntax =
+            """
+            \(raw: accessLevel) typealias Value = \(raw: valueType)
+            """
+            typeAliasDeclarations.append(valueTypeAliasDeclaration)
+        }
+
         // If there is not a handwritten arguments type alias declaration, we need to create one:
         if visitor.argumentsTypeAliasDeclaration == nil {
 
@@ -112,8 +130,7 @@ extension InjectableMacroProtocol {
                 concreteDeclaration.inheritanceClause?.scopeTypeDescription != nil,
                 let (rootFactoryProperty, _) = visitor.factoryProperties.first(where: { $0.0.label == "rootFactory" }),
                 case .any(let typeDescription) = rootFactoryProperty.typeDescription,
-                case .simple(_, let generics) = typeDescription,
-                generics.count == 2
+                case .simple(_, let generics) = typeDescription
             {
                 // If the concrete type inherits from the Scope type,
                 // we infer the Arguments type from the first generic argument.
