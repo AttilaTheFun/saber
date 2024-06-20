@@ -9,7 +9,7 @@ import UIKit
 public final class InboxScope: Scope {
 
     @Factory(InboxViewController.self)
-    public var rootFactory: any Factory<InboxViewController.Arguments, UIViewController>
+    public var rootFactory: any Factory<InboxViewControllerArguments, UIViewController>
 
     @Store(InboxServiceImplementation.self) public var inboxService: any InboxService
 }

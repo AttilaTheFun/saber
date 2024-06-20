@@ -6,5 +6,5 @@ import UIKit
 @Injectable
 public final class MapScope: Scope {
     @Factory(MapViewController.self)
-    public var rootFactory: any Factory<MapViewController.Arguments, UIViewController>
+    public var rootFactory: any Factory<MapViewControllerArguments, UIViewController>
 }
