@@ -1,0 +1,18 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "logged_in_feature_implementation",
+    srcs = ["LoggedInTabBarController.swift"],
+    module_name = "LoggedInFeatureImplementation",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//examples/feature_interfaces/camera_feature_interface",
+        "//examples/feature_interfaces/inbox_feature_interface",
+        "//examples/feature_interfaces/logged_in_feature_interface",
+        "//examples/feature_interfaces/map_feature_interface",
+        "//examples/service_interfaces/user_service_interface",
+        "//examples/service_interfaces/user_session_service_interface",
+        "//examples/service_interfaces/window_service_interface",
+        "//saber/saber",
+    ],
+)

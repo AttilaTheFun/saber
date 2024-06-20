@@ -1,0 +1,12 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "window_service_implementation",
+    srcs = ["WindowServiceImplementation.swift"],
+    module_name = "WindowServiceImplementation",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//examples/service_interfaces/window_service_interface",
+        "//saber/saber",
+    ],
+)

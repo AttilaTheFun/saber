@@ -1,0 +1,13 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "map_scope",
+    srcs = ["MapScope.swift"],
+    module_name = "MapScope",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//examples/feature_implementations/map_feature_implementation",
+        "//examples/feature_interfaces/map_feature_interface",
+        "//saber/saber",
+    ],
+)

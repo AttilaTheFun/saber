@@ -1,0 +1,12 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "inbox_service_implementation",
+    srcs = ["InboxServiceImplementation.swift"],
+    module_name = "InboxServiceImplementation",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//examples/service_interfaces/inbox_service_interface",
+        "//saber/saber",
+    ],
+)

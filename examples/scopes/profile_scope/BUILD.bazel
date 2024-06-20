@@ -1,0 +1,18 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "profile_scope",
+    srcs = ["ProfileScope.swift"],
+    module_name = "ProfileScope",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//examples/feature_implementations/profile_feature_implementation",
+        "//examples/feature_interfaces/logged_out_feature_interface",
+        "//examples/feature_interfaces/profile_feature_interface",
+        "//examples/service_implementations/user_session_service_implementation",
+        "//examples/service_interfaces/user_service_interface",
+        "//examples/service_interfaces/user_session_service_interface",
+        "//examples/service_interfaces/window_service_interface",
+        "//saber/saber",
+    ],
+)

@@ -1,0 +1,13 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "camera_scope",
+    srcs = ["CameraScope.swift"],
+    module_name = "CameraScope",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//examples/feature_implementations/camera_feature_implementation",
+        "//examples/feature_interfaces/camera_feature_interface",
+        "//saber/saber",
+    ],
+)
