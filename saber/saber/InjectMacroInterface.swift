@@ -1,4 +1,4 @@
-import DependencyMacrosTypes
+import SaberTypes
 
 /// The @Inject macro can be applied to an uninitialized `var` property of any type,
 /// on a type annotated with the @Injectable macro.
@@ -8,4 +8,4 @@ import DependencyMacrosTypes
 @attached(accessor)
 public macro Inject(
     storage: StorageStrategy = .strong
-) = #externalMacro(module: "DependencyMacrosPlugin", type: "InjectMacro")
+) = #externalMacro(module: "SaberPlugin", type: "InjectMacro")

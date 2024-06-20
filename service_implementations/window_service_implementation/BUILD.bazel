@@ -6,7 +6,7 @@ swift_library(
     module_name = "WindowServiceImplementation",
     visibility = ["//visibility:public"],
     deps = [
-        "//macros/dependency_macros",
+        "//saber/saber",
         "//service_interfaces/window_service_interface",
     ],
 )

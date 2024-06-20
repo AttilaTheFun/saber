@@ -1,4 +1,4 @@
-import DependencyMacros
+import Saber
 import InboxFeatureInterface
 import InboxFeatureImplementation
 import InboxServiceInterface

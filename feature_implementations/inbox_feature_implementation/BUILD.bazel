@@ -7,7 +7,7 @@ swift_library(
     visibility = ["//visibility:public"],
     deps = [
         "//feature_interfaces/inbox_feature_interface",
-        "//macros/dependency_macros",
+        "//saber/saber",
         "//service_interfaces/inbox_service_interface",
     ],
 )

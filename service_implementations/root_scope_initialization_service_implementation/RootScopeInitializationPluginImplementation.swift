@@ -1,4 +1,4 @@
-import DependencyMacros
+import Saber
 import LoggedOutFeatureInterface
 import LoggedInFeatureInterface
 import LoadingFeatureInterface

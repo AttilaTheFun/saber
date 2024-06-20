@@ -1,3 +1,3 @@
-import DependencyMacrosLibrary
+import SaberLibrary
 
 public struct FactoryMacro: FactoryMacroProtocol {}

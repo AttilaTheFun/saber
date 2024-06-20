@@ -1,4 +1,4 @@
-import DependencyMacrosTypes
+import SaberTypes
 
 /// The @Store macro can be applied to an uninitialized `var` property of any type,
 /// on a type annotated with the @Injectable macro.
@@ -10,4 +10,4 @@ public macro Store(
     _ concrete: Any.Type,
     storage: StorageStrategy = .strong,
     init: InitializationStrategy = .lazy
-) = #externalMacro(module: "DependencyMacrosPlugin", type: "StoreMacro")
+) = #externalMacro(module: "SaberPlugin", type: "StoreMacro")

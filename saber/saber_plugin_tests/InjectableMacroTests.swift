@@ -1,4 +1,4 @@
-import DependencyMacrosPlugin
+import SaberPlugin
 import SwiftSyntaxMacros
 import SwiftSyntaxMacrosTestSupport
 import XCTest

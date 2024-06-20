@@ -1,5 +1,5 @@
 import LoggedOutFeatureInterface
-import DependencyMacros
+import Saber
 import LoadingFeatureInterface
 import UserSessionServiceInterface
 import UIKit

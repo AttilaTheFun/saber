@@ -2,7 +2,7 @@ import SwiftCompilerPlugin
 import SwiftSyntaxMacros
 
 @main
-struct DependencyMacrosPlugin: CompilerPlugin {
+struct SaberPlugin: CompilerPlugin {
     let providingMacros: [Macro.Type] = [
         ArgumentMacro.self,
         FactoryMacro.self,

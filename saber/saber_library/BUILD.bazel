@@ -3,7 +3,7 @@ load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 package(default_visibility = ["//visibility:public"])
 
 swift_library(
-    name = "dependency_macros_library",
+    name = "saber_library",
     srcs = [
         "ArgumentMacroProtocol.swift",
         "AttributeListSyntax.Element+Extensions.swift",
@@ -22,10 +22,10 @@ swift_library(
         "String+Extensions.swift",
         "TypeDescription.swift",
     ],
-    module_name = "DependencyMacrosLibrary",
+    module_name = "SaberLibrary",
     visibility = ["//visibility:public"],
     deps = [
-        "//macros/dependency_macros_types",
+        "//saber/saber_types",
         "@swiftpkg_swift_syntax//:SwiftSyntaxMacros",
     ],
 )

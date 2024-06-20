@@ -1,6 +1,6 @@
 import CameraFeatureInterface
 import CameraScope
-import DependencyMacros
+import Saber
 import InboxFeatureInterface
 import InboxScope
 import MapFeatureInterface

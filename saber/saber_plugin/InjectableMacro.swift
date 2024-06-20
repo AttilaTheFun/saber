@@ -1,6 +1,6 @@
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
-import DependencyMacrosLibrary
+import SaberLibrary
 
 public class InjectableMacro: InjectableMacroProtocol {}

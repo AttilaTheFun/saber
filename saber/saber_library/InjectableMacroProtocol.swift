@@ -1,4 +1,4 @@
-import DependencyMacrosTypes
+import SaberTypes
 import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros

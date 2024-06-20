@@ -3,19 +3,19 @@ load("@build_bazel_rules_swift//swift:swift_compiler_plugin.bzl", "swift_compile
 package(default_visibility = ["//visibility:public"])
 
 swift_compiler_plugin(
-    name = "dependency_macros_plugin",
+    name = "saber_plugin",
     srcs = [
         "ArgumentMacro.swift",
-        "DependencyMacrosPlugin.swift",
+        "SaberPlugin.swift",
         "FactoryMacro.swift",
         "InjectMacro.swift",
         "InjectableMacro.swift",
         "StoreMacro.swift",
     ],
-    module_name = "DependencyMacrosPlugin",
+    module_name = "SaberPlugin",
     visibility = ["//visibility:public"],
     deps = [
-        "//macros/dependency_macros_library",
+        "//saber/saber_library",
         "@swiftpkg_swift_syntax//:SwiftCompilerPlugin",
         "@swiftpkg_swift_syntax//:SwiftSyntax",
         "@swiftpkg_swift_syntax//:SwiftSyntaxBuilder",

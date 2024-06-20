@@ -4,7 +4,7 @@ load("@rules_swift_package_manager//swiftpkg:defs.bzl", "swift_update_packages")
 # gazelle directives
 
 # gazelle:swift_module_naming_convention pascal_case
-# gazelle:resolve swift DependencyMacrosPlugin //macros/dependency_macros_plugin
+# gazelle:resolve swift SaberPlugin //saber/saber_plugin
 # gazelle:exclude .build
 # gazelle:exclude .bazel
 

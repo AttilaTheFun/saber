@@ -1,4 +1,4 @@
-import DependencyMacros
+import Saber
 import CameraFeatureInterface
 import CameraFeatureImplementation
 import UIKit

@@ -7,6 +7,6 @@ swift_library(
     visibility = ["//visibility:public"],
     deps = [
         "//feature_interfaces/camera_feature_interface",
-        "//macros/dependency_macros",
+        "//saber/saber",
     ],
 )

@@ -1,20 +1,20 @@
-import DependencyMacrosPlugin
+import SaberPlugin
 import SwiftSyntaxMacrosTestSupport
 import XCTest
 
-final class StoreMacroTests: XCTestCase {
-    private let macros = ["Store": StoreMacro.self]
+final class ArgumentMacroTests: XCTestCase {
+    private let macros = ["Argument": ArgumentMacro.self]
 
     func testMacro() throws {
         assertMacroExpansion(
             """
-            @Store(FooServiceImplementation.self) var fooService: FooService
+            @Argument var user: User
             """,
             expandedSource:
             """
-            var fooService: FooService {
+            var user: User {
                 get {
-                    return self._fooServiceStore.value
+                    return self._arguments.user
                 }
             }
             """,

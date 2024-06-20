@@ -5,7 +5,7 @@ Bazel Modules
 # MODULE ##############################################################################################################
 
 module(
-    name = "dependency_injection",
+    name = "saber",
     version = "0.0.0",
 )
 
@@ -39,7 +39,7 @@ bazel_dep(name = "rules_xcodeproj", version = "2.4.0")
 
 # rules_swift_package_manager
 
-bazel_dep(name = "rules_swift_package_manager", version = "0.30.0")
+bazel_dep(name = "rules_swift_package_manager", version = "0.32.0")
 
 # swift_deps START
 swift_deps = use_extension(
@@ -51,8 +51,6 @@ swift_deps.from_file(
 )
 use_repo(
     swift_deps,
-    "swiftpkg_asyncextensions",
-    "swiftpkg_swift_async_algorithms",
     "swiftpkg_swift_syntax",
 )
 # swift_deps END

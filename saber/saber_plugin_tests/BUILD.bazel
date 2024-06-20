@@ -3,7 +3,7 @@ load("@build_bazel_rules_swift//swift:swift.bzl", "swift_test")
 package(default_visibility = ["//visibility:public"])
 
 swift_test(
-    name = "dependency_macros_plugin_tests",
+    name = "saber_plugin_tests",
     srcs = [
         "ArgumentMacroTests.swift",
         "FactoryMacroTests.swift",
@@ -11,10 +11,10 @@ swift_test(
         "InjectableMacroTests.swift",
         "StoreMacroTests.swift",
     ],
-    module_name = "DependencyMacrosPluginTests",
+    module_name = "SaberPluginTests",
     visibility = ["//visibility:public"],
     deps = [
-        "//macros/dependency_macros_plugin",
+        "//saber/saber_plugin",
         "@swiftpkg_swift_syntax//:SwiftSyntaxMacrosTestSupport",
     ],
 )

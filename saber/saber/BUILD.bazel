@@ -3,7 +3,7 @@ load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 package(default_visibility = ["//visibility:public"])
 
 swift_library(
-    name = "dependency_macros",
+    name = "saber",
     srcs = [
         "ArgumentMacroInterface.swift",
         "Factory.swift",
@@ -17,8 +17,8 @@ swift_library(
         "StoreImplementation.swift",
         "StoreMacroInterface.swift",
     ],
-    module_name = "DependencyMacros",
-    plugins = ["//macros/dependency_macros_plugin"],
+    module_name = "Saber",
+    plugins = ["//saber/saber_plugin"],
     visibility = ["//visibility:public"],
-    deps = ["//macros/dependency_macros_types"],
+    deps = ["//saber/saber_types"],
 )

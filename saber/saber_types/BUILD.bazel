@@ -3,13 +3,13 @@ load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 package(default_visibility = ["//visibility:public"])
 
 swift_library(
-    name = "dependency_macros_types",
+    name = "saber_types",
     srcs = [
         "ChildDependenciesReferenceType.swift",
         "DependenciesReferenceType.swift",
         "InitializationStrategy.swift",
         "StorageStrategy.swift",
     ],
-    module_name = "DependencyMacrosTypes",
+    module_name = "SaberTypes",
     visibility = ["//visibility:public"],
 )

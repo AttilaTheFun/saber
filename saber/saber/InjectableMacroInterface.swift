@@ -1,4 +1,4 @@
-import DependencyMacrosTypes
+import SaberTypes
 
 /// The @Injectable macro can be applied to any concrete type declaration which supports stored properties.
 ///
@@ -18,4 +18,4 @@ public macro Injectable(
     _ super: Any.Type? = nil,
     dependencies: DependenciesReferenceType = .strong,
     childDependencies: ChildDependenciesReferenceType = .weak
-) = #externalMacro(module: "DependencyMacrosPlugin", type: "InjectableMacro")
+) = #externalMacro(module: "SaberPlugin", type: "InjectableMacro")

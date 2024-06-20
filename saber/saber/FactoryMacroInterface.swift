@@ -11,4 +11,4 @@
 public macro Factory<T>(
     _ concrete: T.Type,
     factory: PartialKeyPath<T>? = nil
-) = #externalMacro(module: "DependencyMacrosPlugin", type: "FactoryMacro")
+) = #externalMacro(module: "SaberPlugin", type: "FactoryMacro")

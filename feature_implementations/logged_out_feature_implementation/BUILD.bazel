@@ -8,7 +8,7 @@ swift_library(
     deps = [
         "//feature_interfaces/loading_feature_interface",
         "//feature_interfaces/logged_out_feature_interface",
-        "//macros/dependency_macros",
+        "//saber/saber",
         "//service_interfaces/user_session_service_interface",
         "//service_interfaces/window_service_interface",
     ],
