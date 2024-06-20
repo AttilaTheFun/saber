@@ -7,19 +7,28 @@ import UIKit
 public final class MapViewController: UIViewController {
     private let mapView = MKMapView()
 
-    public override func viewDidLoad() {
-        super.viewDidLoad()
+    public init(arguments: Arguments, dependencies: any Dependencies) {
+        self._arguments = arguments
+        self._dependencies = dependencies
+        super.init(nibName: nil, bundle: nil)
 
-        // TODO: Move this setup to custom init.
         // Configure the tab bar item:
         self.tabBarItem = UITabBarItem(
             title: nil,
             image: UIImage.init(systemName: "map.fill"),
             tag: 0
         )
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    public override func viewDidLoad() {
+        super.viewDidLoad()
 
         // Configure the views:
-        self.view.backgroundColor = .white
+        self.view.backgroundColor = .black
         self.mapView.translatesAutoresizingMaskIntoConstraints = false
         self.mapView.delegate = self
         self.view.addSubview(self.mapView)
