@@ -8,6 +8,8 @@ struct SaberPlugin: CompilerPlugin {
         FactoryMacro.self,
         InjectableMacro.self,
         InjectMacro.self,
+        ProvideMacro.self,
+        ScopeMacro.self,
         StoreMacro.self,
     ]
 }

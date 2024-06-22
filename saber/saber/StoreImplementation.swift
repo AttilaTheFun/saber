@@ -1,6 +1,6 @@
 import Foundation
 
-fileprivate typealias Lock = NSLock
+private typealias Lock = NSLock
 
 public protocol BackingStore<Value>: AnyObject {
     associatedtype Value

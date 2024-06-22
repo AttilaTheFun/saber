@@ -1,7 +1,7 @@
 import SwiftDiagnostics
 import SwiftSyntax
 
-public final class InjectableVisitor: SyntaxVisitor {
+public final class DeclarationVisitor: SyntaxVisitor {
 
     // MARK: Initialization
 
@@ -18,7 +18,9 @@ public final class InjectableVisitor: SyntaxVisitor {
     public private(set) var concreteDeclaration: ConcreteDeclSyntaxProtocol?
     public private(set) var argumentsTypeAliasDeclaration: TypeAliasDeclSyntax?
     public private(set) var dependenciesTypeAliasDeclaration: TypeAliasDeclSyntax?
-    public private(set) var initializerDeclaration: InitializerDeclSyntax?
+    public private(set) var initArgumentsDeclaration: InitializerDeclSyntax?
+    public private(set) var initArgumentsDependenciesDeclaration: InitializerDeclSyntax?
+    public private(set) var initDependenciesDeclaration: InitializerDeclSyntax?
 
     public private(set) var argumentProperties: [(Property,AttributeSyntax)] = []
     public private(set) var injectProperties: [(Property,AttributeSyntax)] = []
@@ -74,33 +76,50 @@ public final class InjectableVisitor: SyntaxVisitor {
 
     public override func visit(_ node: InitializerDeclSyntax) -> SyntaxVisitorContinueKind {
         let parameters = node.signature.parameterClause.parameters
-        guard parameters.count == 2 else {
+        guard parameters.count <= 2 else {
             return .skipChildren
         }
 
-        guard
-            let firstParameter = parameters.first,
-            firstParameter.firstName.text == "arguments",
-            case .simple(let name, let generics) = firstParameter.type.typeDescription,
+        // Find the arguments parameter index, if any:
+        var argumentsParameterIndex: SyntaxChildrenIndex?
+        if
+            let index = parameters.firstIndex(where: { $0.firstName.text == "arguments" }),
+            case .simple(let name, let generics) = parameters[index].type.typeDescription,
             name == "Arguments",
-            generics.count == 0 else
+            generics.count == 0
         {
-            return .skipChildren
+            argumentsParameterIndex = index
         }
 
-        guard
-            let secondParameter = parameters.dropFirst().first,
-            secondParameter.firstName.text == "dependencies",
-            case .any(let typeDescription) = secondParameter.type.typeDescription,
+        // Find the dependencies parameter index, if any:
+        var dependenciesParameterIndex: SyntaxChildrenIndex?
+        if
+            let index = parameters.firstIndex(where: { $0.firstName.text == "dependencies" }),
+            case .any(let typeDescription) = parameters[index].type.typeDescription,
             case .simple(let name, let generics) = typeDescription,
             name == "Dependencies",
-            generics.count == 0 else
+            generics.count == 0
         {
-            return .skipChildren
+            dependenciesParameterIndex = index
         }
 
-        self.initializerDeclaration = node
-        return .visitChildren
+        // If the initializer matches one of the known signatures, retain it:
+        if
+            parameters.count == 2,
+            let argumentsParameterIndex,
+            let dependenciesParameterIndex,
+            argumentsParameterIndex < dependenciesParameterIndex
+        {
+            self.initArgumentsDependenciesDeclaration = node
+        }
+        if parameters.count == 1, argumentsParameterIndex != nil {
+            self.initArgumentsDeclaration = node
+        }
+        if parameters.count == 1, dependenciesParameterIndex != nil {
+            self.initDependenciesDeclaration = node
+        }
+
+        return .skipChildren
     }
 
     // MARK: Variable Declarations

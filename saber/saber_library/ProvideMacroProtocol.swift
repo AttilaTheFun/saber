@@ -2,13 +2,13 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 
-public enum ArgumentMacroProtocolError: Error {
+public enum ProvideMacroProtocolError: Error {
     case unknownType(String)
 }
 
-public protocol ArgumentMacroProtocol: AccessorMacro {}
+public protocol ProvideMacroProtocol: AccessorMacro {}
 
-extension ArgumentMacroProtocol {
+extension ProvideMacroProtocol {
 
     // MARK: AccessorMacro
 
@@ -30,7 +30,7 @@ extension ArgumentMacroProtocol {
         return [
             """
             get {
-                return self.arguments.\(identifierPattern.identifier)
+                return self._arguments.\(identifierPattern.identifier)
             }
             """
         ]

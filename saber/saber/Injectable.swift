@@ -1,13 +1,6 @@
 
-public protocol Injectable<Arguments, Dependencies> {
-    associatedtype Arguments
+/// An Injectable type retains some set of Dependencies which are injected by a Scope.
+public protocol Injectable<Dependencies> {
     associatedtype Dependencies
-    
-    init(arguments: Arguments, dependencies: Dependencies)
-}
-
-extension Injectable where Arguments == Any {
-    public init(dependencies: Dependencies) {
-        self.init(arguments: (), dependencies: dependencies)
-    }
+    var dependencies: Dependencies { get }
 }

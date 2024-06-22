@@ -1,10 +1,8 @@
 import SaberTypes
 
 /// The @Argument macro can be applied to an uninitialized `var` property of any type,
-/// on a type annotated with the @Injectable macro.
-/// 
-/// The macro expansion will retrieve the value from the Arguments of the receiver.
+/// on a type annotated with the @Scope macro.
+///
+/// The macro expansion read the value from the property of the Arguments type.
 @attached(accessor)
-public macro Argument(
-    storage: StorageStrategy = .strong
-) = #externalMacro(module: "SaberPlugin", type: "ArgumentMacro")
+public macro Argument() = #externalMacro(module: "SaberPlugin", type: "ArgumentMacro")

@@ -18,6 +18,16 @@ extension AttributeListSyntax {
         return nil
     }
 
+    public var injectableMacro: AttributeSyntax? {
+        for element in self {
+            if let injectMacro = element.injectableMacro {
+                return injectMacro
+            }
+        }
+
+        return nil
+    }
+
     public var injectMacro: AttributeSyntax? {
         for element in self {
             if let injectMacro = element.injectMacro {
@@ -32,6 +42,16 @@ extension AttributeListSyntax {
         for element in self {
             if let factoryMacro = element.factoryMacro {
                 return factoryMacro
+            }
+        }
+
+        return nil
+    }
+
+    public var scopeMacro: AttributeSyntax? {
+        for element in self {
+            if let injectMacro = element.scopeMacro {
+                return injectMacro
             }
         }
 

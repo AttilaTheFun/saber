@@ -1,7 +1,6 @@
 
-/// A Scope retains dependencies with the same lifespan as the instance built by its root Factory.
-public protocol Scope {
+/// A Scope type retains some set of Arguments and fulfills the Dependencies of Injectable types.
+public protocol Scope<Arguments> {
     associatedtype Arguments
-    associatedtype Value
-    var rootFactory: any Factory<Arguments, Value> { get }
+    var arguments: Arguments { get }
 }

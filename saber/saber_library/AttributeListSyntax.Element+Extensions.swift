@@ -5,12 +5,24 @@ extension AttributeListSyntax.Element {
         self.attributeIfNameEquals("Argument")
     }
 
+    public var injectableMacro: AttributeSyntax? {
+        self.attributeIfNameEquals("Injectable")
+    }
+
     public var injectMacro: AttributeSyntax? {
         self.attributeIfNameEquals("Inject")
     }
 
     public var factoryMacro: AttributeSyntax? {
         self.attributeIfNameEquals("Factory")
+    }
+
+    public var provideMacro: AttributeSyntax? {
+        self.attributeIfNameEquals("Provide")
+    }
+
+    public var scopeMacro: AttributeSyntax? {
+        self.attributeIfNameEquals("Scope")
     }
 
     public var storeMacro: AttributeSyntax? {
