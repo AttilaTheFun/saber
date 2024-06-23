@@ -9,17 +9,23 @@ import UserSessionServiceImplementation
 import WindowServiceInterface 
 
 @Injectable
-public final class ProfileScope: Scope {
+@Scope
+public final class ProfileScope {
     @Inject public var user: User
     @Inject public var userSession: UserSession
     @Inject public var userStorageService: any UserStorageService
     @Inject public var userSessionStorageService: any UserSessionStorageService
     @Inject public var windowService: any WindowService
-    @Inject public var loggedOutViewControllerFactory: any Factory<LoggedOutViewControllerArguments, UIViewController>
+    @Inject public var loggedOutViewControllerFactory: Factory<LoggedOutScopeArguments, UIViewController>
 
-    @Factory(ProfileViewController.self)
-    public var rootFactory: any Factory<ProfileViewControllerArguments, UIViewController>
+    @Once
+    @Fulfill(UserSessionServiceImplementationUnownedDependencies.self)
+    lazy var userSessionService: any UserSessionService = self.userSessionServiceOnce { [unowned self] in
+        UserSessionServiceImplementation(dependencies: self.fulfilledDependencies)
+    }
 
-    @Store(UserSessionServiceImplementation.self)
-    public var userSessionService: any UserSessionService
+    @Fulfill(ProfileViewControllerDependencies.self)
+    public lazy var rootFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
+        ProfileViewController(dependencies: self.fulfilledDependencies)
+    }
 }

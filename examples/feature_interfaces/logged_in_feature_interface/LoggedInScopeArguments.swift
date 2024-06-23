@@ -1,7 +1,7 @@
 import UserSessionServiceInterface
 import UserServiceInterface
 
-public struct LoggedInTabBarControllerArguments {
+public struct LoggedInScopeArguments {
     public let userSession: UserSession
     public let user: User
 

@@ -1,6 +1,6 @@
 import Foundation
 
-public struct RootArguments {
+public struct RootScopeArguments {
     public init(endpointURL: URL) {
         self.endpointURL = endpointURL
     }

@@ -6,10 +6,17 @@ import InboxServiceImplementation
 import UIKit
 
 @Injectable
-public final class InboxScope: Scope {
+@Scope
+public final class InboxScope {
 
-    @Factory(InboxViewController.self)
-    public var rootFactory: any Factory<InboxViewControllerArguments, UIViewController>
+    @Once
+    @Fulfill(InboxServiceImplementationUnownedDependencies.self)
+    lazy var inboxService: any InboxService = self.inboxServiceOnce { [unowned self] in
+        InboxServiceImplementation(dependencies: self.fulfilledDependencies)
+    }
 
-    @Store(InboxServiceImplementation.self) public var inboxService: any InboxService
+    @Fulfill(InboxViewControllerDependencies.self)
+    public lazy var rootFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
+        InboxViewController(dependencies: self.fulfilledDependencies)
+    }
 }

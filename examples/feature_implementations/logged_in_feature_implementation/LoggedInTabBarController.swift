@@ -10,12 +10,11 @@ import WindowServiceInterface
 
 @Injectable(UIViewController.self)
 public final class LoggedInTabBarController: UITabBarController {
-    @Inject public var inboxViewControllerFactory: any Factory<InboxViewControllerArguments, UIViewController>
-    @Inject public var cameraViewControllerFactory: any Factory<CameraViewControllerArguments, UIViewController>
-    @Inject public var mapViewControllerFactory: any Factory<MapViewControllerArguments, UIViewController>
+    @Inject public var inboxViewControllerFactory: Factory<Void, UIViewController>
+    @Inject public var cameraViewControllerFactory: Factory<Void, UIViewController>
+    @Inject public var mapViewControllerFactory: Factory<Void, UIViewController>
 
-    public init(arguments: Arguments, dependencies: any Dependencies) {
-        self._arguments = arguments
+    public init(dependencies: any Dependencies) {
         self._dependencies = dependencies
         super.init(nibName: nil, bundle: nil)
 
@@ -24,9 +23,9 @@ public final class LoggedInTabBarController: UITabBarController {
 
         // Create the initial view controllers:
         let viewControllers = [
-            self.inboxViewControllerFactory.build(arguments: InboxViewControllerArguments()),
-            self.cameraViewControllerFactory.build(arguments: CameraViewControllerArguments()),
-            self.mapViewControllerFactory.build(arguments: MapViewControllerArguments()),
+            self.inboxViewControllerFactory.build(),
+            self.cameraViewControllerFactory.build(),
+            self.mapViewControllerFactory.build(),
         ]
 
         // Set the initial view controllers:

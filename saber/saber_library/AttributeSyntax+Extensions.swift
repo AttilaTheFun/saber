@@ -6,6 +6,10 @@ extension AttributeSyntax {
         return self.typeDescriptionIfNameEquals(nil)
     }
 
+    public var existentialTypeArgument: TypeDescription? {
+        return self.typeDescriptionIfNameEquals(nil)
+    }
+
     public var superTypeArgument: TypeDescription? {
         return self.typeDescriptionIfNameEquals(nil)
     }
@@ -53,19 +57,9 @@ extension AttributeSyntax {
         return DependenciesReferenceType(rawValue: rawValue ?? "")
     }
 
-    public var childDependenciesReferenceTypeArgument: ChildDependenciesReferenceType? {
-        let rawValue = self.memberAccessBaseNameIfNameEquals("childDependencies")
-        return ChildDependenciesReferenceType(rawValue: rawValue ?? "")
-    }
-
-    public var initializationStrategyArgument: InitializationStrategy? {
-        let rawValue = self.memberAccessBaseNameIfNameEquals("init")
-        return InitializationStrategy(rawValue: rawValue ?? "")
-    }
-
-    public var storageStrategyArgument: StorageStrategy? {
-        let rawValue = self.memberAccessBaseNameIfNameEquals("storage")
-        return StorageStrategy(rawValue: rawValue ?? "")
+    public var fulfilledDependenciesReferenceTypeArgument: FulfilledDependenciesReferenceType? {
+        let rawValue = self.memberAccessBaseNameIfNameEquals("fulfilledDependencies")
+        return FulfilledDependenciesReferenceType(rawValue: rawValue ?? "")
     }
 
     private func memberAccessBaseNameIfNameEquals(_ expectedName: String?) -> String? {

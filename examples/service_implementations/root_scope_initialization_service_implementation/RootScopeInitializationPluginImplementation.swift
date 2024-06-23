@@ -16,9 +16,9 @@ public final class RootViewControllerInitializationServiceImplementation: RootVi
     @Inject private var userSessionStorageService: UserSessionStorageService
     @Inject private var userStorageService: UserStorageService
     @Inject private var windowService: WindowService
-    @Inject private var loggedOutViewControllerFactory: any Factory<LoggedOutViewControllerArguments, UIViewController>
-    @Inject private var loadingViewControllerFactory: any Factory<LoadingViewControllerArguments, UIViewController>
-    @Inject private var loggedInTabBarControllerFactory: any Factory<LoggedInTabBarControllerArguments, UIViewController>
+    @Inject private var loggedOutViewControllerFactory: Factory<LoggedOutScopeArguments, UIViewController>
+    @Inject private var loadingViewControllerFactory: Factory<LoadingScopeArguments, UIViewController>
+    @Inject private var loggedInTabBarControllerFactory: Factory<LoggedInScopeArguments, UIViewController>
 
     public func registerRootViewControllerFactory() {
         guard let userSession = self.userSessionStorageService.userSession else {
@@ -26,7 +26,7 @@ public final class RootViewControllerInitializationServiceImplementation: RootVi
             self.userStorageService.user = nil
             let factory = self.loggedOutViewControllerFactory
             self.windowService.register {
-                let arguments = LoggedOutViewControllerArguments()
+                let arguments = LoggedOutScopeArguments()
                 return factory.build(arguments: arguments)
             }
             return
@@ -36,7 +36,7 @@ public final class RootViewControllerInitializationServiceImplementation: RootVi
             self.userStorageService.user = nil
             let factory = self.loadingViewControllerFactory
             self.windowService.register {
-                let arguments = LoadingViewControllerArguments(userSession: userSession)
+                let arguments = LoadingScopeArguments(userSession: userSession)
                 return factory.build(arguments: arguments)
             }
             return
@@ -44,7 +44,7 @@ public final class RootViewControllerInitializationServiceImplementation: RootVi
 
         let factory = self.loggedInTabBarControllerFactory
         self.windowService.register {
-            let arguments = LoggedInTabBarControllerArguments(userSession: userSession, user: user)
+            let arguments = LoggedInScopeArguments(userSession: userSession, user: user)
             return factory.build(arguments: arguments)
         }
     }

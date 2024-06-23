@@ -26,6 +26,10 @@ extension AttributeListSyntax.Element {
         self.attributeIfNameEquals("Factory")
     }
 
+    public var fulfillMacro: AttributeSyntax? {
+        self.attributeIfNameEquals("Fulfill")
+    }
+
     public var provideMacro: AttributeSyntax? {
         self.attributeIfNameEquals("Provide")
     }

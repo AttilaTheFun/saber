@@ -47,15 +47,17 @@ public enum AccessLevel: Comparable, Sendable {
     }
 }
 
-public struct Property: Hashable, Sendable {
+public struct Property: Hashable {
 
     // MARK: Initialization
 
     init(
+        binding: PatternBindingSyntax,
         accessLevel: AccessLevel,
         label: String,
-        typeDescription: TypeDescription
+        typeDescription: TypeDescription?
     ) {
+        self.binding = binding
         self.accessLevel = accessLevel
         self.label = label
         self.typeDescription = typeDescription
@@ -63,12 +65,15 @@ public struct Property: Hashable, Sendable {
 
     // MARK: Public
 
+    /// The variable declaration from which the property was parsed.
+    public let binding: PatternBindingSyntax
+
     /// The access level of the property:
     public let accessLevel: AccessLevel
 
     /// The label by which the property is referenced.
     public let label: String
 
-    /// The type to which the property conforms.
-    public let typeDescription: TypeDescription
+    /// The type to which the property conforms. This may be nil if the type is inferred.
+    public let typeDescription: TypeDescription?
 }

@@ -10,7 +10,7 @@ import SaberTypes
 /// - @Argument
 /// - @Inject
 @attached(member, names: arbitrary)
-@attached(peer, names: suffixed(Dependencies), suffixed(UnownedDependencies), suffixed(ChildDependencies))
+@attached(peer, names: suffixed(Dependencies), suffixed(UnownedDependencies))
 @attached(extension, conformances: DependenciesInitializable)
 public macro Injectable(
     _ super: Any.Type? = nil,

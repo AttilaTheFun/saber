@@ -8,14 +8,19 @@ import UIKit
 import WindowServiceInterface
 
 @Injectable
-public final class LoggedOutScope: Scope {
+@Scope
+public final class LoggedOutScope {
+    public typealias Arguments = LoggedOutScopeArguments
+
     @Inject public var userSessionStorageService: any UserSessionStorageService
     @Inject public var windowService: any WindowService
-    @Inject public var loadingViewControllerFactory: any Factory<LoadingViewControllerArguments, UIViewController>
+    @Inject public var loadingViewControllerFactory: Factory<LoadingScopeArguments, UIViewController>
 
-    @Store(UserSessionServiceImplementation.self)
-    public var userSessionService: any UserSessionService
+    @Fulfill(UserSessionServiceImplementationUnownedDependencies.self)
+    lazy var userSessionService: any UserSessionService = UserSessionServiceImplementation(dependencies: self.fulfilledDependencies)
 
-    @Factory(LoggedOutViewController.self)
-    public var rootFactory: any Factory<LoggedOutViewControllerArguments, UIViewController>
+    @Fulfill(LoggedOutViewControllerDependencies.self)
+    public lazy var rootFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
+        LoggedOutViewController(dependencies: self.fulfilledDependencies)
+    }
 }

@@ -10,13 +10,13 @@ import WindowServiceInterface
 
 @Injectable(UIViewController.self)
 public final class LoadingViewController: UIViewController {
-    @Argument private var userSession: UserSession
+    @Inject private var userSession: UserSession
     @Inject private var userSessionStorageService: any UserSessionStorageService
     @Inject private var userService: any UserService
     @Inject private var userStorageService: any UserStorageService
     @Inject private var windowService: any WindowService
-    @Inject private var loggedOutViewControllerFactory: any Factory<LoggedOutViewControllerArguments, UIViewController>
-    @Inject private var loggedInTabBarControllerFactory: any Factory<LoggedInTabBarControllerArguments, UIViewController>
+    @Inject private var loggedOutViewControllerFactory: Factory<LoggedOutScopeArguments, UIViewController>
+    @Inject private var loggedInTabBarControllerFactory: Factory<LoggedInScopeArguments, UIViewController>
 
     // MARK: View Lifecycle
 
@@ -49,7 +49,7 @@ public final class LoadingViewController: UIViewController {
         self.userStorageService.user = user
         let factory = self.loggedInTabBarControllerFactory
         self.windowService.register {
-            let arguments = LoggedInTabBarControllerArguments(userSession: userSession, user: user)
+            let arguments = LoggedInScopeArguments(userSession: userSession, user: user)
             return factory.build(arguments: arguments)
         }
     }
@@ -59,7 +59,7 @@ public final class LoadingViewController: UIViewController {
         self.userSessionStorageService.userSession = nil
         let factory = self.loggedOutViewControllerFactory
         self.windowService.register {
-            let arguments = LoggedOutViewControllerArguments()
+            let arguments = LoggedOutScopeArguments()
             return factory.build(arguments: arguments)
         }
     }

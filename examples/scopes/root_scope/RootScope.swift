@@ -15,30 +15,42 @@ import UIKit
 import WindowServiceInterface
 import WindowServiceImplementation
 
-@Injectable(childDependencies: .strong)
+@Injectable
+@Scope(fulfilledDependencies: .strong)
 public final class RootScope {
-    public typealias Arguments = RootArguments
-
-    @Store(UserSessionStorageServiceImplementation.self)
-    public var userSessionStorageService: any UserSessionStorageService
-
-    @Store(UserStorageServiceImplementation.self)
-    public var userStorageService: any UserStorageService
-
-    @Store(WindowServiceImplementation.self)
-    public var windowService: any WindowService
-
-    @Store(RootViewControllerInitializationServiceImplementation.self)
-    public var rootViewControllerInitializationService: any RootViewControllerInitializationService
-
-    @Factory(LoggedOutScope.self, factory: \.rootFactory)
-    public var loggedOutViewControllerFactory: any Factory<LoggedOutViewControllerArguments, UIViewController>
-
-    @Factory(LoadingScope.self, factory: \.rootFactory)
-    public var loadingViewControllerFactory: any Factory<LoadingViewControllerArguments, UIViewController>
-
-    @Factory(LoggedInScope.self, factory: \.rootFactory)
-    public var loggedInTabBarControllerFactory: any Factory<LoggedInTabBarControllerArguments, UIViewController>
-
     @Argument public var endpointURL: URL
+
+    @Fulfill(UserSessionStorageServiceImplementationUnownedDependencies.self)
+    lazy var userSessionStorageService: any UserSessionStorageService =
+    UserSessionStorageServiceImplementation(dependencies: self.fulfilledDependencies)
+
+    @Fulfill(UserStorageServiceImplementationUnownedDependencies.self)
+    lazy var userStorageService: any UserStorageService =
+    UserStorageServiceImplementation(dependencies: self.fulfilledDependencies)
+
+    @Fulfill(WindowServiceImplementationUnownedDependencies.self)
+    public lazy var windowService: any WindowService =
+    WindowServiceImplementation(dependencies: self.fulfilledDependencies)
+
+    @Fulfill(RootViewControllerInitializationServiceImplementationUnownedDependencies.self)
+    public lazy var rootViewControllerInitializationService: any RootViewControllerInitializationService =
+    RootViewControllerInitializationServiceImplementation(dependencies: self.fulfilledDependencies)
+
+    @Fulfill(LoggedOutScopeDependencies.self)
+    public lazy var loggedOutViewControllerFactory: Factory<LoggedOutScopeArguments, UIViewController> =
+    Factory { [unowned self] arguments in
+        LoggedOutScope(arguments: arguments, dependencies: self.fulfilledDependencies).rootFactory.build()
+    }
+
+    @Fulfill(LoadingScopeDependencies.self)
+    public lazy var loadingViewControllerFactory: Factory<LoadingScopeArguments, UIViewController> =
+    Factory { [unowned self] arguments in
+        LoadingScope(arguments: arguments, dependencies: self.fulfilledDependencies).rootFactory.build()
+    }
+
+    @Fulfill(LoggedInScopeDependencies.self)
+    public lazy var loggedInTabBarControllerFactory: Factory<LoggedInScopeArguments, UIViewController> =
+    Factory { [unowned self] arguments in
+        LoggedInScope(arguments: arguments, dependencies: self.fulfilledDependencies).rootFactory.build()
+    }
 }

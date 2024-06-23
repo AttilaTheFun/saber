@@ -7,8 +7,7 @@ import UIKit
 public final class MapViewController: UIViewController {
     private let mapView = MKMapView()
 
-    public init(arguments: Arguments, dependencies: any Dependencies) {
-        self._arguments = arguments
+    public init(dependencies: any Dependencies) {
         self._dependencies = dependencies
         super.init(nibName: nil, bundle: nil)
 

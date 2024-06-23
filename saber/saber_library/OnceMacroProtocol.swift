@@ -2,38 +2,31 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 
-public enum StoreMacroProtocolError: Error {
-    case notDecoratingBinding
-    case decoratingStatic
-}
+public protocol OnceMacroProtocol: PeerMacro {}
 
-public protocol StoreMacroProtocol: AccessorMacro {}
+extension OnceMacroProtocol {
 
-extension StoreMacroProtocol {
-
-    // MARK: AccessorMacro
+    // MARK: PeerMacro
 
     public static func expansion(
         of node: AttributeSyntax,
-        providingAccessorsOf declaration: some DeclSyntaxProtocol,
+        providingPeersOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
-    ) throws -> [AccessorDeclSyntax] {
+    ) throws -> [DeclSyntax] {
         guard
             let variableDeclaration = declaration.as(VariableDeclSyntax.self),
             variableDeclaration.bindings.count == 1,
             let binding = variableDeclaration.bindings.first,
             let identifierPattern = IdentifierPatternSyntax(binding.pattern),
-            binding.accessorBlock == nil else
+            let typeAnnotation = binding.typeAnnotation else
         {
             return []
         }
 
+        // Create the once property declaration:
+        let typeDescription = typeAnnotation.type.typeDescription
         return [
-            """
-            get {
-                return self._\(identifierPattern.identifier)Store.value
-            }
-            """
+            "private let \(identifierPattern.identifier.trimmed)Once = Once<\(raw: typeDescription.asSource)>()"
         ]
     }
 }

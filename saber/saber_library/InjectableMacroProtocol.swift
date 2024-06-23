@@ -149,11 +149,10 @@ extension InjectableMacroProtocol {
 
         // Create the dependencies stored property declaration:
         let dependenciesReferenceType = node.dependenciesReferenceTypeArgument ?? .strong
-        let dependenciesSuffix = dependenciesReferenceType == .unowned ? "UnownedDependencies" : "Dependencies"
         let bindingModifier = dependenciesReferenceType == .unowned ? "unowned " : ""
         let dependenciesPropertyDeclaration: DeclSyntax =
         """
-        private \(raw: bindingModifier)let _dependencies: any \(raw: dependenciesSuffix)
+        private \(raw: bindingModifier)let _dependencies: any Dependencies
         """
         propertyDeclarations.append(dependenciesPropertyDeclaration)
 
@@ -255,7 +254,12 @@ extension InjectableMacroProtocol {
         // Create properties for the protocol:
         var protocolProperties = [String]()
         for (property, _) in visitor.injectProperties {
-            let protocolProperty = "var \(property.label): \(property.typeDescription.asSource) { get }"
+            guard let typeDescription = property.typeDescription else {
+                // TODO: Diagnostic
+                fatalError("Missing type annotation")
+            }
+
+            let protocolProperty = "var \(property.label): \(typeDescription.asSource) { get }"
             protocolProperties.append(protocolProperty)
         }
         let protocolBody = protocolProperties.joined(separator: "\n")

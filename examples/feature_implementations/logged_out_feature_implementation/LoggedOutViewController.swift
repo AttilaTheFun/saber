@@ -10,7 +10,7 @@ public final class LoggedOutViewController: UIViewController {
     @Inject private var userSessionService: any UserSessionService
     @Inject private var userSessionStorageService: any UserSessionStorageService
     @Inject private var windowService: any WindowService
-    @Inject private var loadingViewControllerFactory: any Factory<LoadingViewControllerArguments, UIViewController>
+    @Inject private var loadingViewControllerFactory: Factory<LoadingScopeArguments, UIViewController>
 
     private let textField = UITextField()
     private let textFieldContainerView = UIView()
@@ -104,7 +104,7 @@ public final class LoggedOutViewController: UIViewController {
         self.userSessionStorageService.userSession = userSession
         let factory = self.loadingViewControllerFactory
         self.windowService.register {
-            let arguments = LoadingViewControllerArguments(userSession: userSession)
+            let arguments = LoadingScopeArguments(userSession: userSession)
             return factory.build(arguments: arguments)
         }
     }

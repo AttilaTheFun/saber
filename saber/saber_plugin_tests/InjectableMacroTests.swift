@@ -48,6 +48,27 @@ final class InjectableMacroTests: XCTestCase {
         )
     }
 
+//    func testBug() throws {
+//        assertMacroExpansion(
+//            """
+//            @Injectable(UIViewController.self)
+//            public final class CameraViewController: UIViewController {
+//                public init(dependencies: any Dependencies) {
+//                    self._dependencies = dependencies
+//                    super.init(nibName: nil, bundle: nil)
+//                    print("custom init")
+//                }
+//            }
+//            """,
+//            expandedSource:
+//            """
+//            public final class CameraViewController {
+//            }
+//            """,
+//            macros: self.macros
+//        )
+//    }
+
     func testViewController() throws {
         assertMacroExpansion(
             """
@@ -131,7 +152,7 @@ final class InjectableMacroTests: XCTestCase {
 
                 public typealias Dependencies = FooServiceImplementationUnownedDependencies
 
-                private unowned let _dependencies: any UnownedDependencies
+                private unowned let _dependencies: any Dependencies
 
                 public init(dependencies: any Dependencies) {
                     self._dependencies = dependencies

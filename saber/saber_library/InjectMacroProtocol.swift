@@ -30,7 +30,7 @@ extension InjectMacroProtocol {
         return [
             """
             get {
-                return self._dependencies.\(identifierPattern.identifier)
+                return self._dependencies.\(identifierPattern.identifier.trimmed)
             }
             """
         ]

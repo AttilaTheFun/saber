@@ -16,26 +16,37 @@ import UserSessionServiceInterface
 import WindowServiceInterface
 
 @Injectable
-public final class LoggedInScope: Scope {
+@Scope
+public final class LoggedInScope {
     @Argument public var user: User
     @Argument public var userSession: UserSession
     @Inject public var userStorageService: any UserStorageService
     @Inject public var userSessionStorageService: any UserSessionStorageService
     @Inject public var windowService: any WindowService
-    @Inject public var loggedOutViewControllerFactory: any Factory<LoggedOutViewControllerArguments, UIViewController>
+    @Inject public var loggedOutViewControllerFactory: Factory<LoggedOutScopeArguments, UIViewController>
 
-    @Factory(LoggedInTabBarController.self)
-    public var rootFactory: any Factory<LoggedInTabBarControllerArguments, UIViewController>
+    @Fulfill(LoggedInTabBarControllerDependencies.self)
+    public lazy var rootFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
+        return LoggedInTabBarController(dependencies: self.fulfilledDependencies)
+    }
 
-    @Factory(CameraScope.self, factory: \.rootFactory)
-    public var cameraViewControllerFactory: any Factory<CameraViewControllerArguments, UIViewController>
+    @Fulfill(CameraScopeDependencies.self)
+    public lazy var cameraViewControllerFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
+        CameraScope(dependencies: self.fulfilledDependencies).rootFactory.build()
+    }
 
-    @Factory(MapScope.self, factory: \.rootFactory)
-    public var mapViewControllerFactory: any Factory<MapViewControllerArguments, UIViewController>
+    @Fulfill(MapScopeDependencies.self)
+    public lazy var mapViewControllerFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
+        MapScope(dependencies: self.fulfilledDependencies).rootFactory.build()
+    }
 
-    @Factory(InboxScope.self, factory: \.rootFactory)
-    public var inboxViewControllerFactory: any Factory<InboxViewControllerArguments, UIViewController>
+    @Fulfill(InboxScopeDependencies.self)
+    public lazy var inboxViewControllerFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
+        InboxScope(dependencies: self.fulfilledDependencies).rootFactory.build()
+    }
 
-    @Factory(ProfileScope.self, factory: \.rootFactory)
-    public var profileViewControllerFactory: any Factory<ProfileViewControllerArguments, UIViewController>
+    @Fulfill(ProfileScopeDependencies.self)
+    public lazy var profileViewControllerFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
+        ProfileScope(dependencies: self.fulfilledDependencies).rootFactory.build()
+    }
 }

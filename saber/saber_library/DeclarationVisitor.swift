@@ -21,15 +21,10 @@ public final class DeclarationVisitor: SyntaxVisitor {
     public private(set) var initArgumentsAndDependenciesDeclaration: InitializerDeclSyntax?
     public private(set) var initDependenciesDeclaration: InitializerDeclSyntax?
 
+    public private(set) var allProperties: [Property] = []
     public private(set) var argumentProperties: [(Property,AttributeSyntax)] = []
-    public private(set) var factoryProperties: [(Property,AttributeSyntax)] = []
+    public private(set) var fulfillProperties: [(Property,AttributeSyntax)] = []
     public private(set) var injectProperties: [(Property,AttributeSyntax)] = []
-    public private(set) var provideProperties: [(Property,AttributeSyntax)] = []
-    public private(set) var storeProperties: [(Property,AttributeSyntax)] = []
-
-    public var childDependencyProperties: [(Property,AttributeSyntax)] {
-        return self.factoryProperties + self.storeProperties
-    }
 
     // MARK: Concrete Declarations
 
@@ -118,69 +113,50 @@ public final class DeclarationVisitor: SyntaxVisitor {
     // MARK: Variable Declarations
 
     public override func visit(_ node: VariableDeclSyntax) -> SyntaxVisitorContinueKind {
+
+        // Skip static properties:
         if node.modifiers.isStatic {
             return .skipChildren
         }
 
-        guard node.attributes.injectableMacroTypes.count > 0 else {
-            return .skipChildren
-        }
-
         // Ensure that this is a single binding variable declaration:
-        if node.bindings.count > 1 {
+        guard let binding: PatternBindingSyntax = node.bindings.first, node.bindings.count == 1 else {
             // TODO: Diagnostic.
             fatalError()
         }
 
-//        // Check that the binding specifier is a var:
-//        if node.bindingSpecifier.text != "var" {
-//            // TODO: Diagnostic.
-//            fatalError()
-//        }
+        // Parse the property:
+        if let identifierPattern = IdentifierPatternSyntax(binding.pattern) {
 
-        for binding in node.bindings {
-
-//            // Check that each binding has no initializer.
-//            if binding.initializer != nil {
-//                // TODO: Diagnostic.
-//                fatalError()
-//            }
-
-            // Parse the property:
-            if
-                let identifierPattern = IdentifierPatternSyntax(binding.pattern),
-                let typeAnnotation = binding.typeAnnotation
-            {
-                // Parse the type description:
-                let typeDescription = typeAnnotation.type.typeDescription
-                if case .unknown(let description) = typeDescription {
-                    // TODO: Diagnostic.
-                    fatalError(description)
-                }
-                
-                let property = Property(
-                    accessLevel: node.modifiers.accessLevel,
-                    label: identifierPattern.identifier.text,
-                    typeDescription: typeDescription
-                )
-                for injectableMacroType in node.attributes.injectableMacroTypes {
-                    switch injectableMacroType {
-                    case .argument(let attributeSyntax):
-                        self.argumentProperties.append((property, attributeSyntax))
-                    case .inject(let attributeSyntax):
-                        self.injectProperties.append((property, attributeSyntax))
-                    case .factory(let attributeSyntax):
-                        self.factoryProperties.append((property, attributeSyntax))
-                    case .provide(let attributeSyntax):
-                        self.provideProperties.append((property, attributeSyntax))
-                    case .store(let attributeSyntax):
-                        self.storeProperties.append((property, attributeSyntax))
-                    }
-                }
-            } else {
-                // TODO: Diagnostic.
-                fatalError()
+            // Parse the type description if the type was annotated:
+            var typeDescription: TypeDescription?
+            if let typeAnnotation = binding.typeAnnotation {
+                typeDescription = typeAnnotation.type.typeDescription
             }
+
+            // Create the property
+            let property = Property(
+                binding: binding,
+                accessLevel: node.modifiers.accessLevel,
+                label: identifierPattern.identifier.text,
+                typeDescription: typeDescription
+            )
+
+            // Record the property and the injectable macro type if applicable:
+            self.allProperties.append(property)
+            for injectableMacroType in node.attributes.injectableMacroTypes {
+                switch injectableMacroType {
+                case .argument(let attributeSyntax):
+                    self.argumentProperties.append((property, attributeSyntax))
+                case .inject(let attributeSyntax):
+                    self.injectProperties.append((property, attributeSyntax))
+                case .fulfill(let attributeSyntax):
+                    self.fulfillProperties.append((property, attributeSyntax))
+                }
+            }
+        } else {
+            // TODO: Diagnostic.
+            fatalError()
         }
 
         return .skipChildren

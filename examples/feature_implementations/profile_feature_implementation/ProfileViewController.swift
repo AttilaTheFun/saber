@@ -14,7 +14,7 @@ public final class ProfileViewController: UIViewController {
     @Inject private var userSessionStorageService: any UserSessionStorageService
     @Inject private var userStorageService: any UserStorageService
     @Inject private var windowService: any WindowService
-    @Inject private var loggedOutViewControllerFactory: any Factory<LoggedOutViewControllerArguments, UIViewController>
+    @Inject private var loggedOutViewControllerFactory: Factory<LoggedOutScopeArguments, UIViewController>
 
     private let label = UILabel()
     private let labelContainerView = UIView()
@@ -107,7 +107,7 @@ public final class ProfileViewController: UIViewController {
         self.userSessionStorageService.userSession = nil
         let factory = self.loggedOutViewControllerFactory
         self.windowService.register {
-            let arguments = LoggedOutViewControllerArguments()
+            let arguments = LoggedOutScopeArguments()
             return factory.build(arguments: arguments)
         }
     }

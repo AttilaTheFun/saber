@@ -6,132 +6,10 @@ import XCTest
 final class ScopeMacroTests: XCTestCase {
     private let macros: [String : any Macro.Type] = [
         "Argument": ArgumentMacro.self,
-        "Factory": FactoryMacro.self,
         "Injectable": InjectableMacro.self,
         "Inject": InjectMacro.self,
-        "Provide": ProvideMacro.self,
         "Scope": ScopeMacro.self,
-        "Store": StoreMacro.self,
     ]
-
-    func testInject() throws {
-        assertMacroExpansion(
-            """
-            @Injectable
-            @Scope
-            public final class FooScope {
-                @Inject var userService: UserService
-            }
-            """,
-            expandedSource:
-            """
-            public final class FooScope {
-                var userService: UserService {
-                    get {
-                        return self._dependencies.userService
-                    }
-                }
-
-                public typealias Dependencies = FooScopeDependencies
-
-                private let _dependencies: any Dependencies
-
-                public typealias Arguments = Void
-
-                private let _arguments: Arguments
-
-                public init(arguments: Arguments, dependencies: any Dependencies) {
-                    self._arguments = arguments
-                    self._dependencies = dependencies
-                }
-            }
-
-            public protocol FooScopeDependencies: AnyObject {
-                var userService: UserService {
-                    get
-                }
-            }
-
-            extension FooScope: ArgumentsAndDependenciesInitializable {
-            }
-            """,
-            macros: self.macros
-        )
-    }
-
-    func testProvide() throws {
-        assertMacroExpansion(
-            """
-            @Injectable
-            @Scope
-            public final class FooScope {
-                @Provide let date: Date = Date()
-
-                @Provide
-                @Store(BarServiceImplementation.self)
-                var barService: BarService
-            }
-            """,
-            expandedSource:
-            """
-            public final class FooScope {
-                let date: Date = Date()
-                var barService: BarService {
-                    get {
-                        return self._barServiceStore.value
-                    }
-                }
-
-                public typealias Dependencies = FooScopeDependencies
-
-                private let _dependencies: any Dependencies
-
-                public typealias Arguments = Void
-
-                private lazy var _barServiceStore = StoreImplementation(
-                    backingStore: StrongBackingStoreImplementation(),
-                    function: { [unowned self] in
-                        return BarServiceImplementation(dependencies: self._childDependenciesStore.value)
-                    }
-                )
-
-                private lazy var _childDependenciesStore = StoreImplementation(
-                    backingStore: WeakBackingStoreImplementation(),
-                    function: { [unowned self] in
-                        return FooScopeChildDependencies(parent: self)
-                    }
-                )
-
-                private let _arguments: Arguments
-
-                public init(arguments: Arguments, dependencies: any Dependencies) {
-                    self._arguments = arguments
-                    self._dependencies = dependencies
-                }
-            }
-
-            public protocol FooScopeDependencies: AnyObject {
-            }
-
-            fileprivate class FooScopeChildDependencies: BarServiceImplementation.UnownedDependencies {
-                private let _parent: FooScope
-                fileprivate var date: Date {
-                    return self._parent.date
-                }
-                fileprivate var barService: BarService {
-                    return self._parent.barService
-                }
-                fileprivate init(parent: FooScope) {
-                    self._parent = parent
-                }
-            }
-
-            extension FooScope: ArgumentsAndDependenciesInitializable {
-            }
-            """,
-            macros: self.macros
-        )
-    }
 
     func testArgument() throws {
         assertMacroExpansion(
@@ -157,72 +35,25 @@ final class ScopeMacroTests: XCTestCase {
 
                 public typealias Arguments = FooScopeArguments
 
-                private let _arguments: Arguments
+                private weak var _fulfilledDependencies: FooScopeFulfilledDependencies?
 
-                public init(arguments: Arguments, dependencies: any Dependencies) {
-                    self._arguments = arguments
-                    self._dependencies = dependencies
-                }
-            }
+                private let _fulfilledDependenciesLock = Lock()
 
-            public protocol FooScopeDependencies: AnyObject {
-            }
-
-            extension FooScope: ArgumentsAndDependenciesInitializable {
-            }
-            """,
-            macros: self.macros
-        )
-    }
-
-    func testFactory() throws {
-        assertMacroExpansion(
-            """
-            @Injectable
-            @Scope
-            public final class FooScope {
-                @Provide
-                @Factory(FooViewController.self)
-                public var rootFactory: Factory<FooViewControllerArguments, UIViewController>
-
-                @Provide
-                @Factory(BarScope.self, factory: \\.rootFactory)
-                public var barViewControllerFactory: Factory<BarViewControllerArguments, UIViewController>
-            }
-            """,
-            expandedSource:
-            """
-            public final class FooScope {
-                public var rootFactory: Factory<FooViewControllerArguments, UIViewController> {
-                    get {
-                        let childDependencies = self._childDependenciesStore.value
-                        return FactoryImplementation { [childDependencies] arguments in
-                            FooViewController(arguments: arguments, dependencies: childDependencies)
-                        }
+                fileprivate var fulfilledDependencies: FooScopeFulfilledDependencies {
+                    if let fulfilledDependencies = self._fulfilledDependencies {
+                        return fulfilledDependencies
                     }
-                }
-                public var barViewControllerFactory: Factory<BarViewControllerArguments, UIViewController> {
-                    get {
-                        let childDependencies = self._childDependenciesStore.value
-                        return FactoryImplementation { [childDependencies] arguments in
-                            let concrete = BarScope(arguments: arguments, dependencies: childDependencies)
-                            return concrete.rootFactory.build(arguments: arguments)
-                        }
+                    self._fulfilledDependenciesLock.lock()
+                    defer {
+                        self._fulfilledDependenciesLock.unlock()
                     }
-                }
-
-                public typealias Dependencies = FooScopeDependencies
-
-                private let _dependencies: any Dependencies
-
-                public typealias Arguments = Void
-
-                private lazy var _childDependenciesStore = StoreImplementation(
-                    backingStore: WeakBackingStoreImplementation(),
-                    function: { [unowned self] in
-                        return FooScopeChildDependencies(parent: self)
+                    if let fulfilledDependencies = self._fulfilledDependencies {
+                        return fulfilledDependencies
                     }
-                )
+                    let fulfilledDependencies = FooScopeFulfilledDependencies(parent: self)
+                    self._fulfilledDependencies = fulfilledDependencies
+                    return fulfilledDependencies
+                }
 
                 private let _arguments: Arguments
 
@@ -235,13 +66,10 @@ final class ScopeMacroTests: XCTestCase {
             public protocol FooScopeDependencies: AnyObject {
             }
 
-            fileprivate class FooScopeChildDependencies: FooViewController.Dependencies, BarScope.Dependencies {
+            public final class FooScopeFulfilledDependencies {
                 private let _parent: FooScope
-                fileprivate var rootFactory: Factory<FooViewControllerArguments, UIViewController> {
-                    return self._parent.rootFactory
-                }
-                fileprivate var barViewControllerFactory: Factory<BarViewControllerArguments, UIViewController> {
-                    return self._parent.barViewControllerFactory
+                fileprivate var user: User {
+                    return self._parent.user
                 }
                 fileprivate init(parent: FooScope) {
                     self._parent = parent
@@ -255,31 +83,21 @@ final class ScopeMacroTests: XCTestCase {
         )
     }
 
-    func testStore() throws {
+    func testInject() throws {
         assertMacroExpansion(
             """
             @Injectable
             @Scope
             public final class FooScope {
-                @Store(FooServiceImplementation.self, init: .eager)
-                var fooService: FooService
-
-                @Provide
-                @Store(BarServiceImplementation.self, storage: .weak)
-                var barService: BarService
+                @Inject var userService: UserService
             }
             """,
             expandedSource:
             """
             public final class FooScope {
-                var fooService: FooService {
+                var userService: UserService {
                     get {
-                        return self._fooServiceStore.value
-                    }
-                }
-                var barService: BarService {
-                    get {
-                        return self._barServiceStore.value
+                        return self._dependencies.userService
                     }
                 }
 
@@ -289,44 +107,135 @@ final class ScopeMacroTests: XCTestCase {
 
                 public typealias Arguments = Void
 
-                private lazy var _fooServiceStore = StoreImplementation(
-                    backingStore: StrongBackingStoreImplementation(),
-                    function: { [unowned self] in
-                        return FooServiceImplementation(dependencies: self._childDependenciesStore.value)
-                    }
-                )
+                private weak var _fulfilledDependencies: FooScopeFulfilledDependencies?
 
-                private lazy var _barServiceStore = StoreImplementation(
-                    backingStore: WeakBackingStoreImplementation(),
-                    function: { [unowned self] in
-                        return BarServiceImplementation(dependencies: self._childDependenciesStore.value)
-                    }
-                )
+                private let _fulfilledDependenciesLock = Lock()
 
-                private lazy var _childDependenciesStore = StoreImplementation(
-                    backingStore: WeakBackingStoreImplementation(),
-                    function: { [unowned self] in
-                        return FooScopeChildDependencies(parent: self)
+                fileprivate var fulfilledDependencies: FooScopeFulfilledDependencies {
+                    if let fulfilledDependencies = self._fulfilledDependencies {
+                        return fulfilledDependencies
                     }
-                )
+                    self._fulfilledDependenciesLock.lock()
+                    defer {
+                        self._fulfilledDependenciesLock.unlock()
+                    }
+                    if let fulfilledDependencies = self._fulfilledDependencies {
+                        return fulfilledDependencies
+                    }
+                    let fulfilledDependencies = FooScopeFulfilledDependencies(parent: self)
+                    self._fulfilledDependencies = fulfilledDependencies
+                    return fulfilledDependencies
+                }
 
                 private let _arguments: Arguments
 
                 public init(arguments: Arguments, dependencies: any Dependencies) {
                     self._arguments = arguments
                     self._dependencies = dependencies
-                    _ = self.fooService
+                }
+            }
+
+            public protocol FooScopeDependencies: AnyObject {
+                var userService: UserService {
+                    get
+                }
+            }
+
+            public final class FooScopeFulfilledDependencies {
+                private let _parent: FooScope
+                fileprivate var userService: UserService {
+                    return self._parent.userService
+                }
+                fileprivate init(parent: FooScope) {
+                    self._parent = parent
+                }
+            }
+
+            extension FooScope: ArgumentsAndDependenciesInitializable {
+            }
+            """,
+            macros: self.macros
+        )
+    }
+
+    func testFulfill() throws {
+        assertMacroExpansion(
+            """
+            @Injectable
+            @Scope
+            public final class FooScope {
+                let date: Date = Date()
+
+                @Fulfill(BarServiceImplementationUnownedDependencies.self)
+                lazy var barService: any BarService = BarServiceImplementation(dependencies: self.fulfilledDependencies)
+
+                @Fulfill(FooViewControllerDependencies.self)
+                lazy var fooViewControllerFactory: Factory<Void, UIViewController> = Factory { [unowned self] _ in
+                    FooViewController(dependencies: self.fulfilledDependencies)
+                }
+            }
+            """,
+            expandedSource:
+            """
+            public final class FooScope {
+                let date: Date = Date()
+
+                @Fulfill(BarServiceImplementationUnownedDependencies.self)
+                lazy var barService: any BarService = BarServiceImplementation(dependencies: self.fulfilledDependencies)
+
+                @Fulfill(FooViewControllerDependencies.self)
+                lazy var fooViewControllerFactory: Factory<Void, UIViewController> = Factory { [unowned self] _ in
+                    FooViewController(dependencies: self.fulfilledDependencies)
+                }
+
+                public typealias Dependencies = FooScopeDependencies
+
+                private let _dependencies: any Dependencies
+
+                public typealias Arguments = Void
+
+                private weak var _fulfilledDependencies: FooScopeFulfilledDependencies?
+
+                private let _fulfilledDependenciesLock = Lock()
+
+                fileprivate var fulfilledDependencies: FooScopeFulfilledDependencies {
+                    if let fulfilledDependencies = self._fulfilledDependencies {
+                        return fulfilledDependencies
+                    }
+                    self._fulfilledDependenciesLock.lock()
+                    defer {
+                        self._fulfilledDependenciesLock.unlock()
+                    }
+                    if let fulfilledDependencies = self._fulfilledDependencies {
+                        return fulfilledDependencies
+                    }
+                    let fulfilledDependencies = FooScopeFulfilledDependencies(parent: self)
+                    self._fulfilledDependencies = fulfilledDependencies
+                    return fulfilledDependencies
+                }
+
+                private let _arguments: Arguments
+
+                public init(arguments: Arguments, dependencies: any Dependencies) {
+                    self._arguments = arguments
+                    self._dependencies = dependencies
                 }
             }
 
             public protocol FooScopeDependencies: AnyObject {
             }
 
-            fileprivate class FooScopeChildDependencies: FooServiceImplementation.UnownedDependencies, BarServiceImplementation.Dependencies {
+            public final class FooScopeFulfilledDependencies: BarServiceImplementationUnownedDependencies, FooViewControllerDependencies {
                 private let _parent: FooScope
-                fileprivate var barService: BarService {
+                fileprivate var date: Date {
+                    return self._parent.date
+                }
+                fileprivate var barService: any BarService {
                     return self._parent.barService
                 }
+                fileprivate var fooViewControllerFactory: Factory<Void, UIViewController> {
+                    return self._parent.fooViewControllerFactory
+                }
                 fileprivate init(parent: FooScope) {
                     self._parent = parent
                 }
@@ -339,24 +248,19 @@ final class ScopeMacroTests: XCTestCase {
         )
     }
 
-    func testStrongChildDependencies() throws {
+    func testStrongFulfilledDependencies() throws {
         assertMacroExpansion(
             """
             @Injectable
-            @Scope(childDependencies: .strong)
+            @Scope(fulfilledDependencies: .strong)
             public final class RootScope {
-                @Store(FooServiceImplementation.self)
-                var fooService: FooService
+                let date: Date = Date()
             }
             """,
             expandedSource:
             """
             public final class RootScope {
-                var fooService: FooService {
-                    get {
-                        return self._fooServiceStore.value
-                    }
-                }
+                let date: Date = Date()
 
                 public typealias Dependencies = RootScopeDependencies
 
@@ -364,19 +268,25 @@ final class ScopeMacroTests: XCTestCase {
 
                 public typealias Arguments = Void
 
-                private lazy var _fooServiceStore = StoreImplementation(
-                    backingStore: StrongBackingStoreImplementation(),
-                    function: { [unowned self] in
-                        return FooServiceImplementation(dependencies: self._childDependenciesStore.value)
-                    }
-                )
+                private weak var _fulfilledDependencies: RootScopeFulfilledDependencies?
 
-                private lazy var _childDependenciesStore = StoreImplementation(
-                    backingStore: StrongBackingStoreImplementation(),
-                    function: { [unowned self] in
-                        return RootScopeChildDependencies(parent: self)
+                private let _fulfilledDependenciesLock = Lock()
+
+                fileprivate var fulfilledDependencies: RootScopeFulfilledDependencies {
+                    if let fulfilledDependencies = self._fulfilledDependencies {
+                        return fulfilledDependencies
                     }
-                )
+                    self._fulfilledDependenciesLock.lock()
+                    defer {
+                        self._fulfilledDependenciesLock.unlock()
+                    }
+                    if let fulfilledDependencies = self._fulfilledDependencies {
+                        return fulfilledDependencies
+                    }
+                    let fulfilledDependencies = RootScopeFulfilledDependencies(parent: self)
+                    self._fulfilledDependencies = fulfilledDependencies
+                    return fulfilledDependencies
+                }
 
                 private let _arguments: Arguments
 
@@ -389,8 +299,11 @@ final class ScopeMacroTests: XCTestCase {
             public protocol RootScopeDependencies: AnyObject {
             }
 
-            fileprivate class RootScopeChildDependencies: FooServiceImplementation.UnownedDependencies {
+            public final class RootScopeFulfilledDependencies {
                 private let _parent: RootScope
+                fileprivate var date: Date {
+                    return self._parent.date
+                }
                 fileprivate init(parent: RootScope) {
                     self._parent = parent
                 }
@@ -431,10 +344,37 @@ final class ScopeMacroTests: XCTestCase {
 
                 public typealias Arguments = Void
 
+                private weak var _fulfilledDependencies: FooScopeFulfilledDependencies?
+
+                private let _fulfilledDependenciesLock = Lock()
+
+                fileprivate var fulfilledDependencies: FooScopeFulfilledDependencies {
+                    if let fulfilledDependencies = self._fulfilledDependencies {
+                        return fulfilledDependencies
+                    }
+                    self._fulfilledDependenciesLock.lock()
+                    defer {
+                        self._fulfilledDependenciesLock.unlock()
+                    }
+                    if let fulfilledDependencies = self._fulfilledDependencies {
+                        return fulfilledDependencies
+                    }
+                    let fulfilledDependencies = FooScopeFulfilledDependencies(parent: self)
+                    self._fulfilledDependencies = fulfilledDependencies
+                    return fulfilledDependencies
+                }
+
                 private let _arguments: Arguments
             }
 
             public protocol FooScopeDependencies: AnyObject {
+            }
+
+            public final class FooScopeFulfilledDependencies {
+                private let _parent: FooScope
+                fileprivate init(parent: FooScope) {
+                    self._parent = parent
+                }
             }
 
             extension FooScope: ArgumentsAndDependenciesInitializable {
@@ -469,6 +409,26 @@ final class ScopeMacroTests: XCTestCase {
 
                 private let _dependencies: any Dependencies
 
+                private weak var _fulfilledDependencies: FooScopeFulfilledDependencies?
+
+                private let _fulfilledDependenciesLock = Lock()
+
+                fileprivate var fulfilledDependencies: FooScopeFulfilledDependencies {
+                    if let fulfilledDependencies = self._fulfilledDependencies {
+                        return fulfilledDependencies
+                    }
+                    self._fulfilledDependenciesLock.lock()
+                    defer {
+                        self._fulfilledDependenciesLock.unlock()
+                    }
+                    if let fulfilledDependencies = self._fulfilledDependencies {
+                        return fulfilledDependencies
+                    }
+                    let fulfilledDependencies = FooScopeFulfilledDependencies(parent: self)
+                    self._fulfilledDependencies = fulfilledDependencies
+                    return fulfilledDependencies
+                }
+
                 private let _arguments: Arguments
 
                 public init(arguments: Arguments, dependencies: any Dependencies) {
@@ -478,6 +438,13 @@ final class ScopeMacroTests: XCTestCase {
             }
 
             public protocol FooScopeDependencies: AnyObject {
+            }
+
+            public final class FooScopeFulfilledDependencies {
+                private let _parent: FooScope
+                fileprivate init(parent: FooScope) {
+                    self._parent = parent
+                }
             }
 
             extension FooScope: ArgumentsAndDependenciesInitializable {

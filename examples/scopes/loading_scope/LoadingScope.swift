@@ -10,17 +10,20 @@ import UserServiceImplementation
 import WindowServiceInterface
 
 @Injectable
-public final class LoadingScope: Scope {
+@Scope
+public final class LoadingScope {
     @Argument public var userSession: UserSession
     @Inject public var userStorageService: any UserStorageService
     @Inject public var userSessionStorageService: any UserSessionStorageService
     @Inject public var windowService: any WindowService
-    @Inject public var loggedOutViewControllerFactory: any Factory<LoggedOutViewControllerArguments, UIViewController>
-    @Inject public var loggedInTabBarControllerFactory: any Factory<LoggedInTabBarControllerArguments, UIViewController>
+    @Inject public var loggedOutViewControllerFactory: Factory<LoggedOutScopeArguments, UIViewController>
+    @Inject public var loggedInTabBarControllerFactory: Factory<LoggedInScopeArguments, UIViewController>
 
-    @Store(UserServiceImplementation.self)
-    public var userService: any UserService
+    @Fulfill(UserServiceImplementationUnownedDependencies.self)
+    lazy var userService: any UserService = UserServiceImplementation(dependencies: self.fulfilledDependencies)
 
-    @Factory(LoadingViewController.self)
-    public var rootFactory: any Factory<LoadingViewControllerArguments, UIViewController>
+    @Fulfill(LoadingViewControllerDependencies.self)
+    public lazy var rootFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
+        LoadingViewController(dependencies: self.fulfilledDependencies)
+    }
 }

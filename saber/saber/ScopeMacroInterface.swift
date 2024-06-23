@@ -11,9 +11,9 @@ import SaberTypes
 /// - @Factory
 /// - @Store
 @attached(member, names: arbitrary)
-@attached(peer, names: suffixed(Dependencies), suffixed(UnownedDependencies), suffixed(ChildDependencies))
+@attached(peer, names: suffixed(FulfilledDependencies))
 @attached(extension, conformances: ArgumentsAndDependenciesInitializable)
 public macro Scope(
     _ super: Any.Type? = nil,
-    childDependencies: ChildDependenciesReferenceType = .weak
+    fulfilledDependencies: FulfilledDependenciesReferenceType = .weak
 ) = #externalMacro(module: "SaberPlugin", type: "ScopeMacro")
