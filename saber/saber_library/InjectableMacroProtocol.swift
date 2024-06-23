@@ -24,6 +24,18 @@ extension InjectableMacroProtocol {
       in context: some MacroExpansionContext
     ) throws -> [ExtensionDeclSyntax] {
 
+        // Walk the declaration with the visitor:
+        let visitor = DeclarationVisitor()
+        visitor.walk(declaration)
+        guard let concreteDeclaration = visitor.concreteDeclaration else {
+            throw InjectableMacroProtocolError.declarationNotConcrete
+        }
+
+        // If this type is also annotated with the @Scope macro, defer to its protocol conformance:
+        guard concreteDeclaration.attributes.scopeMacro == nil else {
+            return []
+        }
+
         // Create the extension declaration:
         let extensionDeclaration = try self.extensionDeclaration(
             declaration: declaration,
@@ -43,8 +55,8 @@ extension InjectableMacroProtocol {
         let memberBlock = MemberBlockSyntax(members: memberBlockItemList)
 
         // Create the extension declaration:
-        let injectableProtocolType = TypeSyntax(stringLiteral: "Injectable")
-        let inheritedType = InheritedTypeSyntax(type: injectableProtocolType)
+        let inheritedProtocolType = TypeSyntax(stringLiteral: "DependenciesInitializable")
+        let inheritedType = InheritedTypeSyntax(type: inheritedProtocolType)
         let inheritedTypeList = InheritedTypeListSyntax([inheritedType])
         let inheritanceClause = InheritanceClauseSyntax(inheritedTypes: inheritedTypeList)
         let extensionDeclaration = ExtensionDeclSyntax(
@@ -131,9 +143,6 @@ extension InjectableMacroProtocol {
         visitor: DeclarationVisitor,
         declaration: some DeclSyntaxProtocol
     ) throws -> [DeclSyntax] {
-        guard let concreteDeclaration = visitor.concreteDeclaration else {
-            throw InjectableMacroProtocolError.declarationNotConcrete
-        }
 
         // Create the property declarations:
         var propertyDeclarations = [DeclSyntax]()
@@ -141,11 +150,10 @@ extension InjectableMacroProtocol {
         // Create the dependencies stored property declaration:
         let dependenciesReferenceType = node.dependenciesReferenceTypeArgument ?? .strong
         let dependenciesSuffix = dependenciesReferenceType == .unowned ? "UnownedDependencies" : "Dependencies"
-        let accessLevel = concreteDeclaration.modifiers.accessLevel.rawValue
         let bindingModifier = dependenciesReferenceType == .unowned ? "unowned " : ""
         let dependenciesPropertyDeclaration: DeclSyntax =
         """
-        \(raw: accessLevel) \(raw: bindingModifier)let dependencies: any \(raw: dependenciesSuffix)
+        private \(raw: bindingModifier)let _dependencies: any \(raw: dependenciesSuffix)
         """
         propertyDeclarations.append(dependenciesPropertyDeclaration)
 
@@ -163,7 +171,7 @@ extension InjectableMacroProtocol {
 
         // Create the initializer lines:
         var initializerLines = [
-            "self.dependencies = dependencies",
+            "self._dependencies = dependencies",
         ]
 
         // Call the designated initializer and implement the required initializers, if necessary:

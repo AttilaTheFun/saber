@@ -12,11 +12,7 @@ final class ProvideMacroTests: XCTestCase {
             """,
             expandedSource:
             """
-            var user: User {
-                get {
-                    return self._arguments.user
-                }
-            }
+            var user: User
             """,
             macros: self.macros
         )

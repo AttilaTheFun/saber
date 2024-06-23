@@ -17,22 +17,7 @@ extension ProvideMacroProtocol {
         providingAccessorsOf declaration: some DeclSyntaxProtocol,
         in context: some MacroExpansionContext
     ) throws -> [AccessorDeclSyntax] {
-        guard
-            let variableDeclaration = declaration.as(VariableDeclSyntax.self),
-            variableDeclaration.bindings.count == 1,
-            let binding = variableDeclaration.bindings.first,
-            let identifierPattern = IdentifierPatternSyntax(binding.pattern),
-            binding.accessorBlock == nil else
-        {
-            return []
-        }
-
-        return [
-            """
-            get {
-                return self._arguments.\(identifierPattern.identifier)
-            }
-            """
-        ]
+        // This macro does not expand.
+        return []
     }
 }

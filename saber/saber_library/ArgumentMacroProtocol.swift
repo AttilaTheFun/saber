@@ -30,7 +30,7 @@ extension ArgumentMacroProtocol {
         return [
             """
             get {
-                return self.arguments.\(identifierPattern.identifier)
+                return self._arguments.\(identifierPattern.identifier)
             }
             """
         ]

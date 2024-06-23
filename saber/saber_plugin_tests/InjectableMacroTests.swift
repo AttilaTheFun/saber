@@ -22,16 +22,16 @@ final class InjectableMacroTests: XCTestCase {
             public final class FooObject {
                 var fooService: FooService {
                     get {
-                        return self.dependencies.fooService
+                        return self._dependencies.fooService
                     }
                 }
 
                 public typealias Dependencies = FooObjectDependencies
 
-                public let dependencies: any Dependencies
+                private let _dependencies: any Dependencies
 
                 public init(dependencies: any Dependencies) {
-                    self.dependencies = dependencies
+                    self._dependencies = dependencies
                 }
             }
 
@@ -41,7 +41,7 @@ final class InjectableMacroTests: XCTestCase {
                 }
             }
 
-            extension FooObject: Injectable {
+            extension FooObject: DependenciesInitializable {
             }
             """,
             macros: self.macros
@@ -61,10 +61,10 @@ final class InjectableMacroTests: XCTestCase {
 
                 public typealias Dependencies = FooViewControllerDependencies
 
-                public let dependencies: any Dependencies
+                private let _dependencies: any Dependencies
 
                 public init(dependencies: any Dependencies) {
-                    self.dependencies = dependencies
+                    self._dependencies = dependencies
                     super.init(nibName: nil, bundle: nil)
                 }
 
@@ -76,7 +76,7 @@ final class InjectableMacroTests: XCTestCase {
             public protocol FooViewControllerDependencies: AnyObject {
             }
 
-            extension FooViewController: Injectable {
+            extension FooViewController: DependenciesInitializable {
             }
             """,
             macros: self.macros
@@ -96,10 +96,10 @@ final class InjectableMacroTests: XCTestCase {
 
                 public typealias Dependencies = FooViewDependencies
 
-                public let dependencies: any Dependencies
+                private let _dependencies: any Dependencies
 
                 public init(dependencies: any Dependencies) {
-                    self.dependencies = dependencies
+                    self._dependencies = dependencies
                     super.init(frame: .zero)
                 }
 
@@ -111,7 +111,7 @@ final class InjectableMacroTests: XCTestCase {
             public protocol FooViewDependencies: AnyObject {
             }
 
-            extension FooView: Injectable {
+            extension FooView: DependenciesInitializable {
             }
             """,
             macros: self.macros
@@ -131,17 +131,17 @@ final class InjectableMacroTests: XCTestCase {
 
                 public typealias Dependencies = FooServiceImplementationUnownedDependencies
 
-                public unowned let dependencies: any UnownedDependencies
+                private unowned let _dependencies: any UnownedDependencies
 
                 public init(dependencies: any Dependencies) {
-                    self.dependencies = dependencies
+                    self._dependencies = dependencies
                 }
             }
 
             public protocol FooServiceImplementationUnownedDependencies: AnyObject {
             }
 
-            extension FooServiceImplementation: Injectable {
+            extension FooServiceImplementation: DependenciesInitializable {
             }
             """,
             macros: self.macros
@@ -154,7 +154,7 @@ final class InjectableMacroTests: XCTestCase {
             @Injectable
             public final class Foo {
                 public init(dependencies: any Dependencies) {
-                    self.dependencies = dependencies
+                    self._dependencies = dependencies
                     print("hand written initializer")
                 }
             }
@@ -163,19 +163,19 @@ final class InjectableMacroTests: XCTestCase {
             """
             public final class Foo {
                 public init(dependencies: any Dependencies) {
-                    self.dependencies = dependencies
+                    self._dependencies = dependencies
                     print("hand written initializer")
                 }
 
                 public typealias Dependencies = FooDependencies
 
-                public let dependencies: any Dependencies
+                private let _dependencies: any Dependencies
             }
 
             public protocol FooDependencies: AnyObject {
             }
 
-            extension Foo: Injectable {
+            extension Foo: DependenciesInitializable {
             }
             """,
             macros: self.macros
@@ -200,14 +200,14 @@ final class InjectableMacroTests: XCTestCase {
             public final class FooObject {
                 public typealias Dependencies = FooSpecialDependencies
 
-                public let dependencies: any Dependencies
+                private let _dependencies: any Dependencies
 
                 public init(dependencies: any Dependencies) {
-                    self.dependencies = dependencies
+                    self._dependencies = dependencies
                 }
             }
 
-            extension FooObject: Injectable {
+            extension FooObject: DependenciesInitializable {
             }
             """,
             macros: self.macros

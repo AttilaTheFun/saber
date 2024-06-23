@@ -12,7 +12,7 @@ import SaberTypes
 /// - @Store
 @attached(member, names: arbitrary)
 @attached(peer, names: suffixed(Dependencies), suffixed(UnownedDependencies), suffixed(ChildDependencies))
-@attached(extension, conformances: Scope)
+@attached(extension, conformances: ArgumentsAndDependenciesInitializable)
 public macro Scope(
     _ super: Any.Type? = nil,
     childDependencies: ChildDependenciesReferenceType = .weak

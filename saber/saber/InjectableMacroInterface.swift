@@ -11,7 +11,7 @@ import SaberTypes
 /// - @Inject
 @attached(member, names: arbitrary)
 @attached(peer, names: suffixed(Dependencies), suffixed(UnownedDependencies), suffixed(ChildDependencies))
-@attached(extension, conformances: Injectable)
+@attached(extension, conformances: DependenciesInitializable)
 public macro Injectable(
     _ super: Any.Type? = nil,
     dependencies: DependenciesReferenceType = .strong

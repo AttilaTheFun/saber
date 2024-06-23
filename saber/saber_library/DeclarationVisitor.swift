@@ -18,21 +18,17 @@ public final class DeclarationVisitor: SyntaxVisitor {
     public private(set) var concreteDeclaration: ConcreteDeclSyntaxProtocol?
     public private(set) var argumentsTypeAliasDeclaration: TypeAliasDeclSyntax?
     public private(set) var dependenciesTypeAliasDeclaration: TypeAliasDeclSyntax?
-    public private(set) var initArgumentsDeclaration: InitializerDeclSyntax?
-    public private(set) var initArgumentsDependenciesDeclaration: InitializerDeclSyntax?
+    public private(set) var initArgumentsAndDependenciesDeclaration: InitializerDeclSyntax?
     public private(set) var initDependenciesDeclaration: InitializerDeclSyntax?
 
     public private(set) var argumentProperties: [(Property,AttributeSyntax)] = []
-    public private(set) var injectProperties: [(Property,AttributeSyntax)] = []
     public private(set) var factoryProperties: [(Property,AttributeSyntax)] = []
+    public private(set) var injectProperties: [(Property,AttributeSyntax)] = []
+    public private(set) var provideProperties: [(Property,AttributeSyntax)] = []
     public private(set) var storeProperties: [(Property,AttributeSyntax)] = []
 
     public var childDependencyProperties: [(Property,AttributeSyntax)] {
         return self.factoryProperties + self.storeProperties
-    }
-
-    public var allProperties: [(Property,AttributeSyntax)] {
-        return self.argumentProperties + self.injectProperties + self.factoryProperties + self.storeProperties
     }
 
     // MARK: Concrete Declarations
@@ -110,10 +106,7 @@ public final class DeclarationVisitor: SyntaxVisitor {
             let dependenciesParameterIndex,
             argumentsParameterIndex < dependenciesParameterIndex
         {
-            self.initArgumentsDependenciesDeclaration = node
-        }
-        if parameters.count == 1, argumentsParameterIndex != nil {
-            self.initArgumentsDeclaration = node
+            self.initArgumentsAndDependenciesDeclaration = node
         }
         if parameters.count == 1, dependenciesParameterIndex != nil {
             self.initDependenciesDeclaration = node
@@ -129,7 +122,7 @@ public final class DeclarationVisitor: SyntaxVisitor {
             return .skipChildren
         }
 
-        guard let injectableMacroType = node.attributes.injectableMacroType else {
+        guard node.attributes.injectableMacroTypes.count > 0 else {
             return .skipChildren
         }
 
@@ -139,26 +132,25 @@ public final class DeclarationVisitor: SyntaxVisitor {
             fatalError()
         }
 
-        // Check that the binding specifier is a var:
-        if node.bindingSpecifier.text != "var" {
-            // TODO: Diagnostic.
-            fatalError()
-        }
+//        // Check that the binding specifier is a var:
+//        if node.bindingSpecifier.text != "var" {
+//            // TODO: Diagnostic.
+//            fatalError()
+//        }
 
         for binding in node.bindings {
 
-            // Check that each binding has no initializer.
-            if binding.initializer != nil {
-                // TODO: Diagnostic.
-                fatalError()
-            }
+//            // Check that each binding has no initializer.
+//            if binding.initializer != nil {
+//                // TODO: Diagnostic.
+//                fatalError()
+//            }
 
             // Parse the property:
             if
                 let identifierPattern = IdentifierPatternSyntax(binding.pattern),
                 let typeAnnotation = binding.typeAnnotation
             {
-
                 // Parse the type description:
                 let typeDescription = typeAnnotation.type.typeDescription
                 if case .unknown(let description) = typeDescription {
@@ -171,15 +163,19 @@ public final class DeclarationVisitor: SyntaxVisitor {
                     label: identifierPattern.identifier.text,
                     typeDescription: typeDescription
                 )
-                switch injectableMacroType {
-                case .argument(let attributeSyntax):
-                    self.argumentProperties.append((property, attributeSyntax))
-                case .inject(let attributeSyntax):
-                    self.injectProperties.append((property, attributeSyntax))
-                case .factory(let attributeSyntax):
-                    self.factoryProperties.append((property, attributeSyntax))
-                case .store(let attributeSyntax):
-                    self.storeProperties.append((property, attributeSyntax))
+                for injectableMacroType in node.attributes.injectableMacroTypes {
+                    switch injectableMacroType {
+                    case .argument(let attributeSyntax):
+                        self.argumentProperties.append((property, attributeSyntax))
+                    case .inject(let attributeSyntax):
+                        self.injectProperties.append((property, attributeSyntax))
+                    case .factory(let attributeSyntax):
+                        self.factoryProperties.append((property, attributeSyntax))
+                    case .provide(let attributeSyntax):
+                        self.provideProperties.append((property, attributeSyntax))
+                    case .store(let attributeSyntax):
+                        self.storeProperties.append((property, attributeSyntax))
+                    }
                 }
             } else {
                 // TODO: Diagnostic.

@@ -14,7 +14,7 @@ final class InjectMacroTests: XCTestCase {
             """
             var fooService: FooService {
                 get {
-                    return self.dependencies.fooService
+                    return self._dependencies.fooService
                 }
             }
             """,

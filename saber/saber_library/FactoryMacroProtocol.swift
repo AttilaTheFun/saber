@@ -20,8 +20,7 @@ extension FactoryMacroProtocol {
     ) throws -> [AccessorDeclSyntax] {
         guard
             let variableDeclaration = declaration.as(VariableDeclSyntax.self),
-            let factoryMacro = variableDeclaration.attributes.factoryMacro,
-            let concreteType = factoryMacro.concreteTypeArgument,
+            let concreteType = node.concreteTypeArgument,
             let binding = variableDeclaration.bindings.first,
             binding.accessorBlock == nil else
         {
@@ -30,7 +29,7 @@ extension FactoryMacroProtocol {
 
         // Create the factory lines:
         let factoryLines: [String]
-        if let factoryKeyPathArgument = factoryMacro.factoryKeyPathArgument {
+        if let factoryKeyPathArgument = node.factoryKeyPathArgument {
             factoryLines = [
                 "let concrete = \(concreteType.asSource)(arguments: arguments, dependencies: childDependencies)",
                 "return concrete.\(factoryKeyPathArgument).build(arguments: arguments)"

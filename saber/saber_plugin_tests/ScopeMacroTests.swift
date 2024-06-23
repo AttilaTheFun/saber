@@ -9,6 +9,7 @@ final class ScopeMacroTests: XCTestCase {
         "Factory": FactoryMacro.self,
         "Injectable": InjectableMacro.self,
         "Inject": InjectMacro.self,
+        "Provide": ProvideMacro.self,
         "Scope": ScopeMacro.self,
         "Store": StoreMacro.self,
     ]
@@ -27,21 +28,21 @@ final class ScopeMacroTests: XCTestCase {
             public final class FooScope {
                 var userService: UserService {
                     get {
-                        return self.dependencies.userService
+                        return self._dependencies.userService
                     }
                 }
 
                 public typealias Dependencies = FooScopeDependencies
 
-                public let dependencies: any Dependencies
+                private let _dependencies: any Dependencies
 
                 public typealias Arguments = Void
 
-                public let arguments: Arguments
+                private let _arguments: Arguments
 
                 public init(arguments: Arguments, dependencies: any Dependencies) {
-                    self.arguments = arguments
-                    self.dependencies = dependencies
+                    self._arguments = arguments
+                    self._dependencies = dependencies
                 }
             }
 
@@ -51,10 +52,81 @@ final class ScopeMacroTests: XCTestCase {
                 }
             }
 
-            extension FooScope: Injectable {
+            extension FooScope: ArgumentsAndDependenciesInitializable {
+            }
+            """,
+            macros: self.macros
+        )
+    }
+
+    func testProvide() throws {
+        assertMacroExpansion(
+            """
+            @Injectable
+            @Scope
+            public final class FooScope {
+                @Provide let date: Date = Date()
+
+                @Provide
+                @Store(BarServiceImplementation.self)
+                var barService: BarService
+            }
+            """,
+            expandedSource:
+            """
+            public final class FooScope {
+                let date: Date = Date()
+                var barService: BarService {
+                    get {
+                        return self._barServiceStore.value
+                    }
+                }
+
+                public typealias Dependencies = FooScopeDependencies
+
+                private let _dependencies: any Dependencies
+
+                public typealias Arguments = Void
+
+                private lazy var _barServiceStore = StoreImplementation(
+                    backingStore: StrongBackingStoreImplementation(),
+                    function: { [unowned self] in
+                        return BarServiceImplementation(dependencies: self._childDependenciesStore.value)
+                    }
+                )
+
+                private lazy var _childDependenciesStore = StoreImplementation(
+                    backingStore: WeakBackingStoreImplementation(),
+                    function: { [unowned self] in
+                        return FooScopeChildDependencies(parent: self)
+                    }
+                )
+
+                private let _arguments: Arguments
+
+                public init(arguments: Arguments, dependencies: any Dependencies) {
+                    self._arguments = arguments
+                    self._dependencies = dependencies
+                }
             }
 
-            extension FooScope: Scope {
+            public protocol FooScopeDependencies: AnyObject {
+            }
+
+            fileprivate class FooScopeChildDependencies: BarServiceImplementation.UnownedDependencies {
+                private let _parent: FooScope
+                fileprivate var date: Date {
+                    return self._parent.date
+                }
+                fileprivate var barService: BarService {
+                    return self._parent.barService
+                }
+                fileprivate init(parent: FooScope) {
+                    self._parent = parent
+                }
+            }
+
+            extension FooScope: ArgumentsAndDependenciesInitializable {
             }
             """,
             macros: self.macros
@@ -64,6 +136,7 @@ final class ScopeMacroTests: XCTestCase {
     func testArgument() throws {
         assertMacroExpansion(
             """
+            @Injectable
             @Scope
             public final class FooScope {
                 @Argument var user: User
@@ -74,20 +147,28 @@ final class ScopeMacroTests: XCTestCase {
             public final class FooScope {
                 var user: User {
                     get {
-                        return self.arguments.user
+                        return self._arguments.user
                     }
                 }
 
+                public typealias Dependencies = FooScopeDependencies
+
+                private let _dependencies: any Dependencies
+
                 public typealias Arguments = FooScopeArguments
 
-                public let arguments: Arguments
+                private let _arguments: Arguments
 
-                public init(arguments: Arguments) {
-                    self.arguments = arguments
+                public init(arguments: Arguments, dependencies: any Dependencies) {
+                    self._arguments = arguments
+                    self._dependencies = dependencies
                 }
             }
 
-            extension FooScope: Scope {
+            public protocol FooScopeDependencies: AnyObject {
+            }
+
+            extension FooScope: ArgumentsAndDependenciesInitializable {
             }
             """,
             macros: self.macros
@@ -100,9 +181,11 @@ final class ScopeMacroTests: XCTestCase {
             @Injectable
             @Scope
             public final class FooScope {
+                @Provide
                 @Factory(FooViewController.self)
                 public var rootFactory: Factory<FooViewControllerArguments, UIViewController>
 
+                @Provide
                 @Factory(BarScope.self, factory: \\.rootFactory)
                 public var barViewControllerFactory: Factory<BarViewControllerArguments, UIViewController>
             }
@@ -130,7 +213,7 @@ final class ScopeMacroTests: XCTestCase {
 
                 public typealias Dependencies = FooScopeDependencies
 
-                public let dependencies: any Dependencies
+                private let _dependencies: any Dependencies
 
                 public typealias Arguments = Void
 
@@ -141,11 +224,11 @@ final class ScopeMacroTests: XCTestCase {
                     }
                 )
 
-                public let arguments: Arguments
+                private let _arguments: Arguments
 
                 public init(arguments: Arguments, dependencies: any Dependencies) {
-                    self.arguments = arguments
-                    self.dependencies = dependencies
+                    self._arguments = arguments
+                    self._dependencies = dependencies
                 }
             }
 
@@ -165,10 +248,7 @@ final class ScopeMacroTests: XCTestCase {
                 }
             }
 
-            extension FooScope: Injectable {
-            }
-
-            extension FooScope: Scope {
+            extension FooScope: ArgumentsAndDependenciesInitializable {
             }
             """,
             macros: self.macros
@@ -184,6 +264,7 @@ final class ScopeMacroTests: XCTestCase {
                 @Store(FooServiceImplementation.self, init: .eager)
                 var fooService: FooService
 
+                @Provide
                 @Store(BarServiceImplementation.self, storage: .weak)
                 var barService: BarService
             }
@@ -204,7 +285,7 @@ final class ScopeMacroTests: XCTestCase {
 
                 public typealias Dependencies = FooScopeDependencies
 
-                public let dependencies: any Dependencies
+                private let _dependencies: any Dependencies
 
                 public typealias Arguments = Void
 
@@ -229,11 +310,11 @@ final class ScopeMacroTests: XCTestCase {
                     }
                 )
 
-                public let arguments: Arguments
+                private let _arguments: Arguments
 
                 public init(arguments: Arguments, dependencies: any Dependencies) {
-                    self.arguments = arguments
-                    self.dependencies = dependencies
+                    self._arguments = arguments
+                    self._dependencies = dependencies
                     _ = self.fooService
                 }
             }
@@ -243,9 +324,6 @@ final class ScopeMacroTests: XCTestCase {
 
             fileprivate class FooScopeChildDependencies: FooServiceImplementation.UnownedDependencies, BarServiceImplementation.Dependencies {
                 private let _parent: FooScope
-                fileprivate var fooService: FooService {
-                    return self._parent.fooService
-                }
                 fileprivate var barService: BarService {
                     return self._parent.barService
                 }
@@ -254,10 +332,7 @@ final class ScopeMacroTests: XCTestCase {
                 }
             }
 
-            extension FooScope: Injectable {
-            }
-
-            extension FooScope: Scope {
+            extension FooScope: ArgumentsAndDependenciesInitializable {
             }
             """,
             macros: self.macros
@@ -285,7 +360,7 @@ final class ScopeMacroTests: XCTestCase {
 
                 public typealias Dependencies = RootScopeDependencies
 
-                public let dependencies: any Dependencies
+                private let _dependencies: any Dependencies
 
                 public typealias Arguments = Void
 
@@ -303,11 +378,11 @@ final class ScopeMacroTests: XCTestCase {
                     }
                 )
 
-                public let arguments: Arguments
+                private let _arguments: Arguments
 
                 public init(arguments: Arguments, dependencies: any Dependencies) {
-                    self.arguments = arguments
-                    self.dependencies = dependencies
+                    self._arguments = arguments
+                    self._dependencies = dependencies
                 }
             }
 
@@ -316,18 +391,12 @@ final class ScopeMacroTests: XCTestCase {
 
             fileprivate class RootScopeChildDependencies: FooServiceImplementation.UnownedDependencies {
                 private let _parent: RootScope
-                fileprivate var fooService: FooService {
-                    return self._parent.fooService
-                }
                 fileprivate init(parent: RootScope) {
                     self._parent = parent
                 }
             }
 
-            extension RootScope: Injectable {
-            }
-
-            extension RootScope: Scope {
+            extension RootScope: ArgumentsAndDependenciesInitializable {
             }
             """,
             macros: self.macros
@@ -358,20 +427,17 @@ final class ScopeMacroTests: XCTestCase {
 
                 public typealias Dependencies = FooScopeDependencies
 
-                public let dependencies: any Dependencies
+                private let _dependencies: any Dependencies
 
                 public typealias Arguments = Void
 
-                public let arguments: Arguments
+                private let _arguments: Arguments
             }
 
             public protocol FooScopeDependencies: AnyObject {
             }
 
-            extension FooScope: Injectable {
-            }
-
-            extension FooScope: Scope {
+            extension FooScope: ArgumentsAndDependenciesInitializable {
             }
             """,
             macros: self.macros
@@ -401,23 +467,20 @@ final class ScopeMacroTests: XCTestCase {
 
                 public typealias Dependencies = FooScopeDependencies
 
-                public let dependencies: any Dependencies
+                private let _dependencies: any Dependencies
 
-                public let arguments: Arguments
+                private let _arguments: Arguments
 
                 public init(arguments: Arguments, dependencies: any Dependencies) {
-                    self.arguments = arguments
-                    self.dependencies = dependencies
+                    self._arguments = arguments
+                    self._dependencies = dependencies
                 }
             }
 
             public protocol FooScopeDependencies: AnyObject {
             }
 
-            extension FooScope: Injectable {
-            }
-
-            extension FooScope: Scope {
+            extension FooScope: ArgumentsAndDependenciesInitializable {
             }
             """,
             macros: self.macros

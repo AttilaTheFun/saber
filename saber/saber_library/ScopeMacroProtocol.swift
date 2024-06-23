@@ -43,8 +43,8 @@ extension ScopeMacroProtocol {
         let memberBlock = MemberBlockSyntax(members: memberBlockItemList)
 
         // Create the extension declaration:
-        let injectableProtocolType = TypeSyntax(stringLiteral: "Scope")
-        let inheritedType = InheritedTypeSyntax(type: injectableProtocolType)
+        let inheritedProtocolType = TypeSyntax(stringLiteral: "ArgumentsAndDependenciesInitializable")
+        let inheritedType = InheritedTypeSyntax(type: inheritedProtocolType)
         let inheritedTypeList = InheritedTypeListSyntax([inheritedType])
         let inheritanceClause = InheritanceClauseSyntax(inheritedTypes: inheritedTypeList)
         let extensionDeclaration = ExtensionDeclSyntax(
@@ -68,9 +68,6 @@ extension ScopeMacroProtocol {
         // Walk the declaration with the visitor:
         let visitor = DeclarationVisitor()
         visitor.walk(declaration)
-        guard let concreteDeclaration = visitor.concreteDeclaration else {
-            throw ScopeMacroProtocolError.declarationNotConcrete
-        }
 
         // Create the member declarations:
         var memberDeclarations = [DeclSyntax]()
@@ -86,10 +83,7 @@ extension ScopeMacroProtocol {
         )
 
         // If there there is *not* a handwritten initializer we need to generate it:
-        let isInjectable = concreteDeclaration.attributes.injectableMacro != nil
-        let shouldGenerateInitializer = isInjectable ?
-            visitor.initArgumentsDependenciesDeclaration == nil :
-            visitor.initArgumentsDeclaration == nil
+        let shouldGenerateInitializer = visitor.initArgumentsAndDependenciesDeclaration == nil
         if shouldGenerateInitializer {
             let memberDeclaration = try self.parentInitializerDeclaration(
                 node: node,
@@ -181,10 +175,9 @@ extension ScopeMacroProtocol {
         }
 
         // Create the arguments stored property declaration:
-        let accessLevel = concreteDeclaration.modifiers.accessLevel.rawValue
         let argumentsPropertyDeclaration: DeclSyntax =
         """
-        \(raw: accessLevel) let arguments: Arguments
+        private let _arguments: Arguments
         """
         propertyDeclarations.append(argumentsPropertyDeclaration)
 
@@ -232,14 +225,10 @@ extension ScopeMacroProtocol {
         }
 
         // Create the initializer lines:
-        var initializerParameters = ["arguments: Arguments"]
-        var initializerLines = ["self.arguments = arguments"]
-
-        // If the concrete type is *also* annotated with the @Injectable macro, we need to include the dependencies:
-        if concreteDeclaration.attributes.injectableMacro != nil {
-            initializerParameters.append("dependencies: any Dependencies")
-            initializerLines.append("self.dependencies = dependencies")
-        }
+        var initializerLines = [
+            "self._arguments = arguments",
+            "self._dependencies = dependencies"
+        ]
 
         // Invoke eager store properties:
         for (property, attributeSyntax) in visitor.storeProperties {
@@ -254,7 +243,7 @@ extension ScopeMacroProtocol {
         let accessLevel = concreteDeclaration.modifiers.accessLevel.rawValue
         let initializerDeclaration: DeclSyntax =
         """
-        \(raw: accessLevel) init(\(raw: initializerParameters.joined(separator: ", "))) {
+        \(raw: accessLevel) init(arguments: Arguments, dependencies: any Dependencies) {
         \(raw: initializerLines.joined(separator: "\n"))
         }
         """
@@ -415,7 +404,7 @@ extension ScopeMacroProtocol {
         propertyDeclarations.append(parentPropertyDeclaration)
 
         // Create the computed property declarations for all of the properties, reading their values from the parent:
-        for (property, _) in visitor.allProperties {
+        for (property, _) in visitor.provideProperties {
 
             // Create the stored property declaration:
             let propertyDeclaration: DeclSyntax =

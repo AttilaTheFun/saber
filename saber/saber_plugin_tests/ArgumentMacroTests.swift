@@ -14,7 +14,7 @@ final class ArgumentMacroTests: XCTestCase {
             """
             var user: User {
                 get {
-                    return self.arguments.user
+                    return self._arguments.user
                 }
             }
             """,

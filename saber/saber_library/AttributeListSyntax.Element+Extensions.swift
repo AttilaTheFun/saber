@@ -1,12 +1,21 @@
 import SwiftSyntax
 
 extension AttributeListSyntax.Element {
-    public var argumentMacro: AttributeSyntax? {
-        self.attributeIfNameEquals("Argument")
-    }
+
+    // MARK: Peer Macros
 
     public var injectableMacro: AttributeSyntax? {
         self.attributeIfNameEquals("Injectable")
+    }
+
+    public var scopeMacro: AttributeSyntax? {
+        self.attributeIfNameEquals("Scope")
+    }
+
+    // MARK: Accessor Macros
+
+    public var argumentMacro: AttributeSyntax? {
+        self.attributeIfNameEquals("Argument")
     }
 
     public var injectMacro: AttributeSyntax? {
@@ -21,13 +30,11 @@ extension AttributeListSyntax.Element {
         self.attributeIfNameEquals("Provide")
     }
 
-    public var scopeMacro: AttributeSyntax? {
-        self.attributeIfNameEquals("Scope")
-    }
-
     public var storeMacro: AttributeSyntax? {
         self.attributeIfNameEquals("Store")
     }
+
+    // MARK: Private
 
     private func attributeIfNameEquals(_ expectedName: String) -> AttributeSyntax? {
         if
