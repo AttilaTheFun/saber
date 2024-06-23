@@ -20,10 +20,12 @@ public final class LoadingScope {
     @Inject public var loggedInTabBarControllerFactory: Factory<LoggedInScopeArguments, UIViewController>
 
     @Fulfill(UserServiceImplementationUnownedDependencies.self)
-    lazy var userService: any UserService = UserServiceImplementation(dependencies: self.fulfilledDependencies)
+    public lazy var userService: any UserService = UserServiceImplementation(dependencies: self)
 
     @Fulfill(LoadingViewControllerDependencies.self)
     public lazy var rootFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
-        LoadingViewController(dependencies: self.fulfilledDependencies)
+        LoadingViewController(dependencies: self)
     }
 }
+
+extension LoadingScope: LoadingScopeFulfilledDependencies {}

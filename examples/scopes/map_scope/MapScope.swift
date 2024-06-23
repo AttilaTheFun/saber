@@ -9,6 +9,8 @@ public final class MapScope {
 
     @Fulfill(MapViewControllerDependencies.self)
     public lazy var rootFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
-        MapViewController(dependencies: self.fulfilledDependencies)
+        MapViewController(dependencies: self)
     }
 }
+
+extension MapScope: MapScopeFulfilledDependencies {}

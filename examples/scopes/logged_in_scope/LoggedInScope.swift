@@ -27,26 +27,32 @@ public final class LoggedInScope {
 
     @Fulfill(LoggedInTabBarControllerDependencies.self)
     public lazy var rootFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
-        return LoggedInTabBarController(dependencies: self.fulfilledDependencies)
+        return LoggedInTabBarController(dependencies: self)
     }
 
     @Fulfill(CameraScopeDependencies.self)
     public lazy var cameraViewControllerFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
-        CameraScope(dependencies: self.fulfilledDependencies).rootFactory.build()
+        let scope = CameraScope(dependencies: self)
+        return scope.rootFactory.build()
     }
 
     @Fulfill(MapScopeDependencies.self)
     public lazy var mapViewControllerFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
-        MapScope(dependencies: self.fulfilledDependencies).rootFactory.build()
+        let scope = MapScope(dependencies: self)
+        return scope.rootFactory.build()
     }
 
     @Fulfill(InboxScopeDependencies.self)
     public lazy var inboxViewControllerFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
-        InboxScope(dependencies: self.fulfilledDependencies).rootFactory.build()
+        let scope = InboxScope(dependencies: self)
+        return scope.rootFactory.build()
     }
 
     @Fulfill(ProfileScopeDependencies.self)
     public lazy var profileViewControllerFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
-        ProfileScope(dependencies: self.fulfilledDependencies).rootFactory.build()
+        let scope = ProfileScope(dependencies: self)
+        return scope.rootFactory.build()
     }
 }
+
+extension LoggedInScope: LoggedInScopeFulfilledDependencies {}

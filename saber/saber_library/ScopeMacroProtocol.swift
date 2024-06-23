@@ -140,46 +140,14 @@ extension ScopeMacroProtocol {
         visitor: DeclarationVisitor,
         declaration: some DeclSyntaxProtocol
     ) throws -> [DeclSyntax] {
-        guard let concreteDeclaration = visitor.concreteDeclaration else {
-            throw ScopeMacroProtocolError.declarationNotConcrete
-        }
-
-        // Create the property declarations:
-        var propertyDeclarations = [DeclSyntax]()
-
-        // TODO: Do we still need this?
-        // let fulfilledDependenciesReferenceType = node.fulfilledDependenciesReferenceTypeArgument ?? .weak
-
-        // Create the fulfilled dependencies property declarations:
-        let fulfilledDependenciesClassName = "\(concreteDeclaration.name.trimmed)FulfilledDependencies"
-        propertyDeclarations += [
-            "private weak var _fulfilledDependencies: \(raw: fulfilledDependenciesClassName)?",
-            "private let _fulfilledDependenciesLock = Lock()",
-            """
-            fileprivate var fulfilledDependencies: \(raw: fulfilledDependenciesClassName) {
-            if let fulfilledDependencies = self._fulfilledDependencies {
-            return fulfilledDependencies
-            }
-            self._fulfilledDependenciesLock.lock()
-            defer { self._fulfilledDependenciesLock.unlock() }
-            if let fulfilledDependencies = self._fulfilledDependencies {
-            return fulfilledDependencies
-            }
-            let fulfilledDependencies = \(raw: fulfilledDependenciesClassName)(parent: self)
-            self._fulfilledDependencies = fulfilledDependencies
-            return fulfilledDependencies
-            }
-            """
-        ]
 
         // Create the arguments stored property declaration:
         let argumentsPropertyDeclaration: DeclSyntax =
         """
         private let _arguments: Arguments
         """
-        propertyDeclarations.append(argumentsPropertyDeclaration)
 
-        return propertyDeclarations
+        return [argumentsPropertyDeclaration]
     }
 
     private static func parentInitializerDeclaration(
@@ -216,19 +184,17 @@ extension ScopeMacroProtocol {
         let visitor = DeclarationVisitor()
         visitor.walk(declaration)
 
-        // Create the protocol declarations:
-        let declarations: [DeclSyntax?] = [
-            try self.fulfilledDependenciesClassDeclaration(
-                node: node,
-                visitor: visitor,
-                declaration: declaration
-            )
-        ]
+        // Create the protocol declaration:
+        let fulfilledDependenciesProtocolDeclaration = try self.fulfilledDependenciesProtocolDeclaration(
+            node: node,
+            visitor: visitor,
+            declaration: declaration
+        )
 
-        return declarations.compactMap { $0 }
+        return [fulfilledDependenciesProtocolDeclaration]
     }
 
-    private static func fulfilledDependenciesClassDeclaration(
+    private static func fulfilledDependenciesProtocolDeclaration(
         node: AttributeSyntax,
         visitor: DeclarationVisitor,
         declaration: some DeclSyntaxProtocol
@@ -238,115 +204,39 @@ extension ScopeMacroProtocol {
         }
 
         // Extract the dependencies protocol names from the factory and store properties:
-        var fulfilledDependenciesProtocolNames = [String]()
+        var inheritedProtocolNames = ["AnyObject"]
         for (_, attributeSyntax) in visitor.fulfillProperties {
             guard let concreteTypeDescription = attributeSyntax.concreteTypeArgument else {
                 throw ScopeMacroProtocolError.invalidMacroArguments
             }
 
             let fulfilledDependenciesProtocolName = concreteTypeDescription.asSource
-            fulfilledDependenciesProtocolNames.append(fulfilledDependenciesProtocolName)
+            inheritedProtocolNames.append(fulfilledDependenciesProtocolName)
         }
 
         // Create the inheritance clause:
-        var inheritanceClause: InheritanceClauseSyntax?
-        if fulfilledDependenciesProtocolNames.count > 0 {
-            let inheritedTypes = fulfilledDependenciesProtocolNames.enumerated().map { index, protocolName in
-                let trailingComma: TokenSyntax? = index < (fulfilledDependenciesProtocolNames.endIndex - 1) ?
-                    TokenSyntax.commaToken() : nil
-                return InheritedTypeSyntax(type: TypeSyntax(stringLiteral: protocolName), trailingComma: trailingComma)
-            }
-            let inheritedTypeList = InheritedTypeListSyntax(inheritedTypes)
-            inheritanceClause = InheritanceClauseSyntax(inheritedTypes: inheritedTypeList)
+        let inheritedTypes = inheritedProtocolNames.enumerated().map { index, protocolName in
+            let trailingComma: TokenSyntax? = index < (inheritedProtocolNames.endIndex - 1) ?
+                TokenSyntax.commaToken() : nil
+            return InheritedTypeSyntax(type: TypeSyntax(stringLiteral: protocolName), trailingComma: trailingComma)
         }
+        let inheritedTypeList = InheritedTypeListSyntax(inheritedTypes)
+        let inheritanceClause = InheritanceClauseSyntax(inheritedTypes: inheritedTypeList)
 
-        // Create the member block:
-        let propertyDeclarations =
-            try self.fulfilledDependenciesPropertyDeclarations(visitor: visitor, declaration: declaration)
-        let initializerDeclaration = 
-            try self.fulfilledDependenciesInitializerDeclaration(visitor: visitor, declaration: declaration)
-        let memberDeclarations = propertyDeclarations + [initializerDeclaration]
-        let memberBlockItems = memberDeclarations.map { memberDeclaration in
-            return MemberBlockItemSyntax(decl: memberDeclaration)
-        }
-        let memberBlockItemList = MemberBlockItemListSyntax(memberBlockItems)
-        let memberBlock = MemberBlockSyntax(members: memberBlockItemList)
-
-        // Create the child dependencies class declaration:
-        let fulfilledDependenciesClassName = "\(concreteDeclaration.name.trimmed)FulfilledDependencies"
-        let classDeclaration = ClassDeclSyntax(
+        // Create the fulfilled dependencies protocol declaration:
+        let accessLevel = concreteDeclaration.modifiers.accessLevel.rawValue
+        let fulfilledDependenciesProtocolName = "\(concreteDeclaration.name.trimmed)FulfilledDependencies"
+        let fulfilledDependenciesProtocolDeclaration = ProtocolDeclSyntax(
             modifiers: DeclModifierListSyntax([
                 DeclModifierSyntax(
-                    // TODO: Do we need this?
-                    // name: TokenSyntax(stringLiteral: concreteDeclaration.modifiers.accessLevel.rawValue)
-                    name: TokenSyntax(stringLiteral: "fileprivate")
-                ),
-                DeclModifierSyntax(
-                    name: TokenSyntax(stringLiteral: "final")
+                    name: TokenSyntax(stringLiteral: accessLevel)
                 )
             ]),
-            name: TokenSyntax(stringLiteral: fulfilledDependenciesClassName),
+            name: TokenSyntax(stringLiteral: fulfilledDependenciesProtocolName),
             inheritanceClause: inheritanceClause,
-            memberBlock: memberBlock
+            memberBlock: MemberBlockSyntax(members: [])
         )
 
-        return DeclSyntax(classDeclaration)
-    }
-
-    private static func fulfilledDependenciesPropertyDeclarations(
-        visitor: DeclarationVisitor,
-        declaration: some DeclSyntaxProtocol
-    ) throws -> [DeclSyntax] {
-        guard let concreteDeclaration = visitor.concreteDeclaration else {
-            throw ScopeMacroProtocolError.declarationNotConcrete
-        }
-
-        // Create the property declarations:
-        var propertyDeclarations = [DeclSyntax]()
-
-        // Create the parent stored property declaration:
-        let parentName = "\(concreteDeclaration.name.trimmed)"
-        let parentPropertyDeclaration: DeclSyntax =
-        """
-        private let _parent: \(raw: parentName)
-        """
-        propertyDeclarations.append(parentPropertyDeclaration)
-
-        // Create the computed property declarations for all of the properties, reading their values from the parent:
-        for property in visitor.allProperties {
-            guard let typeDescription = property.typeDescription else {
-                throw ScopeMacroProtocolError.invalidProperty
-            }
-
-            // Create the stored property declaration:
-            let propertyDeclaration: DeclSyntax =
-            """
-            fileprivate var \(raw: property.label): \(raw: typeDescription.asSource) {
-                return self._parent.\(raw: property.label)
-            }
-            """
-            propertyDeclarations.append(propertyDeclaration)
-        }
-
-        return propertyDeclarations
-    }
-
-    private static func fulfilledDependenciesInitializerDeclaration(
-        visitor: DeclarationVisitor,
-        declaration: some DeclSyntaxProtocol
-    ) throws -> DeclSyntax {
-        guard let concreteDeclaration = visitor.concreteDeclaration else {
-            throw ScopeMacroProtocolError.declarationNotConcrete
-        }
-
-        // Create the initializer:
-        let initializerDeclaration: DeclSyntax =
-        """
-        fileprivate init(parent: \(concreteDeclaration.name.trimmed)) {
-            self._parent = parent
-        }
-        """
-
-        return initializerDeclaration
+        return DeclSyntax(fulfilledDependenciesProtocolDeclaration)
     }
 }

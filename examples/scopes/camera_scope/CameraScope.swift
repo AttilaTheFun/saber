@@ -9,6 +9,8 @@ public final class CameraScope {
 
     @Fulfill(CameraViewControllerDependencies.self)
     public lazy var rootFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
-        CameraViewController(dependencies: self.fulfilledDependencies)
+        CameraViewController(dependencies: self)
     }
 }
+
+extension CameraScope: CameraScopeFulfilledDependencies {}

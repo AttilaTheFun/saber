@@ -20,12 +20,14 @@ public final class ProfileScope {
 
     @Once
     @Fulfill(UserSessionServiceImplementationUnownedDependencies.self)
-    lazy var userSessionService: any UserSessionService = self.userSessionServiceOnce { [unowned self] in
-        UserSessionServiceImplementation(dependencies: self.fulfilledDependencies)
+    public lazy var userSessionService: any UserSessionService = self.userSessionServiceOnce { [unowned self] in
+        UserSessionServiceImplementation(dependencies: self)
     }
 
     @Fulfill(ProfileViewControllerDependencies.self)
     public lazy var rootFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
-        ProfileViewController(dependencies: self.fulfilledDependencies)
+        ProfileViewController(dependencies: self)
     }
 }
+
+extension ProfileScope: ProfileScopeFulfilledDependencies {}
