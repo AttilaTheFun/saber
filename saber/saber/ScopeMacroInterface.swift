@@ -1,19 +1,9 @@
 import SaberTypes
 
-/// The @Scope macro can be applied to any concrete type declaration which supports stored properties.
-///
-/// The macro also accepts the following optional arguments:
-/// - super: The type of the superclass (if any) whose designated initializer must be called from the generated initializer. Defaults to nil.
-/// - dependencies: The type of reference created between the injectable type and its dependencies. Defaults to strong.
-///
-/// The macro expansion generates initializers and properties to back the accessor macros:
-/// - @Provide
-/// - @Factory
-/// - @Store
+/// The @Scope macro can be applied to a concrete type which supports stored properties.
+/// It generates a FulfilledDependencies protocol from @Fullfill properties,
+/// as well as an initializer which accepts arguments and dependencies.
 @attached(member, names: arbitrary)
 @attached(peer, names: suffixed(FulfilledDependencies))
 @attached(extension, conformances: ArgumentsAndDependenciesInitializable)
-public macro Scope(
-    _ super: Any.Type? = nil,
-    fulfilledDependencies: FulfilledDependenciesReferenceType = .weak
-) = #externalMacro(module: "SaberPlugin", type: "ScopeMacro")
+public macro Scope() = #externalMacro(module: "SaberPlugin", type: "ScopeMacro")

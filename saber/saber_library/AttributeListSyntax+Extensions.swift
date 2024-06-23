@@ -8,7 +8,7 @@ enum InjectableMacroType {
 
 extension AttributeListSyntax {
 
-    // MARK: Peer Macros
+    // MARK: Common Macros
 
     public var injectableMacro: AttributeSyntax? {
         for element in self {
@@ -20,10 +20,22 @@ extension AttributeListSyntax {
         return nil
     }
 
+    // MARK: Scope Macros
+
     public var scopeMacro: AttributeSyntax? {
         for element in self {
             if let injectMacro = element.scopeMacro {
                 return injectMacro
+            }
+        }
+
+        return nil
+    }
+
+    public var factoryMacro: AttributeSyntax? {
+        for element in self {
+            if let factoryMacro = element.factoryMacro {
+                return factoryMacro
             }
         }
 

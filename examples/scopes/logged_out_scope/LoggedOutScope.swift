@@ -20,9 +20,8 @@ public final class LoggedOutScope {
     public lazy var userSessionService: any UserSessionService = UserSessionServiceImplementation(dependencies: self)
 
     @Fulfill(LoggedOutViewControllerDependencies.self)
-    public lazy var rootFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
-        LoggedOutViewController(dependencies: self)
-    }
+    @Factory(LoggedOutViewController.self)
+    public var rootFactory: Factory<Void, UIViewController>
 }
 
 extension LoggedOutScope: LoggedOutScopeFulfilledDependencies {}

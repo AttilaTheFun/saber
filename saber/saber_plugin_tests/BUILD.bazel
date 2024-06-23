@@ -6,6 +6,7 @@ swift_test(
     name = "saber_plugin_tests",
     srcs = [
         "ArgumentMacroTests.swift",
+        "FactoryMacroTests.swift",
         "FulfillMacroTests.swift",
         "InjectMacroTests.swift",
         "InjectableMacroTests.swift",

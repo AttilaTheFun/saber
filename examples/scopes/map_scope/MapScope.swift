@@ -8,9 +8,8 @@ import UIKit
 public final class MapScope {
 
     @Fulfill(MapViewControllerDependencies.self)
-    public lazy var rootFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
-        MapViewController(dependencies: self)
-    }
+    @Factory(MapViewController.self)
+    public var rootFactory: Factory<Void, UIViewController>
 }
 
 extension MapScope: MapScopeFulfilledDependencies {}

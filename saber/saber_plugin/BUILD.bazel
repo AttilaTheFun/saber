@@ -10,6 +10,7 @@ swift_compiler_plugin(
     name = "saber_plugin",
     srcs = [
         "ArgumentMacro.swift",
+        "FactoryMacro.swift",
         "FulfillMacro.swift",
         "InjectMacro.swift",
         "InjectableMacro.swift",

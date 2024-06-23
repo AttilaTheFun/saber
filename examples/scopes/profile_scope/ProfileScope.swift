@@ -25,9 +25,8 @@ public final class ProfileScope {
     }
 
     @Fulfill(ProfileViewControllerDependencies.self)
-    public lazy var rootFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
-        ProfileViewController(dependencies: self)
-    }
+    @Factory(ProfileViewController.self)
+    public var rootFactory: Factory<Void, UIViewController>
 }
 
 extension ProfileScope: ProfileScopeFulfilledDependencies {}

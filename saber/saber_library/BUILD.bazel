@@ -12,6 +12,7 @@ swift_library(
         "ConcreteDeclSyntaxProtocol.swift",
         "DeclModifierListSyntax+Extensions.swift",
         "DeclarationVisitor.swift",
+        "FactoryMacroProtocol.swift",
         "FulfillMacroProtocol.swift",
         "InheritanceClauseSyntax+Extensions.swift",
         "InjectMacroProtocol.swift",

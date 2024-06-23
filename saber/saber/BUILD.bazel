@@ -22,6 +22,7 @@ swift_library(
         "ArgumentsAndDependenciesInitializable.swift",
         "DependenciesInitializable.swift",
         "Factory.swift",
+        "FactoryMacroInterface.swift",
         "FulfillMacroInterface.swift",
         "InjectMacroInterface.swift",
         "InjectableMacroInterface.swift",

@@ -6,10 +6,6 @@ extension AttributeSyntax {
         return self.typeDescriptionIfNameEquals(nil)
     }
 
-    public var existentialTypeArgument: TypeDescription? {
-        return self.typeDescriptionIfNameEquals(nil)
-    }
-
     public var superTypeArgument: TypeDescription? {
         return self.typeDescriptionIfNameEquals(nil)
     }
@@ -55,11 +51,6 @@ extension AttributeSyntax {
     public var dependenciesReferenceTypeArgument: DependenciesReferenceType? {
         let rawValue = self.memberAccessBaseNameIfNameEquals("dependencies")
         return DependenciesReferenceType(rawValue: rawValue ?? "")
-    }
-
-    public var fulfilledDependenciesReferenceTypeArgument: FulfilledDependenciesReferenceType? {
-        let rawValue = self.memberAccessBaseNameIfNameEquals("fulfilledDependencies")
-        return FulfilledDependenciesReferenceType(rawValue: rawValue ?? "")
     }
 
     private func memberAccessBaseNameIfNameEquals(_ expectedName: String?) -> String? {

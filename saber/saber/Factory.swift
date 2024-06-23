@@ -21,23 +21,11 @@ extension Factory where Arguments == Void {
         }
     }
 
-    public func build() -> Building {
+    public func build(arguments: Any) -> Building {
         return self.build(arguments: ())
     }
-}
 
-extension ArgumentsAndDependenciesInitializable {
-    public static func factory(dependencies: Dependencies) -> Factory<Arguments, Self> {
-        return Factory { arguments in
-            Self(arguments: arguments, dependencies: dependencies)
-        }
-    }
-}
-
-extension DependenciesInitializable {
-    public static func factory(dependencies: Dependencies) -> Factory<Void, Self> {
-        return Factory { _ in
-            Self(dependencies: dependencies)
-        }
+    public func build() -> Building {
+        return self.build(arguments: ())
     }
 }

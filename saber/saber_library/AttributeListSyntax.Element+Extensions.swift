@@ -2,24 +2,24 @@ import SwiftSyntax
 
 extension AttributeListSyntax.Element {
 
-    // MARK: Peer Macros
+    // MARK: Common Macros
 
     public var injectableMacro: AttributeSyntax? {
         self.attributeIfNameEquals("Injectable")
     }
 
+    public var injectMacro: AttributeSyntax? {
+        self.attributeIfNameEquals("Inject")
+    }
+
+    // MARK: Scope Macros
+
     public var scopeMacro: AttributeSyntax? {
         self.attributeIfNameEquals("Scope")
     }
 
-    // MARK: Accessor Macros
-
     public var argumentMacro: AttributeSyntax? {
         self.attributeIfNameEquals("Argument")
-    }
-
-    public var injectMacro: AttributeSyntax? {
-        self.attributeIfNameEquals("Inject")
     }
 
     public var factoryMacro: AttributeSyntax? {
@@ -28,14 +28,6 @@ extension AttributeListSyntax.Element {
 
     public var fulfillMacro: AttributeSyntax? {
         self.attributeIfNameEquals("Fulfill")
-    }
-
-    public var provideMacro: AttributeSyntax? {
-        self.attributeIfNameEquals("Provide")
-    }
-
-    public var storeMacro: AttributeSyntax? {
-        self.attributeIfNameEquals("Store")
     }
 
     // MARK: Private

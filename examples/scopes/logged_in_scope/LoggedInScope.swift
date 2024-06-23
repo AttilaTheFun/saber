@@ -26,33 +26,24 @@ public final class LoggedInScope {
     @Inject public var loggedOutViewControllerFactory: Factory<LoggedOutScopeArguments, UIViewController>
 
     @Fulfill(LoggedInTabBarControllerDependencies.self)
-    public lazy var rootFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
-        return LoggedInTabBarController(dependencies: self)
-    }
+    @Factory(LoggedInTabBarController.self)
+    public var rootFactory: Factory<Void, UIViewController>
 
     @Fulfill(CameraScopeDependencies.self)
-    public lazy var cameraViewControllerFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
-        let scope = CameraScope(dependencies: self)
-        return scope.rootFactory.build()
-    }
+    @Factory(CameraScope.self, factory: \.rootFactory)
+    public var cameraViewControllerFactory: Factory<Void, UIViewController>
 
     @Fulfill(MapScopeDependencies.self)
-    public lazy var mapViewControllerFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
-        let scope = MapScope(dependencies: self)
-        return scope.rootFactory.build()
-    }
+    @Factory(MapScope.self, factory: \.rootFactory)
+    public var mapViewControllerFactory: Factory<Void, UIViewController>
 
     @Fulfill(InboxScopeDependencies.self)
-    public lazy var inboxViewControllerFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
-        let scope = InboxScope(dependencies: self)
-        return scope.rootFactory.build()
-    }
+    @Factory(InboxScope.self, factory: \.rootFactory)
+    public var inboxViewControllerFactory: Factory<Void, UIViewController>
 
     @Fulfill(ProfileScopeDependencies.self)
-    public lazy var profileViewControllerFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
-        let scope = ProfileScope(dependencies: self)
-        return scope.rootFactory.build()
-    }
+    @Factory(ProfileScope.self, factory: \.rootFactory)
+    public var profileViewControllerFactory: Factory<Void, UIViewController>
 }
 
 extension LoggedInScope: LoggedInScopeFulfilledDependencies {}

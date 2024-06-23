@@ -23,9 +23,8 @@ public final class LoadingScope {
     public lazy var userService: any UserService = UserServiceImplementation(dependencies: self)
 
     @Fulfill(LoadingViewControllerDependencies.self)
-    public lazy var rootFactory: Factory<Void, UIViewController> = Factory { [unowned self] in
-        LoadingViewController(dependencies: self)
-    }
+    @Factory(LoadingViewController.self)
+    public var rootFactory: Factory<Void, UIViewController>
 }
 
 extension LoadingScope: LoadingScopeFulfilledDependencies {}

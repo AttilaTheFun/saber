@@ -16,7 +16,7 @@ import WindowServiceInterface
 import WindowServiceImplementation
 
 @Injectable
-@Scope(fulfilledDependencies: .strong)
+@Scope
 public final class RootScope {
     @Argument public var endpointURL: URL
 
@@ -37,25 +37,16 @@ public final class RootScope {
     RootViewControllerInitializationServiceImplementation(dependencies: self)
 
     @Fulfill(LoggedOutScopeDependencies.self)
-    public lazy var loggedOutViewControllerFactory: Factory<LoggedOutScopeArguments, UIViewController> =
-    Factory { [unowned self] arguments in
-        let scope = LoggedOutScope(arguments: arguments, dependencies: self)
-        return scope.rootFactory.build()
-    }
+    @Factory(LoggedOutScope.self, factory: \.rootFactory)
+    public var loggedOutViewControllerFactory: Factory<LoggedOutScopeArguments, UIViewController>
 
     @Fulfill(LoadingScopeDependencies.self)
-    public lazy var loadingViewControllerFactory: Factory<LoadingScopeArguments, UIViewController> =
-    Factory { [unowned self] arguments in
-        let scope = LoadingScope(arguments: arguments, dependencies: self)
-        return scope.rootFactory.build()
-    }
+    @Factory(LoadingScope.self, factory: \.rootFactory)
+    public var loadingViewControllerFactory: Factory<LoadingScopeArguments, UIViewController>
 
     @Fulfill(LoggedInScopeDependencies.self)
-    public lazy var loggedInTabBarControllerFactory: Factory<LoggedInScopeArguments, UIViewController> =
-    Factory { [unowned self] arguments in
-        let scope = LoggedInScope(arguments: arguments, dependencies: self)
-        return scope.rootFactory.build()
-    }
+    @Factory(LoggedInScope.self, factory: \.rootFactory)
+    public var loggedInTabBarControllerFactory: Factory<LoggedInScopeArguments, UIViewController>
 }
 
 extension RootScope: RootScopeFulfilledDependencies {}
