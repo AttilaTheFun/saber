@@ -1,11 +1,13 @@
 import Saber
 import CameraFeatureInterface
 import OptionalServiceInterface
+import PreviewFeatureInterface
 import UIKit
 import PhotosUI
 
 @Injectable(UIViewController.self)
 public final class CameraViewController: UIViewController {
+    @Inject var previewViewControllerFactory: Factory<PreviewScopeArguments, UIViewController>
     @Inject var optionalService: (any OptionalService)?
     private let imagePickerViewController = UIImagePickerController()
 

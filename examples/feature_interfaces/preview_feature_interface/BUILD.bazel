@@ -1,0 +1,8 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "preview_feature_interface",
+    srcs = ["PreviewScopeArguments.swift"],
+    module_name = "PreviewFeatureInterface",
+    visibility = ["//visibility:public"],
+)

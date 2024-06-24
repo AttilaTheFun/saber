@@ -1,0 +1,12 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "preview_feature_implementation",
+    srcs = ["PreviewViewController.swift"],
+    module_name = "PreviewFeatureImplementation",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//examples/feature_interfaces/send_to_feature_interface",
+        "//saber/saber",
+    ],
+)

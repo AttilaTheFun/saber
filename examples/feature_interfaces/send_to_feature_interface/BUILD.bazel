@@ -1,0 +1,8 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "send_to_feature_interface",
+    srcs = ["SendToScopeArguments.swift"],
+    module_name = "SendToFeatureInterface",
+    visibility = ["//visibility:public"],
+)

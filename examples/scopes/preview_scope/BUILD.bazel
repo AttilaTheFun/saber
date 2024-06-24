@@ -1,0 +1,15 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "preview_scope",
+    srcs = ["PreviewScope.swift"],
+    module_name = "PreviewScope",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//examples/feature_implementations/preview_feature_implementation",
+        "//examples/feature_interfaces/preview_feature_interface",
+        "//examples/feature_interfaces/send_to_feature_interface",
+        "//examples/scopes/send_to_scope",
+        "//saber/saber",
+    ],
+)

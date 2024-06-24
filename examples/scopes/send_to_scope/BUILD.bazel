@@ -1,0 +1,13 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "send_to_scope",
+    srcs = ["SendToScope.swift"],
+    module_name = "SendToScope",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//examples/feature_implementations/send_to_feature_implementation",
+        "//examples/feature_interfaces/send_to_feature_interface",
+        "//saber/saber",
+    ],
+)
