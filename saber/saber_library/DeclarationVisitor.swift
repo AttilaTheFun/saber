@@ -19,7 +19,6 @@ public final class DeclarationVisitor: SyntaxVisitor {
     public private(set) var argumentsTypeAliasDeclaration: TypeAliasDeclSyntax?
     public private(set) var dependenciesTypeAliasDeclaration: TypeAliasDeclSyntax?
     public private(set) var initArgumentsAndDependenciesDeclaration: InitializerDeclSyntax?
-    public private(set) var initDependenciesDeclaration: InitializerDeclSyntax?
 
     public private(set) var argumentProperties: [(Property,AttributeSyntax)] = []
     public private(set) var factoryProperties: [(Property,AttributeSyntax)] = []
@@ -94,7 +93,7 @@ public final class DeclarationVisitor: SyntaxVisitor {
             dependenciesParameterIndex = index
         }
 
-        // If the initializer matches one of the known signatures, retain it:
+        // If the initializer matches one the signature, retain it:
         if
             parameters.count == 2,
             let argumentsParameterIndex,
@@ -102,9 +101,6 @@ public final class DeclarationVisitor: SyntaxVisitor {
             argumentsParameterIndex < dependenciesParameterIndex
         {
             self.initArgumentsAndDependenciesDeclaration = node
-        }
-        if parameters.count == 1, dependenciesParameterIndex != nil {
-            self.initDependenciesDeclaration = node
         }
 
         return .skipChildren

@@ -5,7 +5,7 @@ import SaberTypes
 /// as well as an initializer which accepts dependencies.
 @attached(member, names: arbitrary)
 @attached(peer, names: suffixed(Dependencies), suffixed(UnownedDependencies))
-@attached(extension, conformances: DependenciesInitializable)
+@attached(extension, conformances: Injectable)
 public macro Injectable(
     _ super: Any.Type? = nil,
     dependencies: DependenciesReferenceType = .strong

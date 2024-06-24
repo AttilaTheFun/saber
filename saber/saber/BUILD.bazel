@@ -19,11 +19,10 @@ swift_library(
     name = "saber",
     srcs = [
         "ArgumentMacroInterface.swift",
-        "ArgumentsAndDependenciesInitializable.swift",
-        "DependenciesInitializable.swift",
         "Factory.swift",
         "FactoryMacroInterface.swift",
         "InjectMacroInterface.swift",
+        "Injectable.swift",
         "InjectableMacroInterface.swift",
         "ScopeMacroInterface.swift",
         "Store.swift",

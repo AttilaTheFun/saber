@@ -14,7 +14,8 @@ public final class LoggedInTabBarController: UITabBarController {
     @Inject public var cameraViewControllerFactory: Factory<Void, UIViewController>
     @Inject public var mapViewControllerFactory: Factory<Void, UIViewController>
 
-    public init(dependencies: any Dependencies) {
+    public init(arguments: Arguments, dependencies: any Dependencies) {
+        self._arguments = arguments
         self._dependencies = dependencies
         super.init(nibName: nil, bundle: nil)
 

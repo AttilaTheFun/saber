@@ -55,7 +55,7 @@ extension InjectableMacroProtocol {
         let memberBlock = MemberBlockSyntax(members: memberBlockItemList)
 
         // Create the extension declaration:
-        let inheritedProtocolType = TypeSyntax(stringLiteral: "DependenciesInitializable")
+        let inheritedProtocolType = TypeSyntax(stringLiteral: "Injectable")
         let inheritedType = InheritedTypeSyntax(type: inheritedProtocolType)
         let inheritedTypeList = InheritedTypeListSyntax([inheritedType])
         let inheritanceClause = InheritanceClauseSyntax(inheritedTypes: inheritedTypeList)
@@ -80,9 +80,6 @@ extension InjectableMacroProtocol {
         // Walk the declaration with the visitor:
         let visitor = DeclarationVisitor()
         visitor.walk(declaration)
-        guard let concreteDeclaration = visitor.concreteDeclaration else {
-            throw InjectableMacroProtocolError.declarationNotConcrete
-        }
 
         // Create the member declarations:
         var memberDeclarations = [DeclSyntax]()
@@ -97,9 +94,8 @@ extension InjectableMacroProtocol {
             declaration: declaration
         )
 
-        // If the concrete type is not a scope and there is *not* a handwritten initializer we should generate it:
-        let isScope = concreteDeclaration.attributes.scopeMacro != nil
-        let shouldGenerateInitializers = isScope ? false : visitor.initDependenciesDeclaration == nil
+        // If the initializer was not handwritten, we should generate it:
+        let shouldGenerateInitializers = visitor.initArgumentsAndDependenciesDeclaration == nil
         if shouldGenerateInitializers {
             memberDeclarations += try self.parentInitializerDeclarations(
                 node: node,
@@ -121,6 +117,30 @@ extension InjectableMacroProtocol {
         }
 
         var typeAliasDeclarations = [DeclSyntax]()
+
+        // If there is not a handwritten arguments type alias declaration, we need to create one:
+        if visitor.argumentsTypeAliasDeclaration == nil {
+
+            // Determine the arguments type:
+            let argumentsType: String
+            if visitor.argumentProperties.count > 0 {
+                // If we have argument properties,
+                // we infer the Arguments type name is the concrete type name with the Arguments suffix.
+                argumentsType = "\(concreteDeclaration.name.trimmed)Arguments"
+            } else {
+                // If there are no argument properties,
+                // we infer the Arguments type to be Void.
+                argumentsType = "Void"
+            }
+
+            // Create the arguments type alias declaration:
+            let accessLevel = concreteDeclaration.modifiers.accessLevel.rawValue
+            let argumentsTypeAliasDeclaration: DeclSyntax =
+            """
+            \(raw: accessLevel) typealias Arguments = \(raw: argumentsType)
+            """
+            typeAliasDeclarations.append(argumentsTypeAliasDeclaration)
+        }
 
         // If there is not a handwritten dependencies type alias declaration, we need to create one:
         if visitor.dependenciesTypeAliasDeclaration == nil {
@@ -156,6 +176,13 @@ extension InjectableMacroProtocol {
         """
         propertyDeclarations.append(dependenciesPropertyDeclaration)
 
+        // Create the arguments stored property declaration:
+        let argumentsPropertyDeclaration: DeclSyntax =
+        """
+        private let _arguments: Arguments
+        """
+        propertyDeclarations.append(argumentsPropertyDeclaration)
+
         return propertyDeclarations
     }
 
@@ -170,6 +197,7 @@ extension InjectableMacroProtocol {
 
         // Create the initializer lines:
         var initializerLines = [
+            "self._arguments = arguments",
             "self._dependencies = dependencies",
         ]
 
@@ -205,7 +233,7 @@ extension InjectableMacroProtocol {
         let accessLevel = concreteDeclaration.modifiers.accessLevel.rawValue
         let initializerDeclaration: DeclSyntax =
         """
-        \(raw: accessLevel) init(dependencies: any Dependencies) {
+        \(raw: accessLevel) init(arguments: Arguments, dependencies: any Dependencies) {
         \(raw: initializerLines.joined(separator: "\n"))
         }
         """

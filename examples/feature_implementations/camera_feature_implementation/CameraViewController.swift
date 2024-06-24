@@ -7,7 +7,8 @@ import PhotosUI
 public final class CameraViewController: UIViewController {
     private let imagePickerViewController = UIImagePickerController()
 
-    public init(dependencies: any Dependencies) {
+    public init(arguments: Arguments, dependencies: any Dependencies) {
+        self._arguments = arguments
         self._dependencies = dependencies
         super.init(nibName: nil, bundle: nil)
 

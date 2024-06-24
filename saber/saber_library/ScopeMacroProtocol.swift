@@ -11,51 +11,9 @@ public enum ScopeMacroProtocolError: Error {
     case invalidComputedPropertyType
 }
 
-public protocol ScopeMacroProtocol: ExtensionMacro, MemberMacro, PeerMacro {}
+public protocol ScopeMacroProtocol: MemberMacro, PeerMacro {}
 
 extension ScopeMacroProtocol {
-
-    // MARK: ExtensionMacro
-
-    public static func expansion(
-      of node: AttributeSyntax,
-      attachedTo declaration: some DeclGroupSyntax,
-      providingExtensionsOf type: some TypeSyntaxProtocol,
-      conformingTo protocols: [TypeSyntax],
-      in context: some MacroExpansionContext
-    ) throws -> [ExtensionDeclSyntax] {
-
-        // Create the extension declaration:
-        let extensionDeclaration = try self.extensionDeclaration(
-            declaration: declaration,
-            type: type
-        )
-
-        return [extensionDeclaration]
-    }
-
-    private static func extensionDeclaration(
-        declaration: some DeclGroupSyntax,
-        type: some TypeSyntaxProtocol
-    ) throws -> ExtensionDeclSyntax {
-
-        // Create the member block:
-        let memberBlockItemList = MemberBlockItemListSyntax([])
-        let memberBlock = MemberBlockSyntax(members: memberBlockItemList)
-
-        // Create the extension declaration:
-        let inheritedProtocolType = TypeSyntax(stringLiteral: "ArgumentsAndDependenciesInitializable")
-        let inheritedType = InheritedTypeSyntax(type: inheritedProtocolType)
-        let inheritedTypeList = InheritedTypeListSyntax([inheritedType])
-        let inheritanceClause = InheritanceClauseSyntax(inheritedTypes: inheritedTypeList)
-        let extensionDeclaration = ExtensionDeclSyntax(
-            extendedType: type,
-            inheritanceClause: inheritanceClause,
-            memberBlock: memberBlock
-        )
-
-        return extensionDeclaration
-    }
 
     // MARK: MemberMacro
 
@@ -71,68 +29,13 @@ extension ScopeMacroProtocol {
         visitor.walk(declaration)
 
         // Create the member declarations:
-        var memberDeclarations = [DeclSyntax]()
-        memberDeclarations += try self.parentTypeAliasDeclarations(
+        let memberDeclarations = try self.parentPropertyDeclarations(
             node: node,
             visitor: visitor,
             declaration: declaration
         )
-        memberDeclarations += try self.parentPropertyDeclarations(
-            node: node,
-            visitor: visitor,
-            declaration: declaration
-        )
-
-        // If there there is *not* a handwritten initializer we need to generate it:
-        let shouldGenerateInitializer = visitor.initArgumentsAndDependenciesDeclaration == nil
-        if shouldGenerateInitializer {
-            let memberDeclaration = try self.parentInitializerDeclaration(
-                node: node,
-                visitor: visitor,
-                declaration: declaration
-            )
-            memberDeclarations.append(memberDeclaration)
-        }
 
         return memberDeclarations
-    }
-
-    private static func parentTypeAliasDeclarations(
-        node: AttributeSyntax,
-        visitor: DeclarationVisitor,
-        declaration: some DeclSyntaxProtocol
-    ) throws -> [DeclSyntax] {
-        guard let concreteDeclaration = visitor.concreteDeclaration else {
-            throw ScopeMacroProtocolError.declarationNotConcrete
-        }
-
-        var typeAliasDeclarations = [DeclSyntax]()
-
-        // If there is not a handwritten arguments type alias declaration, we need to create one:
-        if visitor.argumentsTypeAliasDeclaration == nil {
-
-            // Determine the arguments type:
-            let argumentsType: String
-            if visitor.argumentProperties.count > 0 {
-                // If we have argument properties,
-                // we infer the Arguments type name is the concrete type name with the Arguments suffix.
-                argumentsType = "\(concreteDeclaration.name.trimmed)Arguments"
-            } else {
-                // If there are no argument properties,
-                // we infer the Arguments type to be Void.
-                argumentsType = "Void"
-            }
-
-            // Create the arguments type alias declaration:
-            let accessLevel = concreteDeclaration.modifiers.accessLevel.rawValue
-            let argumentsTypeAliasDeclaration: DeclSyntax =
-            """
-            \(raw: accessLevel) typealias Arguments = \(raw: argumentsType)
-            """
-            typeAliasDeclarations.append(argumentsTypeAliasDeclaration)
-        }
-
-        return typeAliasDeclarations
     }
 
     private static func parentPropertyDeclarations(
@@ -158,36 +61,7 @@ extension ScopeMacroProtocol {
             propertyDeclarations.append(propertyDeclaration)
         }
 
-        // Create the arguments stored property declaration:
-        let argumentsPropertyDeclaration: DeclSyntax =
-        """
-        private let _arguments: Arguments
-        """
-        propertyDeclarations.append(argumentsPropertyDeclaration)
-
         return propertyDeclarations
-    }
-
-    private static func parentInitializerDeclaration(
-        node: AttributeSyntax,
-        visitor: DeclarationVisitor,
-        declaration: some DeclSyntaxProtocol
-    ) throws -> DeclSyntax {
-        guard let concreteDeclaration = visitor.concreteDeclaration else {
-            throw ScopeMacroProtocolError.declarationNotConcrete
-        }
-
-        // Create the initializer:
-        let accessLevel = concreteDeclaration.modifiers.accessLevel.rawValue
-        let initializerDeclaration: DeclSyntax =
-        """
-        \(raw: accessLevel) init(arguments: Arguments, dependencies: any Dependencies) {
-            self._arguments = arguments
-            self._dependencies = dependencies
-        }
-        """
-
-        return initializerDeclaration
     }
 
     // MARK: PeerMacro
