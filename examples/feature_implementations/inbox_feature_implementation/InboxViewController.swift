@@ -1,12 +1,14 @@
 import Saber
 import InboxFeatureInterface
 import InboxServiceInterface
+import MemberwiseServiceInterface
 import UIKit
 
 @Injectable(UIViewController.self)
 public final class InboxViewController: UIViewController {
     @Inject var date: Date
     @Inject var inboxService: any InboxService
+    @Inject var memberwiseService: any MemberwiseService
 
     public init(arguments: Arguments, dependencies: any Dependencies) {
         self._arguments = arguments

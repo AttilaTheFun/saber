@@ -1,0 +1,9 @@
+load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
+
+swift_library(
+    name = "memberwise_service_implementation",
+    srcs = ["MemberwiseServiceImplementation.swift"],
+    module_name = "MemberwiseServiceImplementation",
+    visibility = ["//visibility:public"],
+    deps = ["//examples/service_interfaces/memberwise_service_interface"],
+)

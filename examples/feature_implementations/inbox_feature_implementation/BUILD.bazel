@@ -8,6 +8,7 @@ swift_library(
     deps = [
         "//examples/feature_interfaces/inbox_feature_interface",
         "//examples/service_interfaces/inbox_service_interface",
+        "//examples/service_interfaces/memberwise_service_interface",
         "//saber/saber",
     ],
 )
