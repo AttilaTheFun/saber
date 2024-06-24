@@ -10,6 +10,10 @@ extension AttributeSyntax {
         return self.typeDescriptionIfNameEquals(nil)
     }
 
+    public var dependenciesTypeArgument: TypeDescription? {
+        return self.typeDescriptionIfNameEquals("dependencies")
+    }
+
     private func typeDescriptionIfNameEquals(_ expectedName: String?) -> TypeDescription? {
         guard
             let arguments = self.arguments,

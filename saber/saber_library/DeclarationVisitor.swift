@@ -21,9 +21,8 @@ public final class DeclarationVisitor: SyntaxVisitor {
     public private(set) var initArgumentsAndDependenciesDeclaration: InitializerDeclSyntax?
     public private(set) var initDependenciesDeclaration: InitializerDeclSyntax?
 
-    public private(set) var allProperties: [Property] = []
     public private(set) var argumentProperties: [(Property,AttributeSyntax)] = []
-    public private(set) var fulfillProperties: [(Property,AttributeSyntax)] = []
+    public private(set) var factoryProperties: [(Property,AttributeSyntax)] = []
     public private(set) var injectProperties: [(Property,AttributeSyntax)] = []
     public private(set) var storeProperties: [(Property,AttributeSyntax)] = []
 
@@ -144,15 +143,14 @@ public final class DeclarationVisitor: SyntaxVisitor {
             )
 
             // Record the property and the injectable macro type if applicable:
-            self.allProperties.append(property)
             for injectableMacroType in node.attributes.injectableMacroTypes {
                 switch injectableMacroType {
                 case .argument(let attributeSyntax):
                     self.argumentProperties.append((property, attributeSyntax))
                 case .inject(let attributeSyntax):
                     self.injectProperties.append((property, attributeSyntax))
-                case .fulfill(let attributeSyntax):
-                    self.fulfillProperties.append((property, attributeSyntax))
+                case .factory(let attributeSyntax):
+                    self.factoryProperties.append((property, attributeSyntax))
                 case .store(let attributeSyntax):
                     self.storeProperties.append((property, attributeSyntax))
                 }

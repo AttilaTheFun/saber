@@ -2,7 +2,7 @@ import SwiftSyntax
 
 extension AttributeListSyntax.Element {
 
-    // MARK: Common Macros
+    // MARK: Injectable Macros
 
     public var injectableMacro: AttributeSyntax? {
         self.attributeIfNameEquals("Injectable")
@@ -12,22 +12,18 @@ extension AttributeListSyntax.Element {
         self.attributeIfNameEquals("Inject")
     }
 
-    // MARK: Scope Macros
+    public var argumentMacro: AttributeSyntax? {
+        self.attributeIfNameEquals("Argument")
+    }
+
+    // MARK: Injector Macros
 
     public var scopeMacro: AttributeSyntax? {
         self.attributeIfNameEquals("Scope")
     }
 
-    public var argumentMacro: AttributeSyntax? {
-        self.attributeIfNameEquals("Argument")
-    }
-
     public var factoryMacro: AttributeSyntax? {
         self.attributeIfNameEquals("Factory")
-    }
-
-    public var fulfillMacro: AttributeSyntax? {
-        self.attributeIfNameEquals("Fulfill")
     }
 
     public var storeMacro: AttributeSyntax? {

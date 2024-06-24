@@ -7,7 +7,6 @@ swift_test(
     srcs = [
         "ArgumentMacroTests.swift",
         "FactoryMacroTests.swift",
-        "FulfillMacroTests.swift",
         "InjectMacroTests.swift",
         "InjectableMacroTests.swift",
         "ScopeMacroTests.swift",

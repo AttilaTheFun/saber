@@ -223,12 +223,22 @@ extension ScopeMacroProtocol {
 
         // Extract the dependencies protocol names from the factory and store properties:
         var inheritedProtocolNames = ["AnyObject"]
-        for (_, attributeSyntax) in visitor.fulfillProperties {
+        let factoryAttributeTuples = visitor.factoryProperties.map { ($0.1, false) }
+        let storeAttributeTuples = visitor.storeProperties.map { ($0.1, true) }
+        for (attributeSyntax, isStored) in factoryAttributeTuples + storeAttributeTuples {
             guard let concreteTypeDescription = attributeSyntax.concreteTypeArgument else {
                 throw ScopeMacroProtocolError.invalidMacroArguments
             }
 
-            let fulfilledDependenciesProtocolName = concreteTypeDescription.asSource
+            // Use the dependencies type if provided, or derive the name from the concrete type if not:
+            let fulfilledDependenciesProtocolName: String
+            if let dependenciesTypeDescription = attributeSyntax.dependenciesTypeArgument {
+                fulfilledDependenciesProtocolName = dependenciesTypeDescription.asSource
+            } else {
+                let suffix = isStored ? "UnownedDependencies" : "Dependencies"
+                fulfilledDependenciesProtocolName = concreteTypeDescription.asSource + suffix
+            }
+
             inheritedProtocolNames.append(fulfilledDependenciesProtocolName)
         }
 

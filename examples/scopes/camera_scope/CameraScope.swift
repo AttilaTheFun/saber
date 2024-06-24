@@ -7,7 +7,6 @@ import UIKit
 @Scope
 public final class CameraScope {
 
-    @Fulfill(CameraViewControllerDependencies.self)
     @Factory(CameraViewController.self)
     public var rootFactory: Factory<Void, UIViewController>
 }

@@ -2,14 +2,14 @@ import SwiftSyntax
 
 enum InjectableMacroType {
     case argument(AttributeSyntax)
+    case factory(AttributeSyntax)
     case inject(AttributeSyntax)
-    case fulfill(AttributeSyntax)
     case store(AttributeSyntax)
 }
 
 extension AttributeListSyntax {
 
-    // MARK: Common Macros
+    // MARK: Injectable Macros
 
     public var injectableMacro: AttributeSyntax? {
         for element in self {
@@ -21,7 +21,7 @@ extension AttributeListSyntax {
         return nil
     }
 
-    // MARK: Scope Macros
+    // MARK: Injector Macros
 
     public var scopeMacro: AttributeSyntax? {
         for element in self {
@@ -62,12 +62,12 @@ extension AttributeListSyntax {
                 injectableMacroTypes.append(.argument(argumentMacro))
             }
 
-            if let injectMacro = element.injectMacro {
-                injectableMacroTypes.append(.inject(injectMacro))
+            if let factoryMacro = element.factoryMacro {
+                injectableMacroTypes.append(.factory(factoryMacro))
             }
 
-            if let fulfillMacro = element.fulfillMacro {
-                injectableMacroTypes.append(.fulfill(fulfillMacro))
+            if let injectMacro = element.injectMacro {
+                injectableMacroTypes.append(.inject(injectMacro))
             }
 
             if let storeMacro = element.storeMacro {

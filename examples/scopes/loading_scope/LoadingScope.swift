@@ -19,11 +19,9 @@ public final class LoadingScope {
     @Inject public var loggedOutViewControllerFactory: Factory<LoggedOutScopeArguments, UIViewController>
     @Inject public var loggedInTabBarControllerFactory: Factory<LoggedInScopeArguments, UIViewController>
 
-    @Fulfill(UserServiceImplementationUnownedDependencies.self)
     @Store(UserServiceImplementation.self)
     public var userService: any UserService
 
-    @Fulfill(LoadingViewControllerDependencies.self)
     @Factory(LoadingViewController.self)
     public var rootFactory: Factory<Void, UIViewController>
 }

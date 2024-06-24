@@ -18,10 +18,6 @@ final class StoreMacroTests: XCTestCase {
                     return self.userServiceStore.value
                 }
             }
-
-            private lazy var userServiceStore = Store { [unowned self] in
-                UserServiceImplementation(dependencies: self)
-            }
             """,
             macros: self.macros
         )

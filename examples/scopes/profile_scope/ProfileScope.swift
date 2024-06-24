@@ -18,11 +18,9 @@ public final class ProfileScope {
     @Inject public var windowService: any WindowService
     @Inject public var loggedOutViewControllerFactory: Factory<LoggedOutScopeArguments, UIViewController>
 
-    @Fulfill(UserSessionServiceImplementationUnownedDependencies.self)
     @Store(UserSessionServiceImplementation.self)
     public var userSessionService: any UserSessionService
 
-    @Fulfill(ProfileViewControllerDependencies.self)
     @Factory(ProfileViewController.self)
     public var rootFactory: Factory<Void, UIViewController>
 }

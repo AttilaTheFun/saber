@@ -25,23 +25,18 @@ public final class LoggedInScope {
     @Inject public var windowService: any WindowService
     @Inject public var loggedOutViewControllerFactory: Factory<LoggedOutScopeArguments, UIViewController>
 
-    @Fulfill(LoggedInTabBarControllerDependencies.self)
     @Factory(LoggedInTabBarController.self)
     public var rootFactory: Factory<Void, UIViewController>
 
-    @Fulfill(CameraScopeDependencies.self)
     @Factory(CameraScope.self, factory: \.rootFactory)
     public var cameraViewControllerFactory: Factory<Void, UIViewController>
 
-    @Fulfill(MapScopeDependencies.self)
     @Factory(MapScope.self, factory: \.rootFactory)
     public var mapViewControllerFactory: Factory<Void, UIViewController>
 
-    @Fulfill(InboxScopeDependencies.self)
     @Factory(InboxScope.self, factory: \.rootFactory)
     public var inboxViewControllerFactory: Factory<Void, UIViewController>
 
-    @Fulfill(ProfileScopeDependencies.self)
     @Factory(ProfileScope.self, factory: \.rootFactory)
     public var profileViewControllerFactory: Factory<Void, UIViewController>
 }

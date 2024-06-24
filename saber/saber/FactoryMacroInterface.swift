@@ -7,7 +7,8 @@
 /// The optional factory keypath argument allows the factory to build the concrete type 
 /// as an intermediate value, and return an instance built from a nested factory.
 @attached(accessor)
-public macro Factory<T>(
-    _ concrete: T.Type,
-    factory: PartialKeyPath<T>? = nil
+public macro Factory<Concrete, Dependencies>(
+    _ concrete: Concrete.Type,
+    dependencies: Dependencies.Type = Any.self,
+    factory: PartialKeyPath<Concrete>? = nil
 ) = #externalMacro(module: "SaberPlugin", type: "FactoryMacro")

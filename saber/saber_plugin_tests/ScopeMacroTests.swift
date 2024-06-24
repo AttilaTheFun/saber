@@ -110,35 +110,35 @@ final class ScopeMacroTests: XCTestCase {
             @Injectable
             @Scope
             public final class FooScope {
-                let date: Date = Date()
+                public let date: Date = Date()
 
-                @Fulfill(BarServiceImplementationUnownedDependencies.self)
-                lazy var barService: any BarService = BarServiceImplementation(dependencies: self.fulfilledDependencies)
+                @Store(InboxServiceImplementation.self)
+                public var inboxService: any InboxService
 
-                @Fulfill(FooViewControllerDependencies.self)
-                lazy var fooViewControllerFactory: Factory<Void, UIViewController> = Factory { [unowned self] _ in
-                    FooViewController(dependencies: self.fulfilledDependencies)
-                }
+                @Factory(InboxViewController.self)
+                public var rootFactory: Factory<Void, UIViewController>
             }
             """,
             expandedSource:
             """
             public final class FooScope {
-                let date: Date = Date()
+                public let date: Date = Date()
 
-                @Fulfill(BarServiceImplementationUnownedDependencies.self)
-                lazy var barService: any BarService = BarServiceImplementation(dependencies: self.fulfilledDependencies)
+                @Store(InboxServiceImplementation.self)
+                public var inboxService: any InboxService
 
-                @Fulfill(FooViewControllerDependencies.self)
-                lazy var fooViewControllerFactory: Factory<Void, UIViewController> = Factory { [unowned self] _ in
-                    FooViewController(dependencies: self.fulfilledDependencies)
-                }
+                @Factory(InboxViewController.self)
+                public var rootFactory: Factory<Void, UIViewController>
 
                 public typealias Dependencies = FooScopeDependencies
 
                 private let _dependencies: any Dependencies
 
                 public typealias Arguments = Void
+
+                private lazy var inboxServiceStore = Store { [unowned self] in
+                    InboxServiceImplementation(dependencies: self)
+                }
 
                 private let _arguments: Arguments
 
@@ -151,7 +151,7 @@ final class ScopeMacroTests: XCTestCase {
             public protocol FooScopeDependencies: AnyObject {
             }
 
-            public protocol FooScopeFulfilledDependencies: AnyObject, BarServiceImplementationUnownedDependencies, FooViewControllerDependencies {
+            public protocol FooScopeFulfilledDependencies: AnyObject, InboxViewControllerDependencies, InboxServiceImplementationUnownedDependencies {
             }
 
             extension FooScope: ArgumentsAndDependenciesInitializable {

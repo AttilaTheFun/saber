@@ -23,7 +23,6 @@ swift_library(
         "DependenciesInitializable.swift",
         "Factory.swift",
         "FactoryMacroInterface.swift",
-        "FulfillMacroInterface.swift",
         "InjectMacroInterface.swift",
         "InjectableMacroInterface.swift",
         "ScopeMacroInterface.swift",
