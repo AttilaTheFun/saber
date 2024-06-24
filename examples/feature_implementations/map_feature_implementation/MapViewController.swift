@@ -1,10 +1,12 @@
 import Saber
+import LocationServiceInterface
 import MapFeatureInterface
 import MapKit
 import UIKit
 
 @Injectable(UIViewController.self)
 public final class MapViewController: UIViewController {
+    @Inject var locationService: LocationService
     private let mapView = MKMapView()
 
     public init(arguments: Arguments, dependencies: any Dependencies) {

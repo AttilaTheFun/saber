@@ -8,6 +8,9 @@ import UIKit
 @Injectable
 @Injector
 public final class InboxScope {
+    public var date: Date {
+        Date()
+    }
 
     @Store(InboxServiceImplementation.self)
     public var inboxService: any InboxService

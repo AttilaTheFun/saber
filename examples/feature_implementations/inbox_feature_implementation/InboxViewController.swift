@@ -5,6 +5,7 @@ import UIKit
 
 @Injectable(UIViewController.self)
 public final class InboxViewController: UIViewController {
+    @Inject var date: Date
     @Inject var inboxService: any InboxService
 
     public init(arguments: Arguments, dependencies: any Dependencies) {

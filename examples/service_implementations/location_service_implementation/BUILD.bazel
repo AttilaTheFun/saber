@@ -1,12 +1,11 @@
 load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 swift_library(
-    name = "map_feature_implementation",
-    srcs = ["MapViewController.swift"],
-    module_name = "MapFeatureImplementation",
+    name = "location_service_implementation",
+    srcs = ["LocationServiceImplementation.swift"],
+    module_name = "LocationServiceImplementation",
     visibility = ["//visibility:public"],
     deps = [
-        "//examples/feature_interfaces/map_feature_interface",
         "//examples/service_interfaces/location_service_interface",
         "//saber/saber",
     ],

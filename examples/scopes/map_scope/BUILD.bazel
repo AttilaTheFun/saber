@@ -8,6 +8,8 @@ swift_library(
     deps = [
         "//examples/feature_implementations/map_feature_implementation",
         "//examples/feature_interfaces/map_feature_interface",
+        "//examples/service_implementations/location_service_implementation",
+        "//examples/service_interfaces/location_service_interface",
         "//saber/saber",
     ],
 )
