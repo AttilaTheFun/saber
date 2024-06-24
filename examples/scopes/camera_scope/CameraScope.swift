@@ -1,15 +1,18 @@
 import Saber
 import CameraFeatureInterface
 import CameraFeatureImplementation
-import OptionalServiceInterface
 import PreviewFeatureInterface
 import PreviewScope
+import ProfileFeatureInterface
+import ProfileScope
 import UIKit
 
 @Injectable
 @Injector
 public final class CameraScope {
-    public var optionalService: (any OptionalService)?
+
+    @Inject
+    public var profileViewControllerFactory: Factory<ProfileScopeArguments, UIViewController>
 
     @Factory(PreviewScope.self, factory: \.rootFactory)
     public var previewViewControllerFactory: Factory<PreviewScopeArguments, UIViewController>

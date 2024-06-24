@@ -8,7 +8,7 @@ import UIKit
 @Injectable
 @Injector
 public final class PreviewScope {
-    @Argument var image: UIImage
+    @Argument public var image: UIImage
 
     @Factory(SendToScope.self, factory: \.rootFactory)
     public var sendToViewControllerFactory: Factory<SendToScopeArguments, UIViewController>

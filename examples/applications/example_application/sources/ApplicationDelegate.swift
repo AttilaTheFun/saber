@@ -16,6 +16,8 @@ final class ApplicationDelegate: UIResponder, UIApplicationDelegate {
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) 
         -> Bool 
     {
+        let appearance = UINavigationBar.appearance()
+        appearance.tintColor = .black
         self.rootScope.rootViewControllerInitializationService.registerRootViewControllerFactory()
         return true
     }

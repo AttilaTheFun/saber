@@ -5,5 +5,8 @@ swift_library(
     srcs = ["SendToViewController.swift"],
     module_name = "SendToFeatureImplementation",
     visibility = ["//visibility:public"],
-    deps = ["//saber/saber"],
+    deps = [
+        "//examples/service_interfaces/optional_service_interface",
+        "//saber/saber",
+    ],
 )

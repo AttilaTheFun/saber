@@ -11,6 +11,8 @@ import WindowServiceInterface
 @Injectable
 @Injector
 public final class ProfileScope {
+    public typealias Arguments = ProfileScopeArguments
+
     @Inject public var user: User
     @Inject public var userSession: UserSession
     @Inject public var userStorageService: any UserStorageService

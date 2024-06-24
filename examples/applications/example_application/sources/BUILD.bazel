@@ -6,6 +6,9 @@ swift_library(
         "ApplicationDelegate.swift",
         "SceneDelegate.swift",
     ],
+    data = [
+        "//examples/applications/example_application/resources",
+    ],
     module_name = "Sources",
     visibility = ["//visibility:public"],
     deps = [

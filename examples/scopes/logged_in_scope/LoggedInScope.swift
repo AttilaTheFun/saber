@@ -38,7 +38,7 @@ public final class LoggedInScope {
     public var inboxViewControllerFactory: Factory<Void, UIViewController>
 
     @Factory(ProfileScope.self, factory: \.rootFactory)
-    public var profileViewControllerFactory: Factory<Void, UIViewController>
+    public var profileViewControllerFactory: Factory<ProfileScopeArguments, UIViewController>
 }
 
 extension LoggedInScope: LoggedInScopeFulfilledDependencies {}

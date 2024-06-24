@@ -9,8 +9,9 @@ swift_library(
         "//examples/feature_implementations/camera_feature_implementation",
         "//examples/feature_interfaces/camera_feature_interface",
         "//examples/feature_interfaces/preview_feature_interface",
+        "//examples/feature_interfaces/profile_feature_interface",
         "//examples/scopes/preview_scope",
-        "//examples/service_interfaces/optional_service_interface",
+        "//examples/scopes/profile_scope",
         "//saber/saber",
     ],
 )

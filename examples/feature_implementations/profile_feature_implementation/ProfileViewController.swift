@@ -16,8 +16,6 @@ public final class ProfileViewController: UIViewController {
     @Inject private var windowService: any WindowService
     @Inject private var loggedOutViewControllerFactory: Factory<LoggedOutScopeArguments, UIViewController>
 
-    private let label = UILabel()
-    private let labelContainerView = UIView()
     private let logOutButton = UIButton()
 
     // MARK: View Lifecycle
@@ -25,25 +23,17 @@ public final class ProfileViewController: UIViewController {
     public override func viewDidLoad() {
         super.viewDidLoad()
 
-        // Configure the view:
-        self.view.translatesAutoresizingMaskIntoConstraints = false
-        self.view.backgroundColor = .systemBackground
-        
-        // Configure the text field:
-        self.label.translatesAutoresizingMaskIntoConstraints = false
-        self.label.textColor = .label
-        self.label.textAlignment = .center
-        self.label.font = .preferredFont(forTextStyle: .headline)
-        self.label.adjustsFontForContentSizeCategory = true
-        self.label.backgroundColor = .systemGroupedBackground
-        self.label.clipsToBounds = true
-        self.label.layer.cornerRadius = 16
-        self.label.text = "Logged in as \(self.user.username)"
+        // Configure the navigation item:
+        self.navigationItem.title = self.user.username
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(
+            image: UIImage(systemName: "xmark"),
+            style: .plain,
+            target: self,
+            action: #selector(closeButtonTapped)
+        )
 
-        // Configure the text field container view:
-        self.labelContainerView.translatesAutoresizingMaskIntoConstraints = false
-
-        // Configure the log out button:
+        // Configure the views:
+        self.view.backgroundColor = .white
         self.logOutButton.translatesAutoresizingMaskIntoConstraints = false
         var logOutButtonConfiguration = UIButton.Configuration.borderless()
         logOutButtonConfiguration.attributedTitle = AttributedString("Log Out", attributes: .init([
@@ -53,40 +43,24 @@ public final class ProfileViewController: UIViewController {
         logOutButtonConfiguration.background.backgroundColor = .systemYellow
         logOutButtonConfiguration.background.cornerRadius = 16
         self.logOutButton.configuration = logOutButtonConfiguration
-
-        // Create the view hierarchy:
-        self.labelContainerView.addSubview(self.label)
-        self.view.addSubview(self.labelContainerView)
+        self.logOutButton.addTarget(self, action: #selector(logOutButtonTapped), for: .touchUpInside)
         self.view.addSubview(self.logOutButton)
 
         // Create the constraints:
         NSLayoutConstraint.activate([
-            self.label.heightAnchor.constraint(greaterThanOrEqualToConstant: 48),
-            self.labelContainerView.centerYAnchor.constraint(equalTo: self.label.centerYAnchor),
-            self.labelContainerView.leadingAnchor.constraint(equalTo: self.label.leadingAnchor, constant: -24),
-            self.labelContainerView.trailingAnchor.constraint(equalTo: self.label.trailingAnchor, constant: 24),
-
-            self.view.safeAreaLayoutGuide.topAnchor.constraint(equalTo: self.labelContainerView.topAnchor),
-            self.view.safeAreaLayoutGuide.leadingAnchor.constraint(equalTo: self.labelContainerView.leadingAnchor),
-            self.view.safeAreaLayoutGuide.trailingAnchor.constraint(equalTo: self.labelContainerView.trailingAnchor),
-            self.logOutButton.topAnchor.constraint(equalTo: self.labelContainerView.bottomAnchor),
-
             self.logOutButton.heightAnchor.constraint(greaterThanOrEqualToConstant: 48),
-            self.view.safeAreaLayoutGuide.leadingAnchor.constraint(equalTo: self.logOutButton.leadingAnchor, constant: -24),
-            self.view.safeAreaLayoutGuide.trailingAnchor.constraint(equalTo: self.logOutButton.trailingAnchor, constant: 24),
-            self.view.keyboardLayoutGuide.topAnchor.constraint(equalTo: self.logOutButton.bottomAnchor, constant: 24),
+            self.logOutButton.leadingAnchor.constraint(equalTo: self.view.leadingAnchor, constant: 24),
+            self.logOutButton.trailingAnchor.constraint(equalTo: self.view.trailingAnchor, constant: -24),
+            self.logOutButton.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor, constant: -24),
         ])
-
-        // Add the button action:
-        self.logOutButton.addTarget(self, action: #selector(logOutButtonTapped), for: .touchUpInside)
-    }
-
-    public override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        self.label.becomeFirstResponder()
     }
 
     // MARK: Private
+
+    @objc
+    private func closeButtonTapped() {
+        self.dismiss(animated: true)
+    }
 
     @objc
     private func logOutButtonTapped() {
