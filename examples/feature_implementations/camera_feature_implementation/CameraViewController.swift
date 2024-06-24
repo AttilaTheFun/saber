@@ -1,10 +1,12 @@
 import Saber
 import CameraFeatureInterface
+import OptionalServiceInterface
 import UIKit
 import PhotosUI
 
 @Injectable(UIViewController.self)
 public final class CameraViewController: UIViewController {
+    @Inject var optionalService: (any OptionalService)?
     private let imagePickerViewController = UIImagePickerController()
 
     public init(arguments: Arguments, dependencies: any Dependencies) {

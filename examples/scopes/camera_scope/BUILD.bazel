@@ -8,6 +8,7 @@ swift_library(
     deps = [
         "//examples/feature_implementations/camera_feature_implementation",
         "//examples/feature_interfaces/camera_feature_interface",
+        "//examples/service_interfaces/optional_service_interface",
         "//saber/saber",
     ],
 )
