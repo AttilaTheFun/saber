@@ -10,7 +10,7 @@ import UserServiceImplementation
 import WindowServiceInterface
 
 @Injectable
-@Scope
+@Injector
 public final class LoadingScope {
     @Argument public var userSession: UserSession
     @Inject public var userStorageService: any UserStorageService

@@ -3,7 +3,7 @@ import SwiftSyntax
 import SwiftSyntaxBuilder
 import SwiftSyntaxMacros
 
-public enum ScopeMacroProtocolError: Error {
+public enum InjectorMacroProtocolError: Error {
     case declarationNotConcrete
     case invalidMacroArguments
     case invalidProperty
@@ -11,9 +11,9 @@ public enum ScopeMacroProtocolError: Error {
     case invalidComputedPropertyType
 }
 
-public protocol ScopeMacroProtocol: MemberMacro, PeerMacro {}
+public protocol InjectorMacroProtocol: MemberMacro, PeerMacro {}
 
-extension ScopeMacroProtocol {
+extension InjectorMacroProtocol {
 
     // MARK: MemberMacro
 
@@ -48,7 +48,7 @@ extension ScopeMacroProtocol {
         var propertyDeclarations = [DeclSyntax]()
         for (property, attributeSyntax) in visitor.storeProperties {
             guard let concreteType = attributeSyntax.concreteTypeArgument else {
-                throw ScopeMacroProtocolError.invalidMacroArguments
+                throw InjectorMacroProtocolError.invalidMacroArguments
             }
 
             // Create the property declaration:
@@ -92,7 +92,7 @@ extension ScopeMacroProtocol {
         declaration: some DeclSyntaxProtocol
     ) throws -> DeclSyntax {
         guard let concreteDeclaration = visitor.concreteDeclaration else {
-            throw ScopeMacroProtocolError.declarationNotConcrete
+            throw InjectorMacroProtocolError.declarationNotConcrete
         }
 
         // Extract the dependencies protocol names from the factory and store properties:
@@ -101,7 +101,7 @@ extension ScopeMacroProtocol {
         let storeAttributeTuples = visitor.storeProperties.map { ($0.1, true) }
         for (attributeSyntax, isStored) in factoryAttributeTuples + storeAttributeTuples {
             guard let concreteTypeDescription = attributeSyntax.concreteTypeArgument else {
-                throw ScopeMacroProtocolError.invalidMacroArguments
+                throw InjectorMacroProtocolError.invalidMacroArguments
             }
 
             // Use the dependencies type if provided, or derive the name from the concrete type if not:

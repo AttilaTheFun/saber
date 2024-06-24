@@ -24,7 +24,7 @@ swift_library(
         "InjectMacroInterface.swift",
         "Injectable.swift",
         "InjectableMacroInterface.swift",
-        "ScopeMacroInterface.swift",
+        "InjectorMacroInterface.swift",
         "Store.swift",
         "StoreMacroInterface.swift",
     ],

@@ -9,7 +9,7 @@ import UserSessionServiceImplementation
 import WindowServiceInterface 
 
 @Injectable
-@Scope
+@Injector
 public final class ProfileScope {
     @Inject public var user: User
     @Inject public var userSession: UserSession

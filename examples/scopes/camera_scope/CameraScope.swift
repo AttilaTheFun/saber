@@ -4,7 +4,7 @@ import CameraFeatureImplementation
 import UIKit
 
 @Injectable
-@Scope
+@Injector
 public final class CameraScope {
 
     @Factory(CameraViewController.self)

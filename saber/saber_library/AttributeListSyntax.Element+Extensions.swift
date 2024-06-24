@@ -18,8 +18,8 @@ extension AttributeListSyntax.Element {
 
     // MARK: Injector Macros
 
-    public var scopeMacro: AttributeSyntax? {
-        self.attributeIfNameEquals("Scope")
+    public var injectorMacro: AttributeSyntax? {
+        self.attributeIfNameEquals("Injector")
     }
 
     public var factoryMacro: AttributeSyntax? {

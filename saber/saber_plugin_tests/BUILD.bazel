@@ -9,7 +9,7 @@ swift_test(
         "FactoryMacroTests.swift",
         "InjectMacroTests.swift",
         "InjectableMacroTests.swift",
-        "ScopeMacroTests.swift",
+        "InjectorMacroTests.swift",
         "StoreMacroTests.swift",
     ],
     module_name = "SaberPluginTests",

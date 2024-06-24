@@ -16,7 +16,7 @@ import UserSessionServiceInterface
 import WindowServiceInterface
 
 @Injectable
-@Scope
+@Injector
 public final class LoggedInScope {
     @Argument public var user: User
     @Argument public var userSession: UserSession

@@ -4,7 +4,7 @@ import MapFeatureImplementation
 import UIKit
 
 @Injectable
-@Scope
+@Injector
 public final class MapScope {
 
     @Factory(MapViewController.self)

@@ -23,10 +23,10 @@ extension AttributeListSyntax {
 
     // MARK: Injector Macros
 
-    public var scopeMacro: AttributeSyntax? {
+    public var injectorMacro: AttributeSyntax? {
         for element in self {
-            if let injectMacro = element.scopeMacro {
-                return injectMacro
+            if let injectorMacro = element.injectorMacro {
+                return injectorMacro
             }
         }
 

@@ -6,7 +6,7 @@ import InboxServiceImplementation
 import UIKit
 
 @Injectable
-@Scope
+@Injector
 public final class InboxScope {
 
     @Store(InboxServiceImplementation.self)

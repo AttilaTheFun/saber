@@ -8,7 +8,7 @@ import UIKit
 import WindowServiceInterface
 
 @Injectable
-@Scope
+@Injector
 public final class LoggedOutScope {
     public typealias Arguments = LoggedOutScopeArguments
 

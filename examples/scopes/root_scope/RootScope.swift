@@ -16,7 +16,7 @@ import WindowServiceInterface
 import WindowServiceImplementation
 
 @Injectable
-@Scope
+@Injector
 public final class RootScope {
     @Argument public var endpointURL: URL
 

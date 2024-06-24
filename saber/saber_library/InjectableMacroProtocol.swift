@@ -24,36 +24,6 @@ extension InjectableMacroProtocol {
       in context: some MacroExpansionContext
     ) throws -> [ExtensionDeclSyntax] {
 
-        // Walk the declaration with the visitor:
-        let visitor = DeclarationVisitor()
-        visitor.walk(declaration)
-        guard let concreteDeclaration = visitor.concreteDeclaration else {
-            throw InjectableMacroProtocolError.declarationNotConcrete
-        }
-
-        // If this type is also annotated with the @Scope macro, defer to its protocol conformance:
-        guard concreteDeclaration.attributes.scopeMacro == nil else {
-            return []
-        }
-
-        // Create the extension declaration:
-        let extensionDeclaration = try self.extensionDeclaration(
-            declaration: declaration,
-            type: type
-        )
-
-        return [extensionDeclaration]
-    }
-
-    private static func extensionDeclaration(
-        declaration: some DeclGroupSyntax,
-        type: some TypeSyntaxProtocol
-    ) throws -> ExtensionDeclSyntax {
-
-        // Create the member block:
-        let memberBlockItemList = MemberBlockItemListSyntax([])
-        let memberBlock = MemberBlockSyntax(members: memberBlockItemList)
-
         // Create the extension declaration:
         let inheritedProtocolType = TypeSyntax(stringLiteral: "Injectable")
         let inheritedType = InheritedTypeSyntax(type: inheritedProtocolType)
@@ -62,10 +32,10 @@ extension InjectableMacroProtocol {
         let extensionDeclaration = ExtensionDeclSyntax(
             extendedType: type,
             inheritanceClause: inheritanceClause,
-            memberBlock: memberBlock
+            memberBlock: MemberBlockSyntax(members: [])
         )
 
-        return extensionDeclaration
+        return [extensionDeclaration]
     }
 
     // MARK: MemberMacro
@@ -75,8 +45,7 @@ extension InjectableMacroProtocol {
         providingMembersOf declaration: some DeclGroupSyntax,
         conformingTo protocols: [TypeSyntax],
         in context: some MacroExpansionContext
-    ) throws -> [DeclSyntax]
-    {
+    ) throws -> [DeclSyntax] {
         // Walk the declaration with the visitor:
         let visitor = DeclarationVisitor()
         visitor.walk(declaration)

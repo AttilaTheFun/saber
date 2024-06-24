@@ -8,8 +8,8 @@ public enum DependenciesReferenceType: String {
     ///
     /// This is useful to avoid retain cycles. For example, if you have:
     /// ```
-    /// FooScope -(store)-> FooServiceImplementation
-    /// FooServiceImplementation -(dependencies)-> FooScope
+    /// FooScope -(Store)-> FooServiceImplementation
+    /// FooServiceImplementation -(Dependencies)-> FooScope
     /// ```
     /// This would create a retain cycle.
     ///
