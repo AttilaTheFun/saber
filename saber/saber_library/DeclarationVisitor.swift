@@ -25,6 +25,7 @@ public final class DeclarationVisitor: SyntaxVisitor {
     public private(set) var argumentProperties: [(Property,AttributeSyntax)] = []
     public private(set) var fulfillProperties: [(Property,AttributeSyntax)] = []
     public private(set) var injectProperties: [(Property,AttributeSyntax)] = []
+    public private(set) var storeProperties: [(Property,AttributeSyntax)] = []
 
     // MARK: Concrete Declarations
 
@@ -152,6 +153,8 @@ public final class DeclarationVisitor: SyntaxVisitor {
                     self.injectProperties.append((property, attributeSyntax))
                 case .fulfill(let attributeSyntax):
                     self.fulfillProperties.append((property, attributeSyntax))
+                case .store(let attributeSyntax):
+                    self.storeProperties.append((property, attributeSyntax))
                 }
             }
         } else {

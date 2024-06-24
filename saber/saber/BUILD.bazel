@@ -26,9 +26,9 @@ swift_library(
         "FulfillMacroInterface.swift",
         "InjectMacroInterface.swift",
         "InjectableMacroInterface.swift",
-        "Once.swift",
-        "OnceMacroInterface.swift",
         "ScopeMacroInterface.swift",
+        "Store.swift",
+        "StoreMacroInterface.swift",
     ],
     module_name = "Saber",
     plugins = select({

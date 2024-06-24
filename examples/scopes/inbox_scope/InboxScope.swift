@@ -10,10 +10,8 @@ import UIKit
 public final class InboxScope {
 
     @Fulfill(InboxServiceImplementationUnownedDependencies.self)
-    @Once
-    public lazy var inboxService: any InboxService = self.inboxServiceOnce { [unowned self] in
-        InboxServiceImplementation(dependencies: self)
-    }
+    @Store(InboxServiceImplementation.self)
+    public var inboxService: any InboxService
 
     @Fulfill(InboxViewControllerDependencies.self)
     @Factory(InboxViewController.self)

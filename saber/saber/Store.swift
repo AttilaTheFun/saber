@@ -2,13 +2,16 @@ import Foundation
 
 public typealias Lock = NSLock
 
-public final class Once<Value> {
+public final class Store<Value> {
     private let lock = Lock()
+    private let initializer: () -> Value
     private var backingValue: Value?
 
-    public init() {}
+    public init(initializer: @escaping () -> Value) {
+        self.initializer = initializer
+    }
 
-    public func callAsFunction(initializer: @escaping () -> Value) -> Value {
+    public var value: Value {
         if let value = self.backingValue {
             return value
         }
@@ -17,7 +20,7 @@ public final class Once<Value> {
         if let value = self.backingValue {
             return value
         }
-        let value = initializer()
+        let value = self.initializer()
         self.backingValue = value
         return value
     }

@@ -21,20 +21,20 @@ public final class RootScope {
     @Argument public var endpointURL: URL
 
     @Fulfill(UserSessionStorageServiceImplementationUnownedDependencies.self)
-    public lazy var userSessionStorageService: any UserSessionStorageService =
-    UserSessionStorageServiceImplementation(dependencies: self)
+    @Store(UserSessionStorageServiceImplementation.self)
+    public var userSessionStorageService: any UserSessionStorageService
 
     @Fulfill(UserStorageServiceImplementationUnownedDependencies.self)
-    public lazy var userStorageService: any UserStorageService =
-    UserStorageServiceImplementation(dependencies: self)
+    @Store(UserStorageServiceImplementation.self)
+    public var userStorageService: any UserStorageService
 
     @Fulfill(WindowServiceImplementationUnownedDependencies.self)
-    public lazy var windowService: any WindowService =
-    WindowServiceImplementation(dependencies: self)
+    @Store(WindowServiceImplementation.self)
+    public var windowService: any WindowService
 
     @Fulfill(RootViewControllerInitializationServiceImplementationUnownedDependencies.self)
-    public lazy var rootViewControllerInitializationService: any RootViewControllerInitializationService =
-    RootViewControllerInitializationServiceImplementation(dependencies: self)
+    @Store(RootViewControllerInitializationServiceImplementation.self)
+    public var rootViewControllerInitializationService: any RootViewControllerInitializationService
 
     @Fulfill(LoggedOutScopeDependencies.self)
     @Factory(LoggedOutScope.self, factory: \.rootFactory)

@@ -9,7 +9,7 @@ struct SaberPlugin: CompilerPlugin {
         FulfillMacro.self,
         InjectableMacro.self,
         InjectMacro.self,
-        OnceMacro.self,
         ScopeMacro.self,
+        StoreMacro.self,
     ]
 }

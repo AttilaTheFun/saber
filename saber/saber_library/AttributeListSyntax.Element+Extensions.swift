@@ -30,6 +30,10 @@ extension AttributeListSyntax.Element {
         self.attributeIfNameEquals("Fulfill")
     }
 
+    public var storeMacro: AttributeSyntax? {
+        self.attributeIfNameEquals("Store")
+    }
+
     // MARK: Private
 
     private func attributeIfNameEquals(_ expectedName: String) -> AttributeSyntax? {

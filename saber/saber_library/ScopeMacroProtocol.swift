@@ -141,13 +141,31 @@ extension ScopeMacroProtocol {
         declaration: some DeclSyntaxProtocol
     ) throws -> [DeclSyntax] {
 
+        // Add store properties for each of the @Store macros:
+        var propertyDeclarations = [DeclSyntax]()
+        for (property, attributeSyntax) in visitor.storeProperties {
+            guard let concreteType = attributeSyntax.concreteTypeArgument else {
+                throw ScopeMacroProtocolError.invalidMacroArguments
+            }
+
+            // Create the property declaration:
+            let propertyDeclaration: DeclSyntax =
+            """
+            private lazy var \(raw: property.label)Store = Store { [unowned self] in
+            \(raw: concreteType.asSource)(dependencies: self)
+            }
+            """
+            propertyDeclarations.append(propertyDeclaration)
+        }
+
         // Create the arguments stored property declaration:
         let argumentsPropertyDeclaration: DeclSyntax =
         """
         private let _arguments: Arguments
         """
+        propertyDeclarations.append(argumentsPropertyDeclaration)
 
-        return [argumentsPropertyDeclaration]
+        return propertyDeclarations
     }
 
     private static func parentInitializerDeclaration(

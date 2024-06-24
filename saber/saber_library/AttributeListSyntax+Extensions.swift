@@ -4,6 +4,7 @@ enum InjectableMacroType {
     case argument(AttributeSyntax)
     case inject(AttributeSyntax)
     case fulfill(AttributeSyntax)
+    case store(AttributeSyntax)
 }
 
 extension AttributeListSyntax {
@@ -42,6 +43,16 @@ extension AttributeListSyntax {
         return nil
     }
 
+    public var storeMacro: AttributeSyntax? {
+        for element in self {
+            if let storeMacro = element.storeMacro {
+                return storeMacro
+            }
+        }
+
+        return nil
+    }
+
     // MARK: Accessor Macros
 
     var injectableMacroTypes: [InjectableMacroType] {
@@ -57,6 +68,10 @@ extension AttributeListSyntax {
 
             if let fulfillMacro = element.fulfillMacro {
                 injectableMacroTypes.append(.fulfill(fulfillMacro))
+            }
+
+            if let storeMacro = element.storeMacro {
+                injectableMacroTypes.append(.store(storeMacro))
             }
         }
 
