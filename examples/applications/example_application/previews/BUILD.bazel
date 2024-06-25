@@ -1,0 +1,20 @@
+load("@build_bazel_rules_apple//apple:ios.bzl", "ios_framework")
+
+# TODO: Update this to your bundle ID.
+FRAMEWORK_BUNDLE_ID = "com.LoganShire.ExampleApplication.Previews"
+
+ios_framework(
+    name = "example_application_previews",
+    bundle_id = FRAMEWORK_BUNDLE_ID,
+    bundle_name = "ExampleApplicationPreviews",
+    families = [
+        "iphone",
+        "ipad",
+    ],
+    infoplists = [":Info.plist"],
+    minimum_os_version = "16.0",
+    visibility = ["//visibility:public"],
+    deps = [
+        "//examples/feature_implementations/inbox_feature_implementation",
+    ],
+)

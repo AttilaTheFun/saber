@@ -2,7 +2,12 @@ load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
 swift_library(
     name = "inbox_feature_implementation",
-    srcs = ["InboxViewController.swift"],
+    srcs = [
+        "InboxItemView.swift",
+        "InboxView.swift",
+        "InboxViewController.swift",
+        "InboxViewModel.swift",
+    ],
     module_name = "InboxFeatureImplementation",
     visibility = ["//visibility:public"],
     deps = [

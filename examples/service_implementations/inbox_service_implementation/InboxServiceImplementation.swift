@@ -7,12 +7,12 @@ public final class InboxServiceImplementation: InboxService {
     public func getInboxItems() async -> [InboxItem] {
         return [
             InboxItem(
-                threadID: "1",
-                title: "Logan Shire",
+                id: "1",
+                title: "John Doe",
                 subtitle: "Check out the new Inbox"
             ),
             InboxItem(
-                threadID: "2",
+                id: "2",
                 title: "Other Person",
                 subtitle: "This isn't spam"
             ),
