@@ -39,7 +39,7 @@ ios_application(
     ],
     infoplists = [":Info.plist"],
     launch_storyboard = ":LaunchScreen.storyboard",
-    minimum_os_version = "16.0",
+    minimum_os_version = "17.0",
     provisioning_profile = ":_development_profile",
     version = ":_version",
     visibility = ["//visibility:public"],
@@ -49,7 +49,7 @@ ios_application(
 ios_unit_test(
     name = "example_application_tests",
     bundle_id = BUNDLE_ID + ".Tests",
-    minimum_os_version = "16.0",
+    minimum_os_version = "17.0",
     test_host = ":example_application",
     visibility = ["//visibility:public"],
     deps = ["//saber/saber_plugin_tests"],

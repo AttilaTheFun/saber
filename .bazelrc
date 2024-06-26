@@ -1,4 +1,5 @@
 # Bazel Symlink Prefix
 build --symlink_prefix=.bazel/
 
-# Enable macros:
+# Enable building for iOS simulator from CLI:
+build:ios_simulator --platforms=@build_bazel_apple_support//platforms:ios_sim_arm64

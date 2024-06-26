@@ -23,10 +23,28 @@ public final class LoggedInTabBarController: UITabBarController {
         self.configureTabBarAppearance()
 
         // Create the initial view controllers:
+        let inboxViewController = self.inboxViewControllerFactory.build()
+        inboxViewController.tabBarItem = UITabBarItem(
+            title: nil,
+            image: UIImage.init(systemName: "tray.fill"),
+            tag: 0
+        )
+        let cameraViewController = self.cameraViewControllerFactory.build()
+        cameraViewController.tabBarItem = UITabBarItem(
+            title: nil,
+            image: UIImage.init(systemName: "camera.fill"),
+            tag: 0
+        )
+        let mapViewController = self.mapViewControllerFactory.build()
+        mapViewController.tabBarItem = UITabBarItem(
+            title: nil,
+            image: UIImage.init(systemName: "map.fill"),
+            tag: 0
+        )
         let viewControllers = [
-            self.inboxViewControllerFactory.build(),
-            self.cameraViewControllerFactory.build(),
-            self.mapViewControllerFactory.build(),
+            inboxViewController,
+            cameraViewController,
+            mapViewController,
         ]
 
         // Set the initial view controllers:
@@ -37,7 +55,9 @@ public final class LoggedInTabBarController: UITabBarController {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
+    // MARK: Private
+
     private func configureTabBarAppearance() {
         let appearance = UITabBarAppearance()
         appearance.configureWithDefaultBackground()

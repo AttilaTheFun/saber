@@ -12,7 +12,7 @@ ios_framework(
         "ipad",
     ],
     infoplists = [":Info.plist"],
-    minimum_os_version = "16.0",
+    minimum_os_version = "17.0",
     visibility = ["//visibility:public"],
     deps = [
         "//examples/feature_implementations/inbox_feature_implementation",

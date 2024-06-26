@@ -9,23 +9,6 @@ public final class MapViewController: UIViewController {
     @Inject var locationService: LocationService
     private let mapView = MKMapView()
 
-    public init(arguments: Arguments, dependencies: any Dependencies) {
-        self._arguments = arguments
-        self._dependencies = dependencies
-        super.init(nibName: nil, bundle: nil)
-
-        // Configure the tab bar item:
-        self.tabBarItem = UITabBarItem(
-            title: nil,
-            image: UIImage.init(systemName: "map.fill"),
-            tag: 0
-        )
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     public override func viewDidLoad() {
         super.viewDidLoad()
 

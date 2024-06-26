@@ -1,7 +1,6 @@
 import Saber
 import InboxFeatureInterface
 import InboxServiceInterface
-import MemberwiseServiceInterface
 import UIKit
 
 private let reuseIdentifier = "Cell"
@@ -10,25 +9,7 @@ private let reuseIdentifier = "Cell"
 public final class InboxViewController: UIViewController {
     @Inject var date: Date
     @Inject var inboxService: any InboxService
-    @Inject var memberwiseService: any MemberwiseService
     private let tableView = UITableView()
-
-    public init(arguments: Arguments, dependencies: any Dependencies) {
-        self._arguments = arguments
-        self._dependencies = dependencies
-        super.init(nibName: nil, bundle: nil)
-
-        // Configure the tab bar item:
-        self.tabBarItem = UITabBarItem(
-            title: nil,
-            image: UIImage.init(systemName: "tray.fill"),
-            tag: 0
-        )
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
 
     // MARK: View Lifecycle
 
@@ -52,23 +33,6 @@ public final class InboxViewController: UIViewController {
             self.tableView.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor),
             self.tableView.trailingAnchor.constraint(equalTo: self.view.trailingAnchor),
         ])
-    }
-
-    public override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        self.navigationController?.setNavigationBarHidden(false, animated: animated)
-    }
-
-    // MARK: Private
-
-    @objc
-    private func closeButtonTapped() {
-        self.navigationController?.popViewController(animated: false)
-    }
-
-    @objc
-    private func sendButtonTapped() {
-        self.navigationController?.popToRootViewController(animated: false)
     }
 }
 

@@ -13,23 +13,6 @@ public final class CameraViewController: UIViewController {
     private let profileButton = UIButton()
     private let captureButton = UIButton()
 
-    public init(arguments: Arguments, dependencies: any Dependencies) {
-        self._arguments = arguments
-        self._dependencies = dependencies
-        super.init(nibName: nil, bundle: nil)
-
-        // Configure the tab bar item:
-        self.tabBarItem = UITabBarItem(
-            title: nil,
-            image: UIImage.init(systemName: "camera.fill"),
-            tag: 0
-        )
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
     // MARK: View Lifecycle
 
     public override func viewDidLoad() {
