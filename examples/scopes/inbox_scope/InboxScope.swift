@@ -5,6 +5,7 @@ import InboxServiceInterface
 import InboxServiceImplementation
 import MemberwiseServiceInterface
 import MemberwiseServiceImplementation
+import SwiftUI
 import UIKit
 
 @Injectable
@@ -22,8 +23,11 @@ public final class InboxScope {
     @Store(InboxServiceImplementation.self)
     public var inboxService: any InboxService
 
-    @Factory(InboxViewController.self)
-    public var rootFactory: Factory<Void, UIViewController>
+    @Factory(InboxView.self)
+    public var rootFactory: Factory<Void, any View>
+
+//    @Factory(InboxViewController.self)
+//    public var rootFactory: Factory<Void, UIViewController>
 }
 
 extension InboxScope: InboxScopeFulfilledDependencies {}

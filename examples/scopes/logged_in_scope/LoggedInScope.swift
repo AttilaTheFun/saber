@@ -10,6 +10,7 @@ import LoggedInFeatureImplementation
 import LoggedOutFeatureInterface
 import ProfileFeatureInterface
 import ProfileScope
+import SwiftUI
 import UIKit
 import UserServiceInterface
 import UserSessionServiceInterface
@@ -35,7 +36,7 @@ public final class LoggedInScope {
     public var mapViewControllerFactory: Factory<Void, UIViewController>
 
     @Factory(InboxScope.self, factory: \.rootFactory)
-    public var inboxViewControllerFactory: Factory<Void, UIViewController>
+    public var inboxViewFactory: Factory<Void, any View>
 
     @Factory(ProfileScope.self, factory: \.rootFactory)
     public var profileViewControllerFactory: Factory<ProfileScopeArguments, UIViewController>

@@ -3,17 +3,17 @@ import Saber
 import SwiftUI
 
 @Injectable
-struct InboxView: View {
-    @Inject var inboxService: any InboxService
+public struct InboxView: View {
+    @Inject private var inboxService: any InboxService
     private var viewModel: InboxViewModel
 
-    init(arguments: Arguments, dependencies: any Dependencies) {
+    public init(arguments: Arguments, dependencies: any Dependencies) {
         self._arguments = arguments
         self._dependencies = dependencies
         self.viewModel = InboxViewModel(inboxService: dependencies.inboxService)
     }
 
-    var body: some View {
+    public var body: some View {
         List(self.viewModel.inboxItems) { inboxItem in
             InboxItemView(title: inboxItem.title, subtitle: inboxItem.subtitle)
         }

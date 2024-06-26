@@ -3,6 +3,7 @@ import CameraFeatureInterface
 import InboxFeatureInterface
 import MapFeatureInterface
 import LoggedInFeatureInterface
+import SwiftUI
 import UserSessionServiceInterface
 import UserServiceInterface
 import UIKit
@@ -10,7 +11,7 @@ import WindowServiceInterface
 
 @Injectable(UIViewController.self)
 public final class LoggedInTabBarController: UITabBarController {
-    @Inject public var inboxViewControllerFactory: Factory<Void, UIViewController>
+    @Inject public var inboxViewFactory: Factory<Void, any View>
     @Inject public var cameraViewControllerFactory: Factory<Void, UIViewController>
     @Inject public var mapViewControllerFactory: Factory<Void, UIViewController>
 
@@ -23,7 +24,7 @@ public final class LoggedInTabBarController: UITabBarController {
         self.configureTabBarAppearance()
 
         // Create the initial view controllers:
-        let inboxViewController = self.inboxViewControllerFactory.build()
+        let inboxViewController = UIHostingController(rootView: AnyView(self.inboxViewFactory.build()))
         inboxViewController.tabBarItem = UITabBarItem(
             title: nil,
             image: UIImage.init(systemName: "tray.fill"),
