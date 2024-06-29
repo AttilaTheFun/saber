@@ -1,18 +1,16 @@
 import InboxServiceInterface
 import Observation
+import Saber
 import SwiftUI
 
 @Observable
-final class InboxViewModel {
-    @ObservationIgnored private var inboxService: any InboxService
+@Injectable(dependencies: .unowned)
+public final class InboxViewModel {
+    @Inject @ObservationIgnored private var inboxService: any InboxService
 
-    init(inboxService: any InboxService) {
-        self.inboxService = inboxService
-    }
+    public var inboxItems: [InboxItem] = []
 
-    var inboxItems: [InboxItem] = []
-
-    func getInboxItems() async {
+    public func getInboxItems() async {
         self.inboxItems = await self.inboxService.getInboxItems()
     }
 }

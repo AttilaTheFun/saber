@@ -4,21 +4,14 @@ import SwiftUI
 
 @Injectable
 public struct InboxView: View {
-    @Inject private var inboxService: any InboxService
-    private var viewModel: InboxViewModel
-
-    public init(arguments: Arguments, dependencies: any Dependencies) {
-        self._arguments = arguments
-        self._dependencies = dependencies
-        self.viewModel = InboxViewModel(inboxService: dependencies.inboxService)
-    }
+    @Inject private var inboxViewModel: InboxViewModel
 
     public var body: some View {
-        List(self.viewModel.inboxItems) { inboxItem in
+        List(self.inboxViewModel.inboxItems) { inboxItem in
             InboxItemView(title: inboxItem.title, subtitle: inboxItem.subtitle)
         }
         .task {
-            await self.viewModel.getInboxItems()
+            await self.inboxViewModel.getInboxItems()
         }
     }
 }
@@ -45,8 +38,12 @@ final class MockInboxService: InboxService {
     }
 }
 
-final class MockInboxViewDependencies: InboxViewDependencies {
+final class MockInboxViewModelUnownedDependencies: InboxViewModelUnownedDependencies {
     let inboxService: any InboxService = MockInboxService()
+}
+
+final class MockInboxViewDependencies: InboxViewDependencies {
+    let inboxViewModel = InboxViewModel(dependencies: MockInboxViewModelUnownedDependencies())
 }
 
 #Preview {

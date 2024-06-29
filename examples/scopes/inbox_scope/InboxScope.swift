@@ -23,11 +23,11 @@ public final class InboxScope {
     @Store(InboxServiceImplementation.self)
     public var inboxService: any InboxService
 
+    @Store(InboxViewModel.self)
+    public var inboxViewModel: InboxViewModel
+
     @Factory(InboxView.self)
     public var rootFactory: Factory<Void, any View>
-
-//    @Factory(InboxViewController.self)
-//    public var rootFactory: Factory<Void, UIViewController>
 }
 
 extension InboxScope: InboxScopeFulfilledDependencies {}
