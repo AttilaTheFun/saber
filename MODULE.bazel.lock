@@ -1,6 +1,6 @@
 {
   "lockFileVersion": 6,
-  "moduleFileHash": "2074e0fcdf5622541b170486f4299d0b2b08decf1594c345ec8dce399fa4ce15",
+  "moduleFileHash": "9457d983178dee7ea58ed152c2ba7b0d66fe9f987ea2c73607abb4dcb245ee87",
   "flags": {
     "cmdRegistries": [
       "https://bcr.bazel.build/"
@@ -34,20 +34,24 @@
             "column": 27
           },
           "imports": {
+            "swift_deps_info": "swift_deps_info",
+            "swiftpkg_swift_argument_parser": "swiftpkg_swift_argument_parser",
             "swiftpkg_swift_syntax": "swiftpkg_swift_syntax"
           },
           "devImports": [],
           "tags": [
             {
-              "tagName": "from_file",
+              "tagName": "from_package",
               "attributeValues": {
-                "deps_index": "//:swift_deps_index.json"
+                "declare_swift_deps_info": true,
+                "resolved": "//:Package.resolved",
+                "swift": "//:Package.swift"
               },
               "devDependency": false,
               "location": {
                 "file": "@@//:MODULE.bazel",
                 "line": 53,
-                "column": 21
+                "column": 24
               }
             }
           ],
@@ -63,7 +67,7 @@
         "build_bazel_apple_support": "apple_support@1.15.1",
         "build_bazel_rules_apple": "rules_apple@3.5.1",
         "rules_xcodeproj": "rules_xcodeproj@2.4.0",
-        "rules_swift_package_manager": "rules_swift_package_manager@0.32.0",
+        "rules_swift_package_manager": "rules_swift_package_manager@0.34.1",
         "bazel_tools": "bazel_tools@_",
         "local_config_platform": "local_config_platform@_"
       }
@@ -610,10 +614,10 @@
         }
       }
     },
-    "rules_swift_package_manager@0.32.0": {
+    "rules_swift_package_manager@0.34.1": {
       "name": "rules_swift_package_manager",
-      "version": "0.32.0",
-      "key": "rules_swift_package_manager@0.32.0",
+      "version": "0.34.1",
+      "key": "rules_swift_package_manager@0.34.1",
       "repoName": "rules_swift_package_manager",
       "executionPlatformsToRegister": [],
       "toolchainsToRegister": [],
@@ -621,9 +625,9 @@
         {
           "extensionBzlFile": "@apple_support//crosstool:setup.bzl",
           "extensionName": "apple_cc_configure_extension",
-          "usingModule": "rules_swift_package_manager@0.32.0",
+          "usingModule": "rules_swift_package_manager@0.34.1",
           "location": {
-            "file": "https://bcr.bazel.build/modules/rules_swift_package_manager/0.32.0/MODULE.bazel",
+            "file": "https://bcr.bazel.build/modules/rules_swift_package_manager/0.34.1/MODULE.bazel",
             "line": 40,
             "column": 35
           },
@@ -638,9 +642,9 @@
         {
           "extensionBzlFile": "@bazel_gazelle//:extensions.bzl",
           "extensionName": "go_deps",
-          "usingModule": "rules_swift_package_manager@0.32.0",
+          "usingModule": "rules_swift_package_manager@0.34.1",
           "location": {
-            "file": "https://bcr.bazel.build/modules/rules_swift_package_manager/0.32.0/MODULE.bazel",
+            "file": "https://bcr.bazel.build/modules/rules_swift_package_manager/0.34.1/MODULE.bazel",
             "line": 46,
             "column": 24
           },
@@ -648,6 +652,7 @@
             "com_github_bazelbuild_buildtools": "com_github_bazelbuild_buildtools",
             "com_github_creasty_defaults": "com_github_creasty_defaults",
             "com_github_deckarep_golang_set_v2": "com_github_deckarep_golang_set_v2",
+            "com_github_spf13_cobra": "com_github_spf13_cobra",
             "com_github_stretchr_testify": "com_github_stretchr_testify",
             "in_gopkg_yaml_v3": "in_gopkg_yaml_v3",
             "org_golang_x_exp": "org_golang_x_exp",
@@ -662,7 +667,7 @@
               },
               "devDependency": false,
               "location": {
-                "file": "https://bcr.bazel.build/modules/rules_swift_package_manager/0.32.0/MODULE.bazel",
+                "file": "https://bcr.bazel.build/modules/rules_swift_package_manager/0.34.1/MODULE.bazel",
                 "line": 47,
                 "column": 18
               }
@@ -690,12 +695,12 @@
         "ruleClassName": "http_archive",
         "attributes": {
           "urls": [
-            "https://github.com/cgrindel/rules_swift_package_manager/releases/download/v0.32.0/rules_swift_package_manager.v0.32.0.tar.gz"
+            "https://github.com/cgrindel/rules_swift_package_manager/releases/download/v0.34.1/rules_swift_package_manager.v0.34.1.tar.gz"
           ],
-          "integrity": "sha256-NDu4zwwTa9X253bbWp7XoNc5kMygJ1Bx8VtfwJ41KU4=",
+          "integrity": "sha256-THdD0dkZpyF7MY6ZIW/d/mYfxPYJrXi9nQyjviZROhY=",
           "strip_prefix": "",
           "remote_patches": {
-            "https://bcr.bazel.build/modules/rules_swift_package_manager/0.32.0/patches/module_dot_bazel_version.patch": "sha256-wgUClEcnXHSEuSsRMdvA+1hLedXyTFr9VJf7QsevD7g="
+            "https://bcr.bazel.build/modules/rules_swift_package_manager/0.34.1/patches/module_dot_bazel_version.patch": "sha256-a/szYzjjGqqPOr5x1XnpyMKgi2+iR4CTrzZ1alGX7VA="
           },
           "remote_patch_strip": 1
         }
@@ -1868,7 +1873,7 @@
     },
     "@@bazel_features~//private:extensions.bzl%version_extension": {
       "general": {
-        "bzlTransitiveDigest": "3FcE0iMy2yYKEbEO19f72k9dzcpRUXHH+igow5yVy8g=",
+        "bzlTransitiveDigest": "UwYHXjy4P9iCTMR9n5kWsy4RwLoowjUrfDFTkBo5RG8=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -1963,7 +1968,7 @@
     },
     "@@buildifier_prebuilt~//:defs.bzl%buildifier_prebuilt_deps_extension": {
       "general": {
-        "bzlTransitiveDigest": "ZLz8nU7kwZ0wfwY66sYRmuSjBB3R2KenLwVQfaHkvRI=",
+        "bzlTransitiveDigest": "NvIZr5G7dpZTvf3pJq8bYU5dwPRf0BO2NAY4FWZbw1Q=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -2086,6 +2091,31 @@
         ]
       }
     },
+    "@@buildozer~//:buildozer_binary.bzl%buildozer_binary": {
+      "general": {
+        "bzlTransitiveDigest": "EleDU/FQ1+e/RgkW3aIDmdaxZEthvoWQhsqFTxiSgMI=",
+        "recordedFileInputs": {},
+        "recordedDirentsInputs": {},
+        "envVariables": {},
+        "generatedRepoSpecs": {
+          "buildozer_binary": {
+            "bzlFile": "@@buildozer~//private:buildozer_binary.bzl",
+            "ruleClassName": "_buildozer_binary_repo",
+            "attributes": {
+              "sha256": {
+                "darwin-amd64": "d29e347ecd6b5673d72cb1a8de05bf1b06178dd229ff5eb67fad5100c840cc8e",
+                "darwin-arm64": "9b9e71bdbec5e7223871e913b65d12f6d8fa026684daf991f00e52ed36a6978d",
+                "linux-amd64": "8dfd6345da4e9042daa738d7fdf34f699c5dfce4632f7207956fceedd8494119",
+                "linux-arm64": "6559558fded658c8fa7432a9d011f7c4dcbac6b738feae73d2d5c352e5f605fa",
+                "windows-amd64": "e7f05bf847f7c3689dd28926460ce6e1097ae97380ac8e6ae7147b7b706ba19b"
+              },
+              "version": "6.4.0"
+            }
+          }
+        },
+        "recordedRepoMappingEntries": []
+      }
+    },
     "@@rules_apple~//apple:apple.bzl%provisioning_profile_repository_extension": {
       "general": {
         "bzlTransitiveDigest": "2ouPa9YnJ160vPvKND5m8rW094MMtSiasmXfi/VTdXQ=",
@@ -2175,7 +2205,7 @@
     },
     "@@rules_apple~//apple:extensions.bzl%non_module_deps": {
       "general": {
-        "bzlTransitiveDigest": "Mz+wtZ/VeqGCfg860fLOvbUc8QkdTR8p1ZP3f09ylRQ=",
+        "bzlTransitiveDigest": "8meJ2g0AwxeKDbFt11iiLn0k3gnvPuo+YQSPxlecw08=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -2203,7 +2233,7 @@
     },
     "@@rules_java~//java:extensions.bzl%toolchains": {
       "general": {
-        "bzlTransitiveDigest": "tJHbmWnq7m+9eUBnUdv7jZziQ26FmcGL9C5/hU3Q9UQ=",
+        "bzlTransitiveDigest": "0N5b5J9fUzo0sgvH4F3kIEaeXunz4Wy2/UtSFV/eXUY=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -2708,7 +2738,7 @@
     },
     "@@rules_python~//python/extensions:python.bzl%python": {
       "general": {
-        "bzlTransitiveDigest": "7a7jv196EvOxUgMutfPERBnBTrOv3o1Z/xJPUFb/WXc=",
+        "bzlTransitiveDigest": "yMHv3upNOoUoL1iZqLqo8sb40k21aBzdZ8C/Y0KS1XI=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -2896,7 +2926,7 @@
     },
     "@@rules_python~//python/private/bzlmod:internal_deps.bzl%internal_deps": {
       "general": {
-        "bzlTransitiveDigest": "eaQ4wDSCMX120Gyjf8GAwHl9I1TWl0raUq3qbaqafjg=",
+        "bzlTransitiveDigest": "6f4lBMl4JW6BiD16ABNZUJMDTsyl6I/EiFdQbEUpwCA=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -3068,9 +3098,10 @@
     },
     "@@rules_swift_package_manager~//:extensions.bzl%swift_deps": {
       "general": {
-        "bzlTransitiveDigest": "O+HZw9AJHCPr2MVCtBl11dc0JLqLltxkTJJ1qTkSx6I=",
+        "bzlTransitiveDigest": "IdftIisCDAf6RShq3cb9+zC53YGwN4T6uLgP1Uy7F7w=",
         "recordedFileInputs": {
-          "@@//swift_deps_index.json": "036d111fae3351dd98f0ab1eb685bafabe313522237699c45babf8fa2b6ba254"
+          "@@//Package.resolved": "74b56ec4c1462b50a755f7db34cc1c7f3cc137323a0d49f7f0ea3d62f0ace630",
+          "@@//Package.swift": "f97d289cadbcc4ec2266f8180ed43efbbb2481799939ec36ba30c63320985d9e"
         },
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -3082,7 +3113,6 @@
               "bazel_package_name": "swiftpkg_swift_syntax",
               "commit": "303e5c5c36d6a558407d364878df131c3546fad8",
               "remote": "https://github.com/apple/swift-syntax.git",
-              "dependencies_index": "@@//:swift_deps_index.json",
               "init_submodules": false,
               "recursive_init_submodules": true,
               "patch_args": [
@@ -3093,7 +3123,45 @@
               "patch_tool": "",
               "patches": []
             }
+          },
+          "swiftpkg_swift_argument_parser": {
+            "bzlFile": "@@rules_swift_package_manager~//swiftpkg/internal:swift_package.bzl",
+            "ruleClassName": "swift_package",
+            "attributes": {
+              "bazel_package_name": "swiftpkg_swift_argument_parser",
+              "commit": "0fbc8848e389af3bb55c182bc19ca9d5dc2f255b",
+              "remote": "https://github.com/apple/swift-argument-parser.git",
+              "init_submodules": false,
+              "recursive_init_submodules": true,
+              "patch_args": [
+                "-p0"
+              ],
+              "patch_cmds": [],
+              "patch_cmds_win": [],
+              "patch_tool": "",
+              "patches": []
+            }
+          },
+          "swift_deps_info": {
+            "bzlFile": "@@rules_swift_package_manager~//swiftpkg/internal:swift_deps_info.bzl",
+            "ruleClassName": "swift_deps_info",
+            "attributes": {
+              "direct_dep_pkg_infos": {
+                "@swiftpkg_swift_argument_parser//:pkg_info.json": "swift-argument-parser",
+                "@swiftpkg_swift_syntax//:pkg_info.json": "swift-syntax"
+              }
+            }
           }
+        },
+        "moduleExtensionMetadata": {
+          "explicitRootModuleDirectDeps": [
+            "swiftpkg_swift_argument_parser",
+            "swiftpkg_swift_syntax",
+            "swift_deps_info"
+          ],
+          "explicitRootModuleDirectDevDeps": [],
+          "useAllRepos": "NO",
+          "reproducible": false
         },
         "recordedRepoMappingEntries": [
           [
@@ -3116,7 +3184,7 @@
     },
     "@@rules_swift~//swift:extensions.bzl%non_module_deps": {
       "general": {
-        "bzlTransitiveDigest": "m78FIsmmvFalZmXxi26P0AW5U6W6G+u5KGknjClFU/0=",
+        "bzlTransitiveDigest": "2HjojbikzYbmbwZ2N19uSSpcNJ002txg/QLUMC0rEYk=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -3275,7 +3343,7 @@
     },
     "@@rules_xcodeproj~//xcodeproj:extensions.bzl%internal": {
       "general": {
-        "bzlTransitiveDigest": "iPy2pVY7HbMgvwotVcmbRjZO7AV5JQwh38U5/KuGZJE=",
+        "bzlTransitiveDigest": "QIfjvn6IYepA5XoM9LRq1tQJmpg76E6xv9/8f2Z6NOc=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},
@@ -3297,7 +3365,7 @@
     },
     "@@rules_xcodeproj~//xcodeproj:extensions.bzl%non_module_deps": {
       "general": {
-        "bzlTransitiveDigest": "iPy2pVY7HbMgvwotVcmbRjZO7AV5JQwh38U5/KuGZJE=",
+        "bzlTransitiveDigest": "QIfjvn6IYepA5XoM9LRq1tQJmpg76E6xv9/8f2Z6NOc=",
         "recordedFileInputs": {},
         "recordedDirentsInputs": {},
         "envVariables": {},

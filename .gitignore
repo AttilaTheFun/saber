@@ -3,7 +3,7 @@
 .DS_STORE
 
 # Bazel Files
-.bazel
+bazel-*
 
 # Swift Files
 .build
