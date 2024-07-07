@@ -1,7 +1,5 @@
 load("@build_bazel_rules_swift//swift:swift.bzl", "swift_library")
 
-package(default_visibility = ["//visibility:public"])
-
 swift_library(
     name = "saber_library",
     srcs = [
@@ -29,3 +27,5 @@ swift_library(
         "@swiftpkg_swift_syntax//:SwiftSyntaxMacros",
     ],
 )
+
+package(default_visibility = ["//visibility:public"])

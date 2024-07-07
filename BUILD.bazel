@@ -1,4 +1,4 @@
-load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
+load("@gazelle//:def.bzl", "gazelle", "gazelle_binary")
 
 # gazelle directives
 
@@ -11,7 +11,7 @@ load("@bazel_gazelle//:def.bzl", "gazelle", "gazelle_binary")
 gazelle_binary(
     name = "gazelle_bin",
     languages = [
-        "@bazel_gazelle//language/bazel/visibility",
+        "@gazelle//language/bazel/visibility",
         "@rules_swift_package_manager//gazelle",
     ],
 )

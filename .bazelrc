@@ -1,5 +1,3 @@
-# Enable Bzlmod
-common --enable_bzlmod
 
 # Enable building for iOS simulator from CLI:
 build:ios_simulator --platforms=@build_bazel_apple_support//platforms:ios_sim_arm64
